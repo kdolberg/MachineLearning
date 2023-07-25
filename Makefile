@@ -11,13 +11,13 @@ FLAGS = -DNOFLAGS
 CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -Wall -g -O0
 
 # directory of header files
-INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include
+INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I./include
 
 # sources and objects
+LINALG_DIR = ../Utilities
 LINALG_OBJS = ../Utilities/src/la_basic_types.la ../Utilities/src/la_matrix.la ../Utilities/src/la_matrix_like.la ../Utilities/src/la_vector.la ../Utilities/src/la_vector_overloads.la
-ML_SRC = main.cpp activation_function.cpp
-ML_OBJ = $(ML_SRC:.cpp=.ml)
-OBJECTS = $(LINALG_OBJS) $(ML_OBJ)
+ML_OBJ = obj/main.ml obj/activation_function.ml
+OBJECTS = $(ML_OBJ) $(LINALG_OBJS)
 
 # target executable
 TARGET = a
@@ -25,16 +25,16 @@ TARGET = a
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TARGET) $(OBJECTS)
 
-%.la: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+# %.la: %.cpp
+# 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-%.ml: %.cpp
+obj/%.ml: src/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	rm -f $(ML_OBJ) $(TARGET)
 
 linalg:
-	make $(LINALG_OBJS)
+	make -C $(LINALG_DIR)
 
 .PHONY: clean linalg
