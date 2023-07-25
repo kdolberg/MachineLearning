@@ -60,8 +60,7 @@ namespace MachineLearning {
 		Layer(uint num_inputs, uint num_outputs, ActivationFunction func_) : Layer(num_inputs,num_outputs,func_,true) {}
 		template <typename T>
 		T operator()(const T& t) {
-			T not_the_real_return = this->parameters(t);
-			return not_the_real_return;
+			return this->func(this->parameters(t));
 		}
 	};
 } //MachineLearning
