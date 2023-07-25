@@ -1,22 +1,53 @@
+#include <list>
 #include "types.h"
 #include "activation_function.h"
 
-#define NUM_ROWS_COLS ((LinearAlgebra::uint)5)
+namespace MachineLearning {
+	class Net {
+	protected:
+		std::list<MachineLearning::Layer> layers;
+	public:
+		Net(){}
+		Net(std::vector<uint> def) : Net() {
+			for (uint i = 0; i < def.size()-1; ++i) {
+				uint num_inputs = def[i];
+				uint num_outputs = def[i+1];
+				Layer tmp(num_inputs,num_outputs,get_leaky_ReLU(),true);
+				layers.push_back(tmp);
+			}
+		}
+		auto begin_layer_const_iter() const {
+			return this->layers.cbegin();
+		}
+		auto end_layer_const_iter() const {
+			return this->layers.cend();
+		}
+	// protected:
+	// 	auto begin_layer_iter() {
+	// 		return this->layers.begin();
+	// 	}
+	// 	auto end_layer_iter() {
+	// 		return this->layers.end();
+	// 	}
+	public:
+		std::string str() const {
+			std::stringstream ss;
+			for (auto i = this->begin_layer_const_iter(); i != this->end_layer_const_iter(); ++i) {
+				ss << (*i).parameters.weights << std::endl;
+				ss << (*i).parameters.biases << std::endl;
+			}
+			return ss.str();
+		}
+	};
+}
 
-template <typename T>
-void layer_test() {
-	MachineLearning::LayerParams lp(NUM_ROWS_COLS,NUM_ROWS_COLS);
-	T v(NUM_ROWS_COLS);
+std::ostream& operator<<(std::ostream& os,const MachineLearning::Net n) {
+	os << n.str();
+	return os;
 }
 
 int main(int argc, char const *argv[]) {
-	layer_test<LinearAlgebra::Matrix>();
-	layer_test<LinearAlgebra::VerticalVector>();
-
-	MachineLearning::ActivationFunction f = MachineLearning::get_leaky_ReLU();
-
-	MachineLearning::Layer l((LinearAlgebra::uint)5,(LinearAlgebra::uint)5,MachineLearning::get_leaky_ReLU(),false);
-
-	std::cout << l.parameters.weights << std::endl;
-	std::cout << l.parameters.biases << std::endl;
+	std::vector<MachineLearning::uint> def = {5,5,4,1};
+	MachineLearning::Net n(def);
+	std::cout << n;
 }
