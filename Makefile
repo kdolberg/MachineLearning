@@ -7,7 +7,7 @@ CXX = g++
 # compiler flags
 SCALAR_TYPE=float
 DEFINE_SCALAR_TYPE_MACRO = -DSCALAR_TYPE=$(SCALAR_TYPE)
-FLAGS = -DNOFLAGS
+FLAGS = -DNOFLAGS -UUNIT_TEST
 CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -Wall -g -O0
 
 # directory of header files
@@ -15,18 +15,18 @@ INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I
 
 # sources and objects
 LINALG_DIR = ../Utilities
-LINALG_OBJS = ../Utilities/src/la_basic_types.la ../Utilities/src/la_matrix.la ../Utilities/src/la_matrix_like.la ../Utilities/src/la_vector.la ../Utilities/src/la_vector_overloads.la
+LINALG_OBJS = ../Utilities/obj/la_basic_types.la ../Utilities/obj/la_matrix.la ../Utilities/obj/la_matrix_like.la ../Utilities/obj/la_vector.la ../Utilities/obj/la_vector_overloads.la
 ML_OBJ = obj/main.ml obj/activation_function.ml
 OBJECTS = $(ML_OBJ) $(LINALG_OBJS)
 
 # target executable
 TARGET = a
 
-$(TARGET): $(OBJECTS)
+$(TARGET): $(ML_OBJ)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TARGET) $(OBJECTS)
 
-# %.la: %.cpp
-# 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+linalg:
+	make -C $(LINALG_DIR) obj/la_basic_types.la obj/la_matrix.la obj/la_matrix_like.la obj/la_vector.la obj/la_vector_overloads.la
 
 obj/%.ml: src/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
@@ -34,7 +34,7 @@ obj/%.ml: src/%.cpp
 clean:
 	rm -f $(ML_OBJ) $(TARGET)
 
-linalg:
-	make -C $(LINALG_DIR)
+clean_linalg:
+	rm $(LINALG_OBJS)
 
-.PHONY: clean linalg
+.PHONY: clean clean_linalg linalg
