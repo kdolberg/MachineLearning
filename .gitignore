@@ -3,3 +3,4 @@
 *.stackdump
 *.ml
 test_stubs
+obj
