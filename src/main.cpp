@@ -3,9 +3,25 @@
 #include "activation_function.h"
 
 namespace MachineLearning {
+
 	class Net {
+		// static void forprop(std::list<Layer>::const_iterator i,std::list<Layer>::const_iterator end, ForDataCache& cache, const LinearAlgebra::Matrix& inputdata) {
+		// 	cache.pre_act_func_output.push_back(i->parameters(inputdata));
+		// 	cache.post_act_func_output.push_back(i->func(cache.pre_act_func_output.back()));
+		// 	if(i+1!=end) {
+		// 		forprop((++i),end,cache,cache.post_act_func_output.back());
+		// 	}
+		// }
+
+		// static void backprop(std::list<Layer>::const_reverse_iterator i, std::list<Layer>::const_reverse_iterator end, const ForDataCache& for_cache, BackDataCache& back_cache) {
+
+		// 	if(i+1!=end){
+		// 		backprop((++i),end,for_cache,back_cache);
+		// 	}
+		// }
+
 	protected:
-		std::list<MachineLearning::Layer> layers;
+		std::list<Layer> layers;
 	public:
 		Net(){}
 		Net(std::vector<uint> def) : Net() {
@@ -16,25 +32,18 @@ namespace MachineLearning {
 				layers.push_back(tmp);
 			}
 		}
-		auto begin_layer_const_iter() const {
+		std::list<Layer>::const_iterator layer_cbegin() const {
 			return this->layers.cbegin();
 		}
-		auto end_layer_const_iter() const {
+		std::list<Layer>::const_iterator layer_cend() const {
 			return this->layers.cend();
 		}
-	// protected:
-	// 	auto begin_layer_iter() {
-	// 		return this->layers.begin();
-	// 	}
-	// 	auto end_layer_iter() {
-	// 		return this->layers.end();
-	// 	}
 	public:
 		std::string str() const {
 			std::stringstream ss;
-			for (auto i = this->begin_layer_const_iter(); i != this->end_layer_const_iter(); ++i) {
-				ss << (*i).parameters.weights << std::endl;
-				ss << (*i).parameters.biases << std::endl;
+			for (std::list<Layer>::const_iterator i = this->layer_cbegin(); i != this->layer_cend(); ++i) {
+				ss << i->parameters.weights << std::endl;
+				ss << i->parameters.biases << std::endl;
 			}
 			return ss.str();
 		}

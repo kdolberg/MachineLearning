@@ -26,13 +26,23 @@ namespace MachineLearning {
 			this->weights = LinearAlgebra::Matrix(i);
 			this->biases = LinearAlgebra::VerticalVector(i.row);
 		}
-
+	private:
 		template <typename T>
-		T operator()(const T& in_signal) {
+		T call_op(const T& in_signal) const {
 			assert(T::is_matrix_like());
 			T ret = LinearAlgebra::matrix_multiply<T>(&(this->weights),&in_signal);
 			LinearAlgebra::columnwise_add(&ret,&(this->biases));
 			return ret;
+		}
+	public:
+		LinearAlgebra::Matrix operator()(const LinearAlgebra::Matrix& in_signal) const {
+			return this->call_op<LinearAlgebra::Matrix>(in_signal);
+		}
+		LinearAlgebra::HorizontalVector operator()(const LinearAlgebra::HorizontalVector& in_signal) const {
+			return this->call_op<LinearAlgebra::HorizontalVector>(in_signal);
+		}
+		LinearAlgebra::VerticalVector operator()(const LinearAlgebra::VerticalVector& in_signal) const {
+			return this->call_op<LinearAlgebra::VerticalVector>(in_signal);
 		}
 	};
 
@@ -63,6 +73,15 @@ namespace MachineLearning {
 			return this->func(this->parameters(t));
 		}
 	};
+
+	typedef struct {
+		std::list<LinearAlgebra::Matrix> pre_act_func_output;
+		std::list<LinearAlgebra::Matrix> post_act_func_output;
+	} ForDataCache;
+
+	typedef struct {
+
+	} BackDataCache;
 } //MachineLearning
 
 #endif //TYPES_H
