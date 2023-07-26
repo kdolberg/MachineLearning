@@ -5,13 +5,13 @@
 namespace MachineLearning {
 
 	class Net {
-		// static void forprop(std::list<Layer>::const_iterator i,std::list<Layer>::const_iterator end, ForDataCache& cache, const LinearAlgebra::Matrix& inputdata) {
-		// 	cache.pre_act_func_output.push_back(i->parameters(inputdata));
-		// 	cache.post_act_func_output.push_back(i->func(cache.pre_act_func_output.back()));
-		// 	if(i+1!=end) {
-		// 		forprop((++i),end,cache,cache.post_act_func_output.back());
-		// 	}
-		// }
+		static void forprop(std::list<Layer>::const_iterator i,std::list<Layer>::const_iterator end, ForDataCache& cache, const LinearAlgebra::Matrix& inputdata) {
+			cache.pre_act_func_output.push_back(i->parameters(inputdata));
+			cache.post_act_func_output.push_back(i->func(cache.pre_act_func_output.back()));
+			if((++i)!=end) {
+				forprop(i,end,cache,cache.post_act_func_output.back());
+			}
+		}
 
 		// static void backprop(std::list<Layer>::const_reverse_iterator i, std::list<Layer>::const_reverse_iterator end, const ForDataCache& for_cache, BackDataCache& back_cache) {
 
@@ -59,4 +59,9 @@ int main(int argc, char const *argv[]) {
 	std::vector<MachineLearning::uint> def = {5,5,4,1};
 	MachineLearning::Net n(def);
 	std::cout << n;
+
+	std::list<int> blah = {1,2,3,4,5};
+	for (std::list<int>::const_iterator i = blah.cbegin(); i != blah.cend(); ++i) {
+		std::list<int>::const_iterator j = i+1;
+	}
 }
