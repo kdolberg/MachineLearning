@@ -1,7 +1,5 @@
+#include <math.h>
 #include "activation_function.h"
-#include "math.h"
-
-// 1/(1+exp(-x));
 
 #ifndef LEAKINESS
 #define LEAKINESS 0.1
