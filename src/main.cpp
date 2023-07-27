@@ -1,10 +1,14 @@
 #include <list>
+#include <concepts>
 #include "types.h"
 #include "activation_function.h"
 
 namespace MachineLearning {
 
 	class Net {
+		/**
+		 * @brief Calculates the pre-activation function output data and the post-activation function output data.
+		 */
 		static void forprop(std::list<Layer>::const_iterator i,std::list<Layer>::const_iterator end, ForDataCache& cache, const LinearAlgebra::Matrix& inputdata) {
 			cache.pre_act_func_output.push_back(i->parameters(inputdata));
 			cache.post_act_func_output.push_back(i->func(cache.pre_act_func_output.back()));
@@ -13,12 +17,15 @@ namespace MachineLearning {
 			}
 		}
 
-		// static void backprop(std::list<Layer>::const_reverse_iterator i, std::list<Layer>::const_reverse_iterator end, const ForDataCache& for_cache, BackDataCache& back_cache) {
-
-		// 	if(i+1!=end){
-		// 		backprop((++i),end,for_cache,back_cache);
-		// 	}
-		// }
+		/**
+		 * @brief Calculates the partial derivatives 
+		 */
+		static void backprop(std::list<Layer>::const_reverse_iterator i, std::list<Layer>::const_reverse_iterator end, const ForDataCache& for_cache, BackDataCache& back_cache) {
+			back_cache.naive_derivatives.push_back(i->derivative())
+			if((++i)!=end){
+				backprop(i,end,for_cache,back_cache);
+			}
+		}
 
 	protected:
 		std::list<Layer> layers;
