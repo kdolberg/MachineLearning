@@ -47,8 +47,14 @@ namespace MachineLearning {
 			return ret;
 		}
 	};
+	/**
+	 * @brief Returns the sigmoid function
+	 */
 	ActivationFunction get_sigmoid();
+	/**
+	 * Returns the leaky ReLU function
+	 */
 	ActivationFunction get_leaky_ReLU();
-}
+} //MachineLearning
 
 #endif //ACTIVATION_FUNCTION_H
