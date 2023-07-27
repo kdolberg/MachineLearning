@@ -57,18 +57,32 @@ namespace MachineLearning {
 	};
 }
 
+// template<typename T>
+// concept DerivedFromMatrix_Like = std::is_base_of_v<LinearAlgebra::MatrixLike,T>;
+
+// std::list<int>::const_iterator operator+(std::list<int>::const_iterator iter, int n) {
+// 	for (int i = 0; i < n; ++i) {
+// 		++iter;
+// 	}
+// 	return iter;
+// }
+
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net n) {
 	os << n.str();
 	return os;
 }
 
+#define IS_MATRIXLIKE(_type) std::is_base_of_v<LinearAlgebra::MatrixLike,_type>
+
+#define PRINT_IF_MATRIXLIKE(_type) std::cout << #_type << ": " << IS_MATRIXLIKE(_type) << std::endl;
+
 int main(int argc, char const *argv[]) {
 	std::vector<MachineLearning::uint> def = {5,5,4,1};
 	MachineLearning::Net n(def);
-	std::cout << n;
+	PRINT_IF_MATRIXLIKE(LinearAlgebra::VerticalVector);
+	PRINT_IF_MATRIXLIKE(LinearAlgebra::HorizontalVector);
+	PRINT_IF_MATRIXLIKE(LinearAlgebra::Matrix);
+	PRINT_IF_MATRIXLIKE(LinearAlgebra::mindex_t);
+	PRINT_IF_MATRIXLIKE(int);
 
-	std::list<int> blah = {1,2,3,4,5};
-	for (std::list<int>::const_iterator i = blah.cbegin(); i != blah.cend(); ++i) {
-		std::list<int>::const_iterator j = i+1;
-	}
 }
