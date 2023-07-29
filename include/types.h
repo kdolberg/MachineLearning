@@ -44,6 +44,13 @@ namespace MachineLearning {
 		LinearAlgebra::VerticalVector operator()(const LinearAlgebra::VerticalVector& in_signal) const {
 			return this->call_op<LinearAlgebra::VerticalVector>(in_signal);
 		}
+		uint get_num_inputs() const {
+			return this->weights.get_num_cols();
+		}
+		uint get_num_outputs() const {
+			assert(this->weights.get_num_rows()==this->biases.get_num_rows());
+			return this->weights.get_num_rows();
+		}
 	};
 
 	typedef struct {

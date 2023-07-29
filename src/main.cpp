@@ -1,32 +1,49 @@
 #include <list>
 #include <concepts>
+#include <iterator>
 #include "types.h"
 #include "activation_function.h"
 
 namespace MachineLearning {
+	/**
+	 * @brief Calculates the pre-activation function output data and the post-activation function output data.
+	 */
+	void forprop(std::list<Layer>::const_iterator i,std::list<Layer>::const_iterator end, ForDataCache& cache, const LinearAlgebra::Matrix& inputdata) {
+		cache.pre_act_func_output.push_back(i->parameters(inputdata));
+		cache.post_act_func_output.push_back(i->func(cache.pre_act_func_output.back()));
+		if(std::next(i,1)!=end) {
+			forprop(std::next(i,1),end,cache,cache.post_act_func_output.back());
+		}
+	}
 
+	/**
+	 * @brief Calculates the partial derivatives 
+	 */
+	void backprop(	std::list<Layer>::const_reverse_iterator i,
+					std::list<Layer>::const_reverse_iterator end,
+					const ForDataCache& for_cache,
+					BackDataCache& back_cache	)
+	{
+		back_cache.naive_derivatives.push_back(i->derivative());
+		if((++i)!=end){
+			backprop(i,end,for_cache,back_cache);
+		}
+	}
+	class MetaLayer : public std::list<Layer>::const_iterator {
+		ForDataCache for_data;
+		BackDataCache back_data;
+	public:
+		MetaLayer() {}
+		void initialize_data_caches(uint training_dataset_size) {
+			//Initialize forward propagation data
+			this->for_data.pre_act_func_output 	=	LinearAlgebra::Matrix(MINDEX(	(**this).parameters.get_num_inputs(),	training_dataset_size	));
+			this->for_data.post_act_func_output	=	LinearAlgebra::Matrix(MINDEX(	(**this).parameters.get_num_outputs(),	training_dataset_size	));
+
+			//Initialize backward propagation data
+			/*Do something with the back_data cache*/
+		}
+	}; //MetaLayer
 	class Net {
-		/**
-		 * @brief Calculates the pre-activation function output data and the post-activation function output data.
-		 */
-		static void forprop(std::list<Layer>::const_iterator i,std::list<Layer>::const_iterator end, ForDataCache& cache, const LinearAlgebra::Matrix& inputdata) {
-			cache.pre_act_func_output.push_back(i->parameters(inputdata));
-			cache.post_act_func_output.push_back(i->func(cache.pre_act_func_output.back()));
-			if((++i)!=end) {
-				forprop(i,end,cache,cache.post_act_func_output.back());
-			}
-		}
-
-		/**
-		 * @brief Calculates the partial derivatives 
-		 */
-		static void backprop(std::list<Layer>::const_reverse_iterator i, std::list<Layer>::const_reverse_iterator end, const ForDataCache& for_cache, BackDataCache& back_cache) {
-			back_cache.naive_derivatives.push_back(i->derivative())
-			if((++i)!=end){
-				backprop(i,end,for_cache,back_cache);
-			}
-		}
-
 	protected:
 		std::list<Layer> layers;
 	public:
@@ -54,18 +71,8 @@ namespace MachineLearning {
 			}
 			return ss.str();
 		}
-	};
+	}; //Net
 }
-
-// template<typename T>
-// concept DerivedFromMatrix_Like = std::is_base_of_v<LinearAlgebra::MatrixLike,T>;
-
-// std::list<int>::const_iterator operator+(std::list<int>::const_iterator iter, int n) {
-// 	for (int i = 0; i < n; ++i) {
-// 		++iter;
-// 	}
-// 	return iter;
-// }
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net n) {
 	os << n.str();
