@@ -21,7 +21,7 @@ namespace MachineLearning {
 		LinearAlgebra::scalar_t operator()(LinearAlgebra::scalar_t in) const {
 			return this->function(in);
 		}
-		template <MATRIXLIKE T>
+		template <LinearAlgebra::MATRIXLIKE T>
 		T operator()(const T& t) const {
 			assert(T::is_matrix_like());
 			T ret(t.matrix_size());
@@ -35,7 +35,7 @@ namespace MachineLearning {
 		LinearAlgebra::scalar_t ddx(LinearAlgebra::scalar_t in) const {
 			return this->derivative(in);
 		}
-		template <MATRIXLIKE T>
+		template <LinearAlgebra::MATRIXLIKE T>
 		T ddx(const T& t) const {
 			assert(T::is_matrix_like());
 			T ret(t.matrix_size());
