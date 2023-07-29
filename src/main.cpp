@@ -5,6 +5,12 @@
 #include "activation_function.h"
 
 namespace MachineLearning {
+	LinearAlgebra::Matrix error(const LinearAlgebra::Matrix& net_output_data,const LinearAlgebra::Matrix& dataset_y_data) {
+		return LinearAlgebra::hadamard_square(dataset_y_data-net_output_data)*0.5f;
+	}
+	LinearAlgebra::Matrix error_ddx(const LinearAlgebra::Matrix& net_output_data, const LinearAlgebra::Matrix& dataset_y_data) {
+		return (net_output_data-dataset_y_data);
+	}
 	/**
 	 * @brief Calculates the pre-activation function output data and the post-activation function output data.
 	 */
@@ -22,27 +28,18 @@ namespace MachineLearning {
 	void backprop(	std::list<Layer>::const_reverse_iterator i,
 					std::list<Layer>::const_reverse_iterator end,
 					const ForDataCache& for_cache,
-					BackDataCache& back_cache	)
-	{
-		back_cache.naive_derivatives.push_back(i->derivative());
-		if((++i)!=end) {
-			backprop(i,end,for_cache,back_cache);
+					BackDataCache& back_cache,	const LinearAlgebra::Matrix y_data)	{
+
+		std::list<LinearAlgebra::Matrix> naive_derivatives;
+		std::list<LinearAlgebra::Matrix> partial_derivatives;
+
+		//Get the last element in the post_act_func_output list
+		//Feed that matrix and the y_data from the training dataset into error_ddx
+		//Push the Matrix returned from that into the naive_derivatives list
+		naive_derivatives.push_front(for_cache.post_act_func_output.back(),error_ddx(y_data));
+		for (; i != end; ++i) {;
 		}
 	}
-	class MetaLayer : public std::list<Layer>::const_iterator {
-		ForDataCache for_data;
-		BackDataCache back_data;
-	public:
-		MetaLayer() {}
-		void initialize_data_caches(uint training_dataset_size) {
-			//Initialize forward propagation data
-			this->for_data.pre_act_func_output 	=	LinearAlgebra::Matrix(MINDEX(	(**this).parameters.get_num_inputs(),	training_dataset_size	));
-			this->for_data.post_act_func_output	=	LinearAlgebra::Matrix(MINDEX(	(**this).parameters.get_num_outputs(),	training_dataset_size	));
-
-			//Initialize backward propagation data
-			/*Do something with the back_data cache*/
-		}
-	}; //MetaLayer
 	class Net {
 	protected:
 		std::list<Layer> layers;
@@ -79,7 +76,7 @@ std::ostream& operator<<(std::ostream& os,const MachineLearning::Net n) {
 	return os;
 }
 
-#define IS_MATRIXLIKE(_type) std::is_base_of_v<LinearAlgebra::MatrixLike,_type>
+// #define IS_MATRIXLIKE(_type) std::is_base_of_v<LinearAlgebra::MatrixLike,_type>
 
 #define PRINT_IF_MATRIXLIKE(_type) std::cout << #_type << ": " << IS_MATRIXLIKE(_type) << std::endl;
 
