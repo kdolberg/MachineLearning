@@ -25,7 +25,7 @@ namespace MachineLearning {
 					BackDataCache& back_cache	)
 	{
 		back_cache.naive_derivatives.push_back(i->derivative());
-		if((++i)!=end){
+		if((++i)!=end) {
 			backprop(i,end,for_cache,back_cache);
 		}
 	}
