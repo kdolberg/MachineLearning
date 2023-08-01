@@ -43,11 +43,11 @@ namespace MachineLearning {
 										const LinearAlgebra::Matrix& y_data				);
 
 	/**
-	 * 
+	 * @brief 
 	 */
 	class Net {
 	protected:
-		std::list<Layer> layers;
+		std::list<LayerWithCache> layers;
 	public:
 		Net() {}
 		Net(std::vector<uint> def) : Net() {
