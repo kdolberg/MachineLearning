@@ -12,7 +12,7 @@ namespace MachineLearning {
 	struct layer_params_struct {
 		LinearAlgebra::Matrix weights;
 		LinearAlgebra::VerticalVector biases;
-	} layer_params_struct;
+	};
 
 	/**
 	 * @brief Defines the structure of a layer's parameters
@@ -54,7 +54,7 @@ namespace MachineLearning {
 			assert(this->weights.get_num_rows()==this->biases.get_num_rows());
 			return this->weights.get_num_rows();
 		}
-	};
+	}; //LayerParams
 
 	typedef struct {
 		LinearAlgebra::Matrix x;
@@ -65,34 +65,33 @@ namespace MachineLearning {
 	public:
 		LayerParams parameters;
 		ActivationFunction func;
-	private:
-		Layer(uint num_inputs, uint num_outputs, ActivationFunction func_,int dummy) {
+		LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_,int dummy) {
 			UNUSED(dummy);
 			this->parameters.weights.resize(MINDEX(num_outputs,num_inputs));
 			this->parameters.biases.resize(MINDEX(num_outputs,1));
 			this->func = func_;
 		}
-	public:
-		Layer(uint num_inputs, uint num_outputs, ActivationFunction func_, bool randomize) : Layer(num_inputs,num_outputs,func_,0) {
+		LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_, bool randomize) : LayerNoCache(num_inputs,num_outputs,func_,0) {
 			if(randomize) {
 				this->parameters.weights.randomize();
 				this->parameters.biases.randomize();
 			}
 		}
-		Layer(uint num_inputs, uint num_outputs, ActivationFunction func_) : Layer(num_inputs,num_outputs,func_,true) {}
+		LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_) : LayerNoCache(num_inputs,num_outputs,func_,true) {}
 		template <typename T>
 		T operator()(const T& t) {
 			return this->func(this->parameters(t));
 		}
-		Matrix calc_pre_activation_function_output(const Matrix& x_data) const {
+		LinearAlgebra::Matrix calc_pre_activation_function_output(const LinearAlgebra::Matrix& x_data) const {
 			return this->parameters(x_data);
 		}
-		Matrix calc_post_activation_function_output(const Matrix& pre_activation_function_output) const {
+		LinearAlgebra::Matrix calc_post_activation_function_output(const LinearAlgebra::Matrix& pre_activation_function_output) const {
 			return this->func(pre_activation_function_output);
 		}
-	};
+	}; //LayerNoCache
+
 	LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& weights);
-	LinearAlgebra::Matrix calc_partial_derivatives(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& x_data);
+	LinearAlgebra::Matrix calc_partial_derivatives(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& pre_activation_function_output);
 
 	typedef struct {
 		LinearAlgebra::Matrix pre_act_func_output;
@@ -109,17 +108,17 @@ namespace MachineLearning {
 		LayerBackDataCache back_data;
 	public:
 		using LayerNoCache::LayerNoCache;
-		const LinearAlgebra::Matrix& update_forprop_data_cache(const LinearAlgebra::Matrix& x_data) {
-			this->for_data.pre_act_func_output = i->calc_pre_activation_function_output(x_data);
-			this->for_data.post_act_func_output = i->calc_post_activation_function_output(i->pre_act_func_output);
+		LinearAlgebra::Matrix update_forprop_data_cache(const LinearAlgebra::Matrix& x_data) {
+			this->for_data.pre_act_func_output = this->calc_pre_activation_function_output(x_data);
+			this->for_data.post_act_func_output = this->calc_post_activation_function_output(this->for_data.pre_act_func_output);
 			return this->for_data.post_act_func_output;
 		}
-		const LinearAlgebra::Matrix& update_backprop_data_cache(const LinearAlgebra::Matrix& from_prev_layer) {
-			this->back_data.derivatives = this->func.derivative(this->for_data.pre_act_func_output);
-			this->back_data.partial_derivatives = calc_partial_derivatives(this->back_data.derivatives,)
+		LinearAlgebra::Matrix update_backprop_data_cache(const LinearAlgebra::Matrix& from_prev_layer) {
+			this->back_data.derivatives = this->func.ddx(this->for_data.pre_act_func_output);
+			// this->back_data.partial_derivatives = calc_partial_derivatives(this->back_data.derivatives,)
 			return calc_derivatives_to_pass_on(this->back_data.derivatives,this->parameters.weights);
 		}
-	}
+	}; //Layer
 } //MachineLearning
 
 #endif //TYPES_H

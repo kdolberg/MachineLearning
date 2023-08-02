@@ -30,24 +30,24 @@ namespace MachineLearning {
 	 * @param layers List of all layers in this net
 	 * @param x_data Input data from the training dataset
 	 */
-	ForDataCache forprop			(	const std::list<Layer>& layers,
-										const LinearAlgebra::Matrix& x_data				);
+	void forprop(std::list<Layer>::iterator i,std::list<Layer>::iterator end,const LinearAlgebra::Matrix& x_data);
 
+	void forprop(std::list<Layer>& layers,const LinearAlgebra::Matrix& x_data);
 	/**
 	 * @brief Peforms backpropagation
 	 * @param layers List of all layers in this net
 	 * @param y_data Output data from the training dataset
 	 */
-	BackDataCache backprop 			(	const std::list<Layer>& layers,
-										const ForDataCache& for_data,
-										const LinearAlgebra::Matrix& y_data				);
+	void backprop					(	const std::list<Layer>& layers,
+										const LayerForDataCache& for_data,
+										const LinearAlgebra::Matrix& y_data 			);
 
 	/**
 	 * @brief 
 	 */
 	class Net {
 	protected:
-		std::list<LayerWithCache> layers;
+		std::list<Layer> layers;
 	public:
 		Net() {}
 		Net(std::vector<uint> def) : Net() {
@@ -76,6 +76,6 @@ namespace MachineLearning {
 	}; //Net
 } //MachineLearning
 
-std::ostream& operator<<			(	std::ostream& os,const MachineLearning::Net n)	;
+std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
 
 #endif //NET_H

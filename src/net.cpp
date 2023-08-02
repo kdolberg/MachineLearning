@@ -10,7 +10,7 @@ LinearAlgebra::Matrix MachineLearning::error_ddx(const LinearAlgebra::Matrix& ne
 /**
  * @brief Computetes forward propagation for one layer
  */
-void MachineLearning::forprop (std::list<Layer>::iterator i, std::list<Layer>::iterator end, const LinearAlgebra::Matrix& x_data) {
+void MachineLearning::forprop(std::list<Layer>::iterator i,std::list<Layer>::iterator end,const LinearAlgebra::Matrix& x_data) {
 	if(i!=end) {
 		forprop(std::next(i,1),end,i->update_forprop_data_cache(x_data));
 	}
@@ -27,7 +27,7 @@ void MachineLearning::forprop (std::list<Layer>::iterator i, std::list<Layer>::i
  * 
  * Perhaps it would be worth writing it both ways and comparing the results in terms of speed.
  */
-void MachineLearning::forprop (const std::list<Layer>& layers,const LinearAlgebra::Matrix& x_data) {
+void MachineLearning::forprop(std::list<Layer>& layers,const LinearAlgebra::Matrix& x_data) {
 	MachineLearning::forprop(layers.begin(),layers.end(),x_data);
 }
 
@@ -37,12 +37,12 @@ void MachineLearning::forprop (const std::list<Layer>& layers,const LinearAlgebr
  * @param y_data Output data from the training dataset
  */
 void MachineLearning::backprop (	const std::list<Layer>& layers,
-									const ForDataCache& for_data,
+									const LayerForDataCache& for_data,
 									const LinearAlgebra::Matrix& y_data 	) {
 
 }
 
-std::ostream& operator<<(std::ostream& os,const MachineLearning::Net n) {
+std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n) {
 	os << n.str();
 	return os;
 }
