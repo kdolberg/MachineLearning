@@ -16,7 +16,7 @@ INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I
 # sources and objects
 # LINALG_DIR = ../Utilities
 LINALG_OBJS = obj/la_basic_types.la obj/la_matrix.la obj/la_matrix_like.la obj/la_vector.la obj/la_vector_overloads.la
-ML_OBJ = obj/main.ml obj/activation_function.ml obj/net.ml
+ML_OBJ = obj/main.ml obj/activation_function.ml obj/net.ml obj/layer.ml
 OBJECTS = $(ML_OBJ) $(LINALG_OBJS)
 
 # target executable
