@@ -38,9 +38,7 @@ namespace MachineLearning {
 	 * @param layers List of all layers in this net
 	 * @param y_data Output data from the training dataset
 	 */
-	void backprop					(	const std::list<Layer>& layers,
-										const LayerForDataCache& for_data,
-										const LinearAlgebra::Matrix& y_data 			);
+	void backprop(std::list<MachineLearning::Layer>& layers,const LinearAlgebra::Matrix& y_data);
 
 	/**
 	 * @brief 

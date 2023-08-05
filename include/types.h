@@ -116,7 +116,10 @@ namespace MachineLearning {
 		LinearAlgebra::Matrix update_backprop_data_cache(const LinearAlgebra::Matrix& from_prev_layer) {
 			this->back_data.derivatives = this->func.ddx(this->for_data.pre_act_func_output);
 			// this->back_data.partial_derivatives = calc_partial_derivatives(this->back_data.derivatives,)
-			return calc_derivatives_to_pass_on(this->back_data.derivatives,this->parameters.weights);
+			return calc_derivatives_to_pass_on(this->back_data.derivatives,this->parameters.weights)*from_prev_layer;
+		}
+		const LinearAlgebra::Matrix& get_post_act_func_output() const {
+			return this->for_data.post_act_func_output;
 		}
 	}; //Layer
 } //MachineLearning
