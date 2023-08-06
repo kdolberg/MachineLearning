@@ -38,6 +38,12 @@ namespace MachineLearning {
 		const LinearAlgebra::Matrix& get_weights() const {
 			return this->weights;
 		}
+		const LinearAlgebra::Matrix& get_biases() const {
+			return this->biases;
+		}
+		/**
+		 * @brief 
+		 */
 		LinearAlgebra::Matrix operator()(const LinearAlgebra::Matrix& in_signal) const {
 			return this->call_op<LinearAlgebra::Matrix>(in_signal);
 		}
