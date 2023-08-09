@@ -4,3 +4,4 @@
 *.ml
 test_stubs
 obj
+bin
