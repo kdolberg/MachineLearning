@@ -25,14 +25,11 @@ TARGET = a
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TARGET) $(OBJECTS)
 
-obj/%.ml: src/%.cpp obj
+obj/%.ml: src/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-obj/%.la: ../Utilities/src/%.cpp obj
+obj/%.la: ../Utilities/src/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-obj:
-	mkdir obj
 
 clean:
 	rm -f $(ML_OBJ) $(TARGET)
@@ -40,8 +37,7 @@ clean:
 clean_linalg:
 	rm $(LINALG_OBJS)
 
-linalg:
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TARGET) $(OBJECTS)
+linalg: $(LINALG_OBJS)
 
 clean_all:
 	rm -f $(OBJECTS)
