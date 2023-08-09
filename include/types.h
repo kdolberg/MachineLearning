@@ -9,22 +9,18 @@
 namespace MachineLearning {
 	typedef LinearAlgebra::uint uint;
 
-	struct layer_params_struct {
-		LinearAlgebra::Matrix weights;
-		LinearAlgebra::VerticalVector biases;
-	};
-
 	/**
 	 * @brief Defines the structure of a layer's parameters
 	 */
-	class LayerParams : public layer_params_struct {
+	class LayerParams {
 	public:
-		using MachineLearning::layer_params_struct::layer_params_struct;
+		LinearAlgebra::Matrix weights;
+		LinearAlgebra::Matrix biases;
 		LayerParams() {}
 		LayerParams(uint num_inputs,uint num_outputs) : LayerParams() {
 			LinearAlgebra::mindex_t i = MINDEX(num_outputs,num_inputs);
 			this->weights = LinearAlgebra::Matrix(i);
-			this->biases = LinearAlgebra::VerticalVector(i.row);
+			this->biases = LinearAlgebra::Matrix(MINDEX(i.row,1));
 		}
 	private:
 		template <typename T>
