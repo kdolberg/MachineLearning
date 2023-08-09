@@ -43,29 +43,22 @@ namespace MachineLearning {
 	/**
 	 * @brief 
 	 */
-	class Net {
-	protected:
-		std::list<Layer> layers;
+	class Net : public std::list<Layer> {
 	public:
-		Net() {}
+		using std::list<Layer>::list;
+		Net() : std::list<Layer>::list() {}
 		Net(std::vector<uint> def) : Net() {
 			for (uint i = 0; i < def.size()-1; ++i) {
 				uint num_inputs = def[i];
 				uint num_outputs = def[i+1];
 				Layer tmp(num_inputs,num_outputs,get_leaky_ReLU(),true);
-				layers.push_back(tmp);
+				this->push_back(tmp);
 			}
-		}
-		std::list<Layer>::const_iterator layer_cbegin() const {
-			return this->layers.cbegin();
-		}
-		std::list<Layer>::const_iterator layer_cend() const {
-			return this->layers.cend();
 		}
 	public:
 		std::string str() const {
 			std::stringstream ss;
-			for (std::list<Layer>::const_iterator i = this->layer_cbegin(); i != this->layer_cend(); ++i) {
+			for (std::list<Layer>::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
 				ss << i->parameters.weights << std::endl;
 				ss << i->parameters.biases << std::endl;
 			}
