@@ -31,15 +31,19 @@ namespace MachineLearning {
 	 * @param layers List of all layers in this net
 	 * @param x_data Input data from the training dataset
 	 */
-	void forprop(std::list<Layer>::iterator i,std::list<Layer>::iterator end,const LinearAlgebra::Matrix& x_data);
+	void forprop					(	std::list<Layer>::iterator i,
+										std::list<Layer>::iterator end,
+										const LinearAlgebra::Matrix& x_data				);
 
-	void forprop(std::list<Layer>& layers,const LinearAlgebra::Matrix& x_data);
+	void forprop					(	std::list<Layer>& layers,
+										const LinearAlgebra::Matrix& x_data				);
 	/**
 	 * @brief Peforms backpropagation
 	 * @param layers List of all layers in this net
 	 * @param y_data Output data from the training dataset
 	 */
-	void backprop(std::list<MachineLearning::Layer>& layers,const LinearAlgebra::Matrix& y_data);
+	void backprop					(	std::list<MachineLearning::Layer>& layers,
+										const LinearAlgebra::Matrix& y_data				);
 
 	/**
 	 * @brief 
