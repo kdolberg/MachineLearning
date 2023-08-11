@@ -25,7 +25,7 @@ TARGET = a
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TARGET) $(OBJECTS)
 
-obj/%.ml: src/%.cpp
+obj/%.ml: src/%.cpp inc/%.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 obj/%.la: ../Utilities/src/%.cpp
