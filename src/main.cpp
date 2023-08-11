@@ -1,8 +1,4 @@
-#include <list>
-#include <concepts>
-#include <iterator>
-#include <vector>
-#include "machine_learning.h"
+#include "main.h"
 
 int main(int argc, char const *argv[]) {
 	std::vector<MachineLearning::uint> def = {5,5,4,1};

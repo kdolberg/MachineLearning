@@ -1,4 +1,4 @@
-#include "types.h"
+#include "layer.h"
 
 LinearAlgebra::Matrix MachineLearning::calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& weights) {;
 	return derivatives;

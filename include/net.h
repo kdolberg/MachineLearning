@@ -3,6 +3,7 @@
 
 #include <list>
 #include "types.h"
+#include "layer.h"
 #include "activation_function.h"
 
 namespace MachineLearning {
