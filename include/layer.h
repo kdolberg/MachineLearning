@@ -45,6 +45,10 @@ namespace MachineLearning {
 		LinearAlgebra::VerticalVector operator()(const LinearAlgebra::VerticalVector& in_signal) const {
 			return this->call_op<LinearAlgebra::VerticalVector>(in_signal);
 		}
+		/**
+		 * @brief Returns the number of inputs for this layer
+		 * @return The number of inputs for this layer (AKA the number of column in the matrix of weights)
+		 */
 		uint get_num_inputs() const {
 			return this->weights.get_num_cols();
 		}
