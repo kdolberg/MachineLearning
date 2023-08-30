@@ -58,6 +58,9 @@ namespace MachineLearning {
 		}
 	}; //LayerParams
 
+	/**
+	 * @brief Defines a layer (save for the data caches used in backpropagation and forwardpropagation)
+	 */
 	class LayerNoCache {
 	public:
 		LayerParams parameters;
