@@ -45,4 +45,9 @@ clean_all:
 test_stub:
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TARGET) test_stubs/main.cpp
 
-.PHONY: clean clean_linalg linalg clean_all
+all: $(OBJECTS) $(TARGET)
+
+run: $(TARGET)
+	./$(TARGET).exe
+
+.PHONY: clean clean_linalg linalg clean_all run all
