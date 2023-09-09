@@ -39,15 +39,44 @@ void MachineLearning::backprop(std::list<MachineLearning::Layer>& layers,const L
     for (std::list<MachineLearning::Layer>::iterator i = layers.begin(); i != layers.end(); ++i) {
         from_prev_layer = i->update_backprop_data_cache(from_prev_layer);
     }
+}
 
+MachineLearning::NetGradIter& operator++(MachineLearning::NetGradIter& ni) {
+	++ni.first;
+	++ni.second;
+	return ni;
+}
 
+MachineLearning::Net& operator+=(MachineLearning::Net& a, MachineLearning::Gradient& b) {
+	assert(a.size()==b.size());
+	for (MachineLearning::NetGradIter i(a.begin(),b.cbegin()); (i.first != a.end()) && (i.second != b.cend()); ++i) {
+		*(i.first) += *(i.second);
+	}
+	return a;
 }
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n) {
 	os << n.str();
 	return os;
+}
 
+MachineLearning::Gradient MachineLearning::Net::get_gradient() const {
+	MachineLearning::Gradient ret;
+	return ret;
+}
 
+#define LEARNING_RATE 0.1
 
+void MachineLearning::Net::train(const TrainingDataset& data) {
+	forprop(*this,data.x);
+	backprop(*this,data.y);
+	MachineLearning::Net n((std::vector<uint>){5,4,4,1});
+	MachineLearning::Gradient g;
+	// n += LEARNING_RATE*this->get_gradient();
+}
 
+void MachineLearning::Net::train(const TrainingDataset& data,int iters) {
+	for (int i = 0; i < iters; ++i) {
+		this->train(data);
+	}
 }

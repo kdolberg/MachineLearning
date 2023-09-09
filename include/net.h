@@ -2,12 +2,14 @@
 #define NET_H
 
 #include <list>
+#include <utility>
 #include "types.h"
 #include "layer.h"
 #include "activation_function.h"
 
 namespace MachineLearning {
 
+	typedef std::list<MachineLearning::LayerParams> Gradient;
 
 	/**
 	 * @brief Calculates the error function
@@ -70,10 +72,16 @@ namespace MachineLearning {
 			}
 			return ss.str();
 		}
+		void train(const TrainingDataset& data);
+		void train(const TrainingDataset& data, int iters);
+		Gradient get_gradient() const;
 	}; //Net
+	typedef std::pair<MachineLearning::Net::iterator, MachineLearning::Gradient::const_iterator> NetGradIter;
 } //MachineLearning
+MachineLearning::Net& operator+=(MachineLearning::Net& a, MachineLearning::Gradient& b);
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
 
+MachineLearning::NetGradIter& operator++(MachineLearning::NetGradIter& ni);
 
 #endif //NET_H

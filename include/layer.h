@@ -14,9 +14,9 @@ namespace MachineLearning {
 		LinearAlgebra::Matrix biases;
 		LayerParams() {}
 		LayerParams(uint num_inputs,uint num_outputs) : LayerParams() {
-			LinearAlgebra::mindex_t i = MINDEX(num_outputs,num_inputs);
-			this->weights = LinearAlgebra::Matrix(i);
-			this->biases = LinearAlgebra::Matrix(MINDEX(i.row,1));
+			LinearAlgebra::mindex_t weight_matrix_dims = MINDEX(num_outputs,num_inputs);
+			this->weights = LinearAlgebra::Matrix(weight_matrix_dims);
+			this->biases = LinearAlgebra::Matrix(MINDEX(weight_matrix_dims.row,1));
 		}
 	private:
 		template <typename T>
@@ -100,7 +100,7 @@ namespace MachineLearning {
 
 	typedef struct {
 		LinearAlgebra::Matrix derivatives;
-		LinearAlgebra::Matrix partial_derivatives; 
+		LayerParams partial_derivatives; 
 	} LayerBackDataCache;
 
 	class Layer : public LayerNoCache {
@@ -116,11 +116,20 @@ namespace MachineLearning {
 		LinearAlgebra::Matrix update_backprop_data_cache(const LinearAlgebra::Matrix& from_prev_layer) {
 			this->back_data.derivatives = this->func.ddx(this->for_data.pre_act_func_output);
 			// this->back_data.partial_derivatives = calc_partial_derivatives(this->back_data.derivatives,)
-			return calc_derivatives_to_pass_on(this->back_data.derivatives,this->parameters.weights)*from_prev_layer;
+			// return calc_derivatives_to_pass_on(this->back_data.derivatives,this->parameters.weights)*from_prev_layer;
+			LinearAlgebra::Matrix ret(this->parameters.weights.size());
+			return ret;
 		}
 		const LinearAlgebra::Matrix& get_post_act_func_output() const {
 			return this->for_data.post_act_func_output;
 		}
 	}; //Layer
 } //MachineLearning
+
+MachineLearning::LayerParams& operator+=(MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b);
+
+MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::LayerParams& b);
+
+MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::Layer& b);
+
 #endif //LAYER_H

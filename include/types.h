@@ -12,7 +12,7 @@ namespace MachineLearning {
 	typedef struct {
 		LinearAlgebra::Matrix x;
 		LinearAlgebra::Matrix y;
-	} TrainingDatasetSig;
+	} TrainingDataset;
 
 } //MachineLearning
 
