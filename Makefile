@@ -37,7 +37,11 @@ clean:
 clean_linalg:
 	rm $(LINALG_OBJS)
 
-linalg: $(LINALG_OBJS)
+make_linalg: $(LINALG_OBJS)
+
+linalg:
+	$(MAKE) clean_linalg
+	$(MAKE) make_linalg
 
 clean_all:
 	rm -f $(OBJECTS)
@@ -50,4 +54,4 @@ all: $(OBJECTS) $(TARGET)
 run: $(TARGET)
 	./$(TARGET).exe
 
-.PHONY: clean clean_linalg linalg clean_all run all
+.PHONY: clean clean_linalg linalg clean_all run all make_linalg
