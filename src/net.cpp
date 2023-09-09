@@ -24,12 +24,6 @@ void MachineLearning::forprop(std::list<MachineLearning::Layer>::iterator i,std:
  * @brief Performs forward propagation
  * @param layers List of all layers in this net
  * @param x_data Input data from the training dataset
- * 
- * NOTE: There is probably a way better way to do this! What if we switched to having a class that includes both the layer parameters, the 
- * activation function, AND the data caches? That way, we don't have to do memory allocation with each iteration and this should speed things
- * up.
- * 
- * Perhaps it would be worth writing it both ways and comparing the results in terms of speed.
  */
 void MachineLearning::forprop(std::list<MachineLearning::Layer>& layers,const LinearAlgebra::Matrix& x_data) {
 	MachineLearning::forprop(layers.begin(),layers.end(),x_data);
@@ -41,16 +35,19 @@ void MachineLearning::forprop(std::list<MachineLearning::Layer>& layers,const Li
  * @param y_data Output data from the training dataset
  */
 void MachineLearning::backprop(std::list<MachineLearning::Layer>& layers,const LinearAlgebra::Matrix& y_data) {
-
     LinearAlgebra::Matrix from_prev_layer = MachineLearning::error_ddx(get_final_output_data(layers),y_data);
-
     for (std::list<MachineLearning::Layer>::iterator i = layers.begin(); i != layers.end(); ++i) {
         from_prev_layer = i->update_backprop_data_cache(from_prev_layer);
     }
+
 
 }
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n) {
 	os << n.str();
 	return os;
+
+
+
+
 }

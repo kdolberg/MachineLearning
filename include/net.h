@@ -8,6 +8,7 @@
 
 namespace MachineLearning {
 
+
 	/**
 	 * @brief Calculates the error function
 	 * @param net_output_data Output datset from the neural net for the current dataset and current parameters
@@ -73,5 +74,6 @@ namespace MachineLearning {
 } //MachineLearning
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
+
 
 #endif //NET_H
