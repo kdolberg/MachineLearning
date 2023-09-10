@@ -2,7 +2,8 @@
 #define LAYER_H
 
 #include "types.h"
-//blah
+
+#define NUM_COLUMNS_IN_BASE_MATRIX 1
 
 namespace MachineLearning {
 	/**
@@ -16,7 +17,7 @@ namespace MachineLearning {
 		LayerParams(uint num_inputs,uint num_outputs) : LayerParams() {
 			LinearAlgebra::mindex_t weight_matrix_dims = MINDEX(num_outputs,num_inputs);
 			this->weights = LinearAlgebra::Matrix(weight_matrix_dims);
-			this->biases = LinearAlgebra::Matrix(MINDEX(weight_matrix_dims.row,1));
+			this->biases = LinearAlgebra::Matrix(MINDEX(weight_matrix_dims.row,NUM_COLUMNS_IN_BASE_MATRIX));
 		}
 	private:
 		template <typename T>
@@ -90,8 +91,8 @@ namespace MachineLearning {
 		}
 	}; //LayerNoCache
 
-	LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& weights);
-	LinearAlgebra::Matrix calc_partial_derivatives(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& pre_activation_function_output);
+	LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& weights,const LinearAlgebra::Matrix& naive_derivatives,const LinearAlgebra::Matrix& from_prev_layer);
+	LayerParams calc_partial_derivatives(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& pre_activation_function_output, const LinearAlgebra::Matrix& from_prev_layer);
 
 	typedef struct {
 		LinearAlgebra::Matrix pre_act_func_output;
@@ -116,8 +117,7 @@ namespace MachineLearning {
 		LinearAlgebra::Matrix update_backprop_data_cache(const LinearAlgebra::Matrix& from_prev_layer) {
 			this->back_data.derivatives = this->func.ddx(this->for_data.pre_act_func_output);
 			// this->back_data.partial_derivatives = calc_partial_derivatives(this->back_data.derivatives,)
-			// return calc_derivatives_to_pass_on(this->back_data.derivatives,this->parameters.weights)*from_prev_layer;
-			LinearAlgebra::Matrix ret(this->parameters.weights.size());
+			LinearAlgebra::Matrix ret;
 			return ret;
 		}
 		const LinearAlgebra::Matrix& get_post_act_func_output() const {

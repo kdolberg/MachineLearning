@@ -1,10 +1,13 @@
 #include "layer.h"
 
-LinearAlgebra::Matrix MachineLearning::calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& weights) {;
-	return derivatives;
+LinearAlgebra::Matrix MachineLearning::calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& weights,const LinearAlgebra::Matrix& naive_derivatives,const LinearAlgebra::Matrix& from_prev_layer) {
+	LinearAlgebra::Matrix ret = LinearAlgebra::transpose(naive_derivatives)*from_prev_layer;
+	return ret;
 }
-LinearAlgebra::Matrix MachineLearning::calc_partial_derivatives(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& pre_activation_function_output) {
-	return derivatives;
+
+MachineLearning::LayerParams MachineLearning::calc_partial_derivatives(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& pre_activation_function_output, const LinearAlgebra::Matrix& from_prev_layer) {
+	MachineLearning::LayerParams ret;
+	return ret;
 }
 
 MachineLearning::LayerParams& operator+=(MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b) {
