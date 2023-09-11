@@ -89,9 +89,6 @@ namespace MachineLearning {
 		LinearAlgebra::Matrix calc_post_activation_function_output(const LinearAlgebra::Matrix& pre_activation_function_output) const {
 			return this->func(pre_activation_function_output);
 		}
-		LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& from_prev_layer) {
-			return calc_derivatives_to_pass_on(this->weights,this->back_data.derivatives,from_prev_layer);
-		}
 	}; //LayerNoCache
 
 	LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& weights,const LinearAlgebra::Matrix& naive_derivatives,const LinearAlgebra::Matrix& from_prev_layer);
@@ -119,12 +116,16 @@ namespace MachineLearning {
 		}
 		LinearAlgebra::Matrix update_backprop_data_cache(const LinearAlgebra::Matrix& from_prev_layer) {
 			this->back_data.derivatives = this->func.ddx(this->for_data.pre_act_func_output);
-			// this->back_data.partial_derivatives = calc_partial_derivatives(this->back_data.derivatives,)
+			this->calc_derivatives_to_pass_on(from_prev_layer);
+			this->back_data.partial_derivatives = this->calc_partial_derivatives();
 			LinearAlgebra::Matrix ret;
 			return ret;
 		}
 		const LinearAlgebra::Matrix& get_post_act_func_output() const {
 			return this->for_data.post_act_func_output;
+		}
+		LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& from_prev_layer) {
+			return calc_derivatives_to_pass_on(this->weights,this->back_data.derivatives,from_prev_layer);
 		}
 	}; //Layer
 } //MachineLearning
