@@ -89,6 +89,9 @@ namespace MachineLearning {
 		LinearAlgebra::Matrix calc_post_activation_function_output(const LinearAlgebra::Matrix& pre_activation_function_output) const {
 			return this->func(pre_activation_function_output);
 		}
+		LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& from_prev_layer) {
+			return calc_derivatives_to_pass_on(this->weights,this->back_data.derivatives,from_prev_layer);
+		}
 	}; //LayerNoCache
 
 	LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& weights,const LinearAlgebra::Matrix& naive_derivatives,const LinearAlgebra::Matrix& from_prev_layer);
