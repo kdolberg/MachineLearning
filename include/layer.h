@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-#define NUM_COLUMNS_IN_BASE_MATRIX 1
+#define COLUMNS_IN_BASE_MATRIX 1
 
 namespace MachineLearning {
 	/**
@@ -17,7 +17,7 @@ namespace MachineLearning {
 		LayerParams(uint num_inputs,uint num_outputs) : LayerParams() {
 			LinearAlgebra::mindex_t weight_matrix_dims = MINDEX(num_outputs,num_inputs);
 			this->weights = LinearAlgebra::Matrix(weight_matrix_dims);
-			this->biases = LinearAlgebra::Matrix(MINDEX(weight_matrix_dims.row,NUM_COLUMNS_IN_BASE_MATRIX));
+			this->biases = LinearAlgebra::Matrix(MINDEX(weight_matrix_dims.row,COLUMNS_IN_BASE_MATRIX));
 		}
 	private:
 		template <typename T>
