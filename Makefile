@@ -14,7 +14,7 @@ CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -Wall -g -O0
 INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I./include
 
 # sources and objects
-# LINALG_DIR = ../Utilities
+LINALG_DIR = ../Utilities
 LINALG_OBJS = obj/la_basic_types.la obj/la_matrix.la obj/la_matrix_like.la obj/la_vector.la obj/la_vector_overloads.la
 ML_OBJ = obj/main.ml obj/activation_function.ml obj/net.ml obj/layer.ml
 OBJECTS = $(ML_OBJ) $(LINALG_OBJS)
@@ -40,7 +40,7 @@ clean_linalg:
 make_linalg: $(LINALG_OBJS)
 
 linalg:
-	$(MAKE) clean_linalg
+	$(MAKE) -C $(LINALG_DIR) clean
 	$(MAKE) make_linalg
 
 clean_all:
