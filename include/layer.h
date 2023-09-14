@@ -137,4 +137,6 @@ MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearn
 
 MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::Layer& b);
 
+std::ostream& operator<<(std::ostream& os,const MachineLearning::LayerParams& lp);
+
 #endif //LAYER_H

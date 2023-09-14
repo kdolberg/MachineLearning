@@ -25,3 +25,14 @@ MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearn
 	a += b.parameters;
 	return a;
 }
+
+std::ostream& operator<<(std::ostream& os,const MachineLearning::LayerParams& lp) {
+	for (LinearAlgebra::mindex_t i = {0,0}; i.row < lp.get_num_outputs(); ++i.row) {
+		os << "[ "; 
+		for (i.col = 0; i.col < lp.get_num_inputs(); ++i.col) {
+			os << lp.get_weights()[i] << " ";
+		}
+		os << "]\t[ " << lp.get_biases()[MINDEX(i.row,0)] << " ]\n";
+	}
+	return os;
+}
