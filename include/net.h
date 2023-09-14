@@ -63,6 +63,9 @@ namespace MachineLearning {
 				this->push_back(tmp);
 			}
 		}
+		Net(int num_inputs, int num_outputs, int num_parameters) {
+			
+		}
 	public:
 		std::string str() const {
 			std::stringstream ss;

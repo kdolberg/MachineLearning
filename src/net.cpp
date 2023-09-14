@@ -5,7 +5,7 @@ const LinearAlgebra::Matrix& get_final_output_data(const std::list<MachineLearni
 }
 
 LinearAlgebra::Matrix MachineLearning::error(const LinearAlgebra::Matrix& net_output_data,const LinearAlgebra::Matrix& dataset_y_data) {
-	return LinearAlgebra::hadamard_square(dataset_y_data-net_output_data)*0.5f;
+	return LinearAlgebra::hadamard_square(dataset_y_data-net_output_data)*static_cast<LinearAlgebra::scalar_t>(0.5f);
 }
 LinearAlgebra::Matrix MachineLearning::error_ddx(const LinearAlgebra::Matrix& net_output_data, const LinearAlgebra::Matrix& dataset_y_data) {
 	return (net_output_data-dataset_y_data);
@@ -16,7 +16,7 @@ LinearAlgebra::Matrix MachineLearning::error_ddx(const LinearAlgebra::Matrix& ne
  */
 void MachineLearning::forprop(std::list<MachineLearning::Layer>::iterator i,std::list<MachineLearning::Layer>::iterator end,const LinearAlgebra::Matrix& x_data) {
 	if(i!=end) {
-		forprop(std::next(i,1),end,i->update_forprop_data_cache(x_data));
+		MachineLearning::forprop(std::next(i,1),end,i->update_forprop_data_cache(x_data));
 	}
 }
 
