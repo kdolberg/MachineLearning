@@ -22,6 +22,9 @@ OBJECTS = $(ML_OBJ) $(LINALG_OBJS)
 # target executable
 TARGET = a
 
+TEST = test_exec
+TEST_OBJECTS = obj/test_main.test
+
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TARGET) $(OBJECTS)
 
@@ -31,8 +34,11 @@ obj/%.ml: src/%.cpp
 obj/%.la: ../Utilities/src/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
+obj/%.test: test/%.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
 clean:
-	rm -f $(ML_OBJ) $(TARGET)
+	rm -f $(ML_OBJ) $(TEST_OBJECTS) $(TARGET)
 
 clean_linalg:
 	rm $(LINALG_OBJS)
@@ -54,4 +60,10 @@ all: $(OBJECTS) $(TARGET)
 run: $(TARGET)
 	./$(TARGET).exe
 
-.PHONY: clean clean_linalg linalg clean_all run all make_linalg
+$(TEST): $(OBJECTS) $(TEST_OBJECTS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TEST) $(OBJECTS) $(TEST_OBJECTS)
+
+test: $(TEST) $(TEST_OBJECTS)
+	./$(TEST).exe
+
+.PHONY: clean clean_linalg linalg clean_all run all make_linalg test
