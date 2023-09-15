@@ -14,7 +14,7 @@ namespace MachineLearning {
 	public:
 		using ActivationFunctionStruct::ActivationFunctionStruct;
 		ActivationFunction(){}
-		ActivationFunction(const ActivationFunctionStruct& afs) {
+		ActivationFunction(const ActivationFunctionStruct& afs) { // I don't think this constructor is used. Delete if so
 			this->function = afs.function;
 			this->derivative = afs.derivative;
 		}
