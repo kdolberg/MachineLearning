@@ -148,75 +148,176 @@ namespace MachineLearning {
 	// }; //Layer
 
 	typedef struct {
-		std::list<MachineLearning::LayerParams>::const_iterator parameters,parameters_end;
-		std::list<MachineLearning::LayerForDataCache>::iterator fordata,fordata_end;
-		std::list<MachineLearning::ActivationFunction>::const_iterator act_func,act_func_end;
+		std::list<MachineLearning::LayerParams>::const_iterator parameters;
+		std::list<MachineLearning::LayerForDataCache>::iterator fordata;
+		std::list<MachineLearning::ActivationFunction>::const_iterator act_func;
 	} ForPropIterStruct;
 
-	class ForPropIter : protected MachineLearning::ForPropIterStruct {
+	typedef struct {
+		std::list<MachineLearning::LayerParams>::const_iterator parameters;
+		std::list<MachineLearning::LayerForDataCache>::const_iterator fordata;
+		std::list<MachineLearning::ActivationFunction>::const_iterator act_func;
+		std::list<MachineLearning::LayerBackDataCache>::iterator backdata;
+	} BackPropIterStruct;
+
+	class PropagationIterator {
+		virtual PropagationIterator& operator++() = 0;
+		virtual bool operator==(const PropagationIterator& pi) const = 0;
+		virtual void update_data_cache(const LinearAlgebra::Matrix& in_data) = 0;
+		virtual const LinearAlgebra::Matrix& get_next_input_datum() = 0;
+		virtual PropagationIterator next() = 0;
+	}
+
+	class ForPropIter : protected ForPropIterStruct, public PropagationIterator {
 	public:
-		ForPropIter(ForPropIterStruct fpis) {
-			this->parameters = fpis.parameters;
-			this->parameters_end = fpis.parameters_end;
-			this->fordata = fpis.fordata;
-			this->fordata_end = fpis.fordata_end;
-			this->act_func = fpis.act_func;
-			this->act_func_end = fpis.act_func_end;
+		using ForPropIterStruct::ForPropIterStruct;
+		ForPropIterStruct get_struct() {
+			return (ForPropIterStruct)(*this);
 		}
-		ForPropIter(const std::list<MachineLearning::LayerParams>& lp,const std::list<MachineLearning::ActivationFunction>& af) {
-			CONFIRM(lp.size()==af.size());
-			this->parameters = lp.cbegin();
-			this->parameters_end = lp.cend();
-			this->act_func = af.cbegin();
-			this->act_func_end = af.cend();
-		}
-		ForPropIter(const std::list<MachineLearning::LayerParams>& lp,std::list<MachineLearning::LayerForDataCache>& fd,const std::list<MachineLearning::ActivationFunction>& af) : ForPropIter(lp,af) {
-			this->fordata = fd.begin();
-			this->fordata_end = fd.end();
-		}
-		ForPropIter& operator++() {
+		virtual PropagationIterator& operator++(){
 			++(this->parameters);
 			++(this->fordata);
 			++(this->act_func);
-			return (*this);
 		}
-		LinearAlgebra::Matrix update_data_cache(const LinearAlgebra::Matrix& x_data) {
+		const std::list<MachineLearning::LayerParams>::const_iterator& get_parameters() const {
+			return this->parameters;
+		}
+		const std::list<MachineLearning::LayerForDataCache>::iterator& get_fordata() const {
+			return this->fordata;
+		}
+		const std::list<MachineLearning::ActivationFunction>::const_iterator& get_act_func() const {
+			return this->act_func;
+		} 
+
+		virtual bool operator==(const PropagationIterator& pi) const{
+			if(this->parameters == pi.get_parameters()) {
+				assert(this->fordata == pi.get_fordata());
+				assert(this->act_func == pi.get_act_func());
+				return true;
+			} else {
+				return false;
+			}
+		}
+		virtual void update_data_cache(const LinearAlgebra::Matrix& in_data){
 			//Calculate the pre-activation function output
 			this->fordata->pre_act_func_output = this->parameters->operator()(x_data);
 			//Calculate the post-activation function output
 			this->fordata->post_act_func_output = this->act_func->operator()(this->fordata->pre_act_func_output);
+			this->fordata->post_act_func_output;
+		}
+		virtual const LinearAlgebra::Matrix& get_next_input_datum(){
 			return this->fordata->post_act_func_output;
+		}
+		virtual PropagationIterator next(){
+			
+		}
+	};
+
+	class BackPropIter : protected BackPropIterStruct, public PropagationIterator {
+		/**/
+	};
+
+	template <PropagationIterator P>
+	class Propagator {
+		P iter;
+		P end_iter;
+		Propagator(P iter, P end_iter) {
+			this->iter = iter;
+			this->end_iter = end_iter;
+		}
+		const LinearAlgebra::Matrix& get_next_input_datum() {
+			return this->iter->get_next_input_datum();
+		}
+		void update_data_cache() {
+			this->iter->update_data_cache(this->get_next_input_datum());
 		}
 
 		bool finished() {
-			//Check if the parameters iterator is at the end
-			if(this->parameters == this->parameters_end){
-				// Assert that both of the other iterators are also at the end
-				assert(this->fordata == this->fordata_end);
-				assert(this->act_func == this->act_func_end);
-				// Return true (which is the return value of all 3 boolean checks)
-				return true;
-			} else {
-				// Assert that both of the other iterators are finished
-				assert(this->fordata != this->fordata_end);
-				assert(this->act_func != this->act_func_end);
-				// Return false (which is the return value of all 3 boolean checks)
-				return false;
-			}
+			return this->iter==this->end_iter;
 		}
-		ForPropIter next() const {
-			ForPropIterStruct ret = {std::next(this->parameters),this->parameters_end,std::next(this->fordata),this->fordata_end,std::next(this->act_func),this->act_func_end};
-			return ret;
+
+		Propagator& operator++() {
+			++(this->iter);
+			return (*this);
 		}
 
 		LinearAlgebra::Matrix propagate(const LinearAlgebra::Matrix& in_data) {
 			if(!(this->finished())) {
-				return this->next().propagate(this->update_data_cache(in_data));
+				this->update_data_cache(in_data);
+				return this->next().propagate(this->get_next_input_datum());
 			} else {
 				return in_data;
 			}
 		}
-	}; // ForPropIter
+	}
+
+	typedef Propagator<ForPropIter> ForPropagator;
+	typedef Propagator<BackPropIter> BackPropagator;
+
+	// class ForPropIter : protected MachineLearning::ForPropIterStruct {
+	// public:
+	// 	ForPropIter(ForPropIterStruct fpis) {
+	// 		this->parameters = fpis.parameters;
+	// 		this->parameters_end = fpis.parameters_end;
+	// 		this->fordata = fpis.fordata;
+	// 		this->fordata_end = fpis.fordata_end;
+	// 		this->act_func = fpis.act_func;
+	// 		this->act_func_end = fpis.act_func_end;
+	// 	}
+	// 	ForPropIter(const std::list<MachineLearning::LayerParams>& lp,const std::list<MachineLearning::ActivationFunction>& af) {
+	// 		CONFIRM(lp.size()==af.size());
+	// 		this->parameters = lp.cbegin();
+	// 		this->parameters_end = lp.cend();
+	// 		this->act_func = af.cbegin();
+	// 		this->act_func_end = af.cend();
+	// 	}
+	// 	ForPropIter(const std::list<MachineLearning::LayerParams>& lp,std::list<MachineLearning::LayerForDataCache>& fd,const std::list<MachineLearning::ActivationFunction>& af) : ForPropIter(lp,af) {
+	// 		this->fordata = fd.begin();
+	// 		this->fordata_end = fd.end();
+	// 	}
+	// 	ForPropIter& operator++() {
+	// 		++(this->parameters);
+	// 		++(this->fordata);
+	// 		++(this->act_func);
+	// 		return (*this);
+	// 	}
+	// 	LinearAlgebra::Matrix update_data_cache(const LinearAlgebra::Matrix& x_data) {
+	// 		//Calculate the pre-activation function output
+	// 		this->fordata->pre_act_func_output = this->parameters->operator()(x_data);
+	// 		//Calculate the post-activation function output
+	// 		this->fordata->post_act_func_output = this->act_func->operator()(this->fordata->pre_act_func_output);
+	// 		return this->fordata->post_act_func_output;
+	// 	}
+
+	// 	bool finished() {
+	// 		//Check if the parameters iterator is at the end
+	// 		if(this->parameters == this->parameters_end){
+	// 			// Assert that both of the other iterators are also at the end
+	// 			assert(this->fordata == this->fordata_end);
+	// 			assert(this->act_func == this->act_func_end);
+	// 			// Return true (which is the return value of all 3 boolean checks)
+	// 			return true;
+	// 		} else {
+	// 			// Assert that both of the other iterators are finished
+	// 			assert(this->fordata != this->fordata_end);
+	// 			assert(this->act_func != this->act_func_end);
+	// 			// Return false (which is the return value of all 3 boolean checks)
+	// 			return false;
+	// 		}
+	// 	}
+	// 	ForPropIter next() const {
+	// 		ForPropIterStruct ret = {std::next(this->parameters),this->parameters_end,std::next(this->fordata),this->fordata_end,std::next(this->act_func),this->act_func_end};
+	// 		return ret;
+	// 	}
+
+	// 	LinearAlgebra::Matrix propagate(const LinearAlgebra::Matrix& in_data) {
+	// 		if(!(this->finished())) {
+	// 			return this->next().propagate(this->update_data_cache(in_data));
+	// 		} else {
+	// 			return in_data;
+	// 		}
+	// 	}
+	// }; // ForPropIter
 
 } //MachineLearning
 
