@@ -19,6 +19,9 @@ void activation_function_tests() {
 	TEST_RETURN_FUNC(relu((LinearAlgebra::Matrix){{-1,2},{3,-4}}),==,((LinearAlgebra::Matrix){{-0.1f,2.0f},{3.0f,-0.4f}}));
 }
 
+void LayerParams_tests() {
+}
+
 void layer_tests() {
 	MachineLearning::Layer l(5,5,MachineLearning::get_leaky_ReLU());
 	std::cout << l << std::endl;
