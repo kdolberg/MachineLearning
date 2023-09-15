@@ -2,6 +2,7 @@
 #define LAYER_H
 
 #include "types.h"
+#include "confirm.h"
 
 #define COLUMNS_IN_BASE_MATRIX 1
 
@@ -23,7 +24,7 @@ namespace MachineLearning {
 		template <LinearAlgebra::MATRIXLIKE W,LinearAlgebra::MATRIXLIKE B>
 		LayerParams(const W& weights, const B& biases) {
 			CONFIRM(weights.size().row==biases.size().row);
-			CONFIRM(biases.col==1);
+			CONFIRM(biases.size().col==1);
 			this->weights = weights;
 			this->biases = biases;
 		}
