@@ -20,6 +20,13 @@ void activation_function_tests() {
 }
 
 void LayerParams_tests() {
+	LinearAlgebra::Matrix w = {{1,1},{1,1}};
+	LinearAlgebra::Matrix b = {{1},{1}};
+	LinearAlgebra::VerticalVector x = {1,1};
+	// LinearAlgebra::VerticalVector y = {3,3};
+	MachineLearning::LayerParams lp(w,b);
+	TEST_RETURN_FUNC(lp(x),==,((LinearAlgebra::VerticalVector){3,3}));
+	TEST_RETURN_FUNC(lp(x),!=,((LinearAlgebra::VerticalVector){3,4}));
 }
 
 void layer_tests() {
@@ -31,6 +38,7 @@ int main(int argc, char const *argv[]) {
 	net_tests();
 	activation_function_tests();
 	layer_tests();
+	LayerParams_tests();
 	print_report_card();
 	return 0;
 }
