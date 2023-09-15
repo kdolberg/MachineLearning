@@ -20,6 +20,13 @@ namespace MachineLearning {
 			this->weights = LinearAlgebra::Matrix(weight_matrix_dims);
 			this->biases = LinearAlgebra::Matrix(MINDEX(weight_matrix_dims.row,COLUMNS_IN_BASE_MATRIX));
 		}
+		template <LinearAlgebra::MATRIXLIKE W,LinearAlgebra::MATRIXLIKE B>
+		LayerParams(const W& weights, const B& biases) {
+			CONFIRM(weights.size().row==biases.size().row);
+			CONFIRM(biases.col==1);
+			this->weights = weights;
+			this->biases = biases;
+		}
 	private:
 		template <typename T>
 		T call_op(const T& in_signal) const {
