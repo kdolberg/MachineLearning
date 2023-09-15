@@ -139,12 +139,6 @@ namespace MachineLearning {
 	}; //Layer
 } //MachineLearning
 
-// MachineLearning::LayerParams& operator+=(MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b);
-
-MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::LayerParams& b);
-
-MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::Layer& b);
-
 std::ostream& operator<<(std::ostream& os,const MachineLearning::LayerParams& lp);
 
 #endif //LAYER_H

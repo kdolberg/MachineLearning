@@ -10,22 +10,6 @@ MachineLearning::LayerParams MachineLearning::calc_partial_derivatives(const Lin
 	return ret;
 }
 
-// MachineLearning::LayerParams& operator+=(MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b) {
-// 	a.weights += b.weights;
-// 	a.biases += b.biases;
-// 	return a;
-// }
-
-MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::LayerParams& b) {
-	a += b;
-	return a;
-}
-
-MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::Layer& b) {
-	(MachineLearning::LayerParams)a += (MachineLearning::LayerParams)b;
-	return a;
-}
-
 std::ostream& operator<<(std::ostream& os,const MachineLearning::LayerParams& lp) {
 	for (LinearAlgebra::mindex_t i = {0,0}; i.row < lp.get_num_outputs(); ++i.row) {
 		os << "[ "; 
