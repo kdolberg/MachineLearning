@@ -44,7 +44,7 @@ clean:
 	rm -f $(ML_OBJ) $(TEST_OBJECTS) $(TARGET)
 
 clean_linalg:
-	rm $(LINALG_OBJS)
+	rm -f $(LINALG_OBJS)
 
 make_linalg: $(LINALG_OBJS)
 
