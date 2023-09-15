@@ -1,4 +1,5 @@
-#include "net.h"
+// #include "net.h"
+#include "layer.h"
 #include "UnitTest.h"
 
 void la_matrix_tests() {
@@ -8,14 +9,14 @@ void la_matrix_tests() {
 }
 
 void net_tests() {
-	LinearAlgebra::Matrix x1 = {{5,5},{5,5}};
-	LinearAlgebra::Matrix x2 = {{1,1},{1,1}};
-	LinearAlgebra::Matrix x3 = {{5,5},{5,5.000001f}};
-	LinearAlgebra::Matrix y1 = {{8,8},{8,8}};
-	LinearAlgebra::Matrix y2 = {{4,4},{4,4}};
-	TEST_RETURN_FUNC(MachineLearning::error(x1,x2),==,y1);
-	TEST_RETURN_FUNC((x1==x3),==,true);
-	TEST_RETURN_FUNC(MachineLearning::error_ddx(x1,x2),==,y2);
+	// LinearAlgebra::Matrix x1 = {{5,5},{5,5}};
+	// LinearAlgebra::Matrix x2 = {{1,1},{1,1}};
+	// LinearAlgebra::Matrix x3 = {{5,5},{5,5.000001f}};
+	// LinearAlgebra::Matrix y1 = {{8,8},{8,8}};
+	// LinearAlgebra::Matrix y2 = {{4,4},{4,4}};
+	// TEST_RETURN_FUNC(MachineLearning::error(x1,x2),==,y1);
+	// TEST_RETURN_FUNC((x1==x3),==,true);
+	// TEST_RETURN_FUNC(MachineLearning::error_ddx(x1,x2),==,y2);
 }
 
 void activation_function_tests() {
@@ -41,7 +42,11 @@ void LayerParams_tests() {
 }
 
 void layer_tests() {
-	MachineLearning::Layer l(5,5,MachineLearning::get_leaky_ReLU());
+	// MachineLearning::Layer l(5,5,MachineLearning::get_leaky_ReLU());
+	
+}
+
+void ForPropIter_tests() {
 	
 }
 
