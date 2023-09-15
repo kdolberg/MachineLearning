@@ -10,9 +10,10 @@ namespace MachineLearning {
 	 * @brief Defines the structure of a layer's parameters
 	 */
 	class LayerParams {
-	public:
+	private:
 		LinearAlgebra::Matrix weights;
 		LinearAlgebra::Matrix biases;
+	public:
 		LayerParams() {}
 		LayerParams(uint num_inputs,uint num_outputs) : LayerParams() {
 			LinearAlgebra::mindex_t weight_matrix_dims = MINDEX(num_outputs,num_inputs);
@@ -28,6 +29,10 @@ namespace MachineLearning {
 			return ret;
 		}
 	public:
+		void randomize() {
+			this->weights.randomize();
+			this->biases.randomize();
+		}
 		const LinearAlgebra::Matrix& get_weights() const {
 			return this->weights;
 		}
@@ -51,40 +56,43 @@ namespace MachineLearning {
 		 * @return The number of inputs for this layer (AKA the number of column in the matrix of weights)
 		 */
 		uint get_num_inputs() const {
-			return this->weights.get_num_cols();
+			return this->get_weights().get_num_cols();
 		}
 		uint get_num_outputs() const {
-			assert(this->weights.get_num_rows()==this->biases.get_num_rows());
-			return this->weights.get_num_rows();
+			assert(this->get_weights().get_num_rows()==this->get_biases().get_num_rows());
+			return this->get_weights().get_num_rows();
+		}
+		MachineLearning::LayerParams& operator+=(const MachineLearning::LayerParams& b) {
+			this->weights += b.weights;
+			this->biases += b.biases;
+			return (*this);
 		}
 	}; //LayerParams
 
 	/**
 	 * @brief Defines a layer (save for the data caches used in backpropagation and forwardpropagation)
 	 */
-	class LayerNoCache {
+	class LayerNoCache : public MachineLearning::LayerParams {
 	public:
-		LayerParams parameters;
+		using LayerParams::LayerParams;
+		using LayerParams::operator();
 		ActivationFunction func;
-		LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_,int dummy) {
+		LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_,int dummy) : LayerParams(num_inputs,num_outputs) {
 			UNUSED(dummy);
-			this->parameters.weights.resize(MINDEX(num_outputs,num_inputs));
-			this->parameters.biases.resize(MINDEX(num_outputs,1));
 			this->func = func_;
 		}
 		LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_, bool randomize) : LayerNoCache(num_inputs,num_outputs,func_,0) {
 			if(randomize) {
-				this->parameters.weights.randomize();
-				this->parameters.biases.randomize();
+				this->randomize();
 			}
 		}
 		LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_) : LayerNoCache(num_inputs,num_outputs,func_,true) {}
 		template <typename T>
 		T operator()(const T& t) {
-			return this->func(this->parameters(t));
+			return this->func((*this)(t));
 		}
 		LinearAlgebra::Matrix calc_pre_activation_function_output(const LinearAlgebra::Matrix& x_data) const {
-			return this->parameters(x_data);
+			return (*this)(x_data);
 		}
 		LinearAlgebra::Matrix calc_post_activation_function_output(const LinearAlgebra::Matrix& pre_activation_function_output) const {
 			return this->func(pre_activation_function_output);
@@ -123,7 +131,7 @@ namespace MachineLearning {
 			return this->for_data.post_act_func_output;
 		}
 		LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& from_prev_layer) {
-			return MachineLearning::calc_derivatives_to_pass_on(this->parameters.weights,this->back_data.derivatives,from_prev_layer);
+			return MachineLearning::calc_derivatives_to_pass_on(this->get_weights(),this->back_data.derivatives,from_prev_layer);
 		}
 		LayerParams calc_partial_derivatives(const LinearAlgebra::Matrix& from_prev_layer) {
 			return MachineLearning::calc_partial_derivatives(this->back_data.derivatives,this->for_data.pre_act_func_output,from_prev_layer);
@@ -131,7 +139,7 @@ namespace MachineLearning {
 	}; //Layer
 } //MachineLearning
 
-MachineLearning::LayerParams& operator+=(MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b);
+// MachineLearning::LayerParams& operator+=(MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b);
 
 MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::LayerParams& b);
 

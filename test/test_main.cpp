@@ -21,7 +21,7 @@ void activation_function_tests() {
 
 void layer_tests() {
 	MachineLearning::Layer l(5,5,MachineLearning::get_leaky_ReLU());
-	std::cout << l.parameters << std::endl;
+	std::cout << l << std::endl;
 }
 
 int main(int argc, char const *argv[]) {
@@ -29,6 +29,5 @@ int main(int argc, char const *argv[]) {
 	activation_function_tests();
 	layer_tests();
 	print_report_card();
-
 	return 0;
 }

@@ -10,19 +10,19 @@ MachineLearning::LayerParams MachineLearning::calc_partial_derivatives(const Lin
 	return ret;
 }
 
-MachineLearning::LayerParams& operator+=(MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b) {
-	a.weights += b.weights;
-	a.biases += b.biases;
-	return a;
-}
+// MachineLearning::LayerParams& operator+=(MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b) {
+// 	a.weights += b.weights;
+// 	a.biases += b.biases;
+// 	return a;
+// }
 
 MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::LayerParams& b) {
-	a.parameters += b;
+	a += b;
 	return a;
 }
 
 MachineLearning::Layer& operator+=(MachineLearning::Layer& a, const MachineLearning::Layer& b) {
-	a += b.parameters;
+	(MachineLearning::LayerParams)a += (MachineLearning::LayerParams)b;
 	return a;
 }
 

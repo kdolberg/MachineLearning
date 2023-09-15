@@ -70,8 +70,7 @@ namespace MachineLearning {
 		std::string str() const {
 			std::stringstream ss;
 			for (std::list<Layer>::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
-				ss << i->parameters.weights << std::endl;
-				ss << i->parameters.biases << std::endl;
+				ss << (MachineLearning::LayerParams)(*i) << std::endl;
 			}
 			return ss.str();
 		}
