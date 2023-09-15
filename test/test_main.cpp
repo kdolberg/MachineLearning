@@ -1,6 +1,12 @@
 #include "net.h"
 #include "UnitTest.h"
 
+void la_matrix_tests() {
+	LinearAlgebra::Matrix x = {{1},{1},{1},{1}};
+	std::cout << x << std::endl;
+	std::cout << LinearAlgebra::transpose(x) << std::endl;
+}
+
 void net_tests() {
 	LinearAlgebra::Matrix x1 = {{5,5},{5,5}};
 	LinearAlgebra::Matrix x2 = {{1,1},{1,1}};
@@ -22,23 +28,33 @@ void activation_function_tests() {
 void LayerParams_tests() {
 	LinearAlgebra::Matrix w = {{1,1},{1,1}};
 	LinearAlgebra::Matrix b = {{1},{1}};
-	LinearAlgebra::VerticalVector x = {1,1};
-	// LinearAlgebra::VerticalVector y = {3,3};
+	LinearAlgebra::VerticalVector x_vv = {1,1};
+	LinearAlgebra::Matrix x_m = {{1},{1}};
 	MachineLearning::LayerParams lp(w,b);
-	TEST_RETURN_FUNC(lp(x),==,((LinearAlgebra::VerticalVector){3,3}));
-	TEST_RETURN_FUNC(lp(x),!=,((LinearAlgebra::VerticalVector){3,4}));
+	LinearAlgebra::transpose(b);
+	// MachineLearning::LayerParams lp2(LinearAlgebra::transpose(b),(LinearAlgebra::Matrix){{1}});
+	TEST_RETURN_FUNC(lp(x_vv),==,((LinearAlgebra::VerticalVector){3,3}));
+	TEST_RETURN_FUNC(lp(x_vv),!=,((LinearAlgebra::VerticalVector){3,3.1}));
+	TEST_RETURN_FUNC(lp(x_m),==,((LinearAlgebra::VerticalVector){3,3}));
+	TEST_RETURN_FUNC(lp(x_m),!=,((LinearAlgebra::VerticalVector){3,3.1}));
+	// TEST_RETURN_FUNC(lp2(b),==,(LinearAlgebra::Matrix){{3}});
 }
 
 void layer_tests() {
 	MachineLearning::Layer l(5,5,MachineLearning::get_leaky_ReLU());
-	std::cout << l << std::endl;
+	
 }
 
 int main(int argc, char const *argv[]) {
+	la_matrix_tests();
 	net_tests();
 	activation_function_tests();
 	layer_tests();
 	LayerParams_tests();
 	print_report_card();
+
+	// std::cout << "Let's look for a seg fault\n";
+	// LinearAlgebra::Matrix a = {{1,1}};
+	// a.at_transpose(MINDEX(0,0));
 	return 0;
 }
