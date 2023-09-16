@@ -43,11 +43,12 @@ void LayerParams_tests() {
 
 void layer_tests() {
 	// MachineLearning::Layer l(5,5,MachineLearning::get_leaky_ReLU());
-	
 }
 
 void ForPropIter_tests() {
-	
+	std::vector<MachineLearning::uint> def = {5,4,3,2,1};
+	MachineLearning::Net n(def);
+	// MachineLearning::ForPropIter fpi = n.begin();
 }
 
 int main(int argc, char const *argv[]) {

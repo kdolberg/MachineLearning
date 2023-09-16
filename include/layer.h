@@ -22,8 +22,7 @@ namespace MachineLearning {
 			this->weights = LinearAlgebra::Matrix(weight_matrix_dims);
 			this->biases = LinearAlgebra::Matrix(MINDEX(weight_matrix_dims.row,COLUMNS_IN_BASE_MATRIX));
 		}
-		template <LinearAlgebra::MATRIXLIKE W,LinearAlgebra::MATRIXLIKE B>
-		LayerParams(const W& weights, const B& biases) {
+		LayerParams(const LinearAlgebra::Matrix& weights, const LinearAlgebra::Matrix& biases) {
 			CONFIRM(weights.size().row==biases.size().row);
 			CONFIRM(biases.size().col==1);
 			this->weights = weights;
@@ -84,81 +83,79 @@ namespace MachineLearning {
 	} LayerForDataCache;
 
 	typedef struct {
-		LinearAlgebra::Matrix derivatives;
+		LinearAlgebra::Matrix derivatives_for_next_layer;
 		LayerParams partial_derivatives; 
 	} LayerBackDataCache;
 
-
-	typedef struct {
-		std::list<MachineLearning::LayerParams>::const_iterator parameters,parameters_end;
-		std::list<MachineLearning::LayerForDataCache>::iterator fordata,fordata_end;
-		std::list<MachineLearning::ActivationFunction>::const_iterator act_func,act_func_end;
-	} ForPropIterStruct;
-
-	class ForPropIter : protected MachineLearning::ForPropIterStruct {
+	class LayerStruct {
 	public:
-		ForPropIter(ForPropIterStruct fpis) {
-			this->parameters = fpis.parameters;
-			this->parameters_end = fpis.parameters_end;
-			this->fordata = fpis.fordata;
-			this->fordata_end = fpis.fordata_end;
-			this->act_func = fpis.act_func;
-			this->act_func_end = fpis.act_func_end;
+		LayerParams params;
+		LayerForDataCache fordata;
+		LayerBackDataCache backdata;
+		ActivationFunction actfunc;
+		LayerStruct(uint num_ins,uint num_outs) {
+			this->params = MachineLearning::LayerParams(num_ins,num_outs);
+			//Default activation function
+			this->actfunc = get_leaky_ReLU();
 		}
-		ForPropIter(const std::list<MachineLearning::LayerParams>& lp,const std::list<MachineLearning::ActivationFunction>& af) {
-			CONFIRM(lp.size()==af.size());
-			this->parameters = lp.cbegin();
-			this->parameters_end = lp.cend();
-			this->act_func = af.cbegin();
-			this->act_func_end = af.cend();
+	};
+
+	class ForPropIter : public std::list<LayerStruct>::iterator {
+		using std::list<LayerStruct>::iterator::iterator;
+		const LinearAlgebra::Matrix& get_input() const {
+			return std::prev(*this)->fordata.pre_act_func_output;
 		}
-		ForPropIter(const std::list<MachineLearning::LayerParams>& lp,std::list<MachineLearning::LayerForDataCache>& fd,const std::list<MachineLearning::ActivationFunction>& af) : ForPropIter(lp,af) {
-			this->fordata = fd.begin();
-			this->fordata_end = fd.end();
+		const LinearAlgebra::Matrix& get_activation() const {
+			return (*this)->fordata.pre_act_func_output;
 		}
-		ForPropIter& operator++() {
-			++(this->parameters);
-			++(this->fordata);
-			++(this->act_func);
+		void update_forward_data_cache(const LinearAlgebra::Matrix x_data) {
+			(*this)->fordata.pre_act_func_output = (*this)->params(x_data);
+			(*this)->fordata.post_act_func_output = (*this)->actfunc(this->get_activation());
+		}
+		void update_forward_data_cache() {
+			this->update_forward_data_cache(this->get_input());
+		}
+		ForPropIter& operator=(const std::list<LayerStruct>::iterator& i) {
+			this->std::list<LayerStruct>::iterator::operator=(i);
 			return (*this);
 		}
-		LinearAlgebra::Matrix update_data_cache(const LinearAlgebra::Matrix& x_data) {
-			//Calculate the pre-activation function output
-			this->fordata->pre_act_func_output = this->parameters->operator()(x_data);
-			//Calculate the post-activation function output
-			this->fordata->post_act_func_output = this->act_func->operator()(this->fordata->pre_act_func_output);
-			return this->fordata->post_act_func_output;
+	};
+	
+	class BackPropIter : public std::list<LayerStruct>::reverse_iterator {
+		using std::list<LayerStruct>::reverse_iterator::reverse_iterator;
+		const LinearAlgebra::Matrix& get_input() const {
+			return std::prev(*this)->backdata.derivatives_for_next_layer;
+		}
+		const LinearAlgebra::Matrix& get_activation() const {
+			return (*this)->fordata.pre_act_func_output;
+		}
+		LinearAlgebra::Matrix calc_naive_derivatives() const {
+			return (*this)->actfunc.ddx((*this)->fordata.pre_act_func_output);
 		}
 
-		bool finished() {
-			//Check if the parameters iterator is at the end
-			if(this->parameters == this->parameters_end){
-				// Assert that both of the other iterators are also at the end
-				assert(this->fordata == this->fordata_end);
-				assert(this->act_func == this->act_func_end);
-				// Return true (which is the return value of all 3 boolean checks)
-				return true;
-			} else {
-				// Assert that both of the other iterators are finished
-				assert(this->fordata != this->fordata_end);
-				assert(this->act_func != this->act_func_end);
-				// Return false (which is the return value of all 3 boolean checks)
-				return false;
-			}
-		}
-		ForPropIter next() const {
-			ForPropIterStruct ret = {std::next(this->parameters),this->parameters_end,std::next(this->fordata),this->fordata_end,std::next(this->act_func),this->act_func_end};
-			return ret;
-		}
+		LinearAlgebra::Matrix calc_derivatives_for_next_layer() const;
 
-		LinearAlgebra::Matrix propagate(const LinearAlgebra::Matrix& in_data) {
-			if(!(this->finished())) {
-				return this->next().propagate(this->update_data_cache(in_data));
-			} else {
-				return in_data;
+		void update_backward_data_cache(const LinearAlgebra::Matrix& derivatives_from_prev_layer) {
+			// LinearAlgebra::Matrix& naive_derivatives = this->calc_naive_derivatives();
+		}
+		void update_backward_data_cache() {
+			this->update_backward_data_cache(this->get_input());
+		}
+	};
+
+	class Net : public std::list<MachineLearning::LayerStruct> {
+	public:
+		using std::list<MachineLearning::LayerStruct>::list;
+		Net() /*: std::list<MachineLearning::LayerParams>::list()*/ {}
+		Net(std::vector<uint> def) : Net() {
+			for (uint i = 0; i < def.size()-1; ++i) {
+				uint num_inputs = def[i];
+				uint num_outputs = def[i+1];
+				MachineLearning::LayerStruct tmp(num_inputs,num_outputs);
+				this->push_back(tmp);
 			}
 		}
-	}; // ForPropIter
+	}; 
 
 } //MachineLearning
 
