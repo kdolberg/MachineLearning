@@ -14,6 +14,7 @@ CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -DUNIT_TEST -Wall -g 
 INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I./include -I./../UnitTest -I./../UnitTest/inc -I./../confirm
 
 # sources and objects
+H_FILES = activation_function.h layer.h machine_learning.h main.h net.h types.h
 LINALG_DIR = ../Utilities
 LINALG_OBJS = obj/la_basic_types.la obj/la_matrix.la obj/la_matrix_like.la obj/la_vector.la obj/la_vector_overloads.la
 ML_OBJ = obj/activation_function.ml obj/layer.ml # obj/net.ml
