@@ -78,39 +78,6 @@ namespace MachineLearning {
 		}
 	}; //LayerParams
 
-	/**
-	 * @brief Defines a layer (save for the data caches used in backpropagation and forwardpropagation)
-	 */
-	// class LayerNoCache : public MachineLearning::LayerParams {
-	// public:
-	// 	using LayerParams::LayerParams;
-	// 	using LayerParams::operator();
-	// 	ActivationFunction func;
-	// 	LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_,int dummy) : LayerParams(num_inputs,num_outputs) {
-	// 		UNUSED(dummy);
-	// 		this->func = func_;
-	// 	}
-	// 	LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_, bool randomize) : LayerNoCache(num_inputs,num_outputs,func_,0) {
-	// 		if(randomize) {
-	// 			this->randomize();
-	// 		}
-	// 	}
-	// 	LayerNoCache(uint num_inputs, uint num_outputs, ActivationFunction func_) : LayerNoCache(num_inputs,num_outputs,func_,true) {}
-	// 	template <typename T>
-	// 	T operator()(const T& t) {
-	// 		return this->func((*this)(t));
-	// 	}
-	// 	LinearAlgebra::Matrix calc_pre_activation_function_output(const LinearAlgebra::Matrix& x_data) const {
-	// 		return (*this)(x_data);
-	// 	}
-	// 	LinearAlgebra::Matrix calc_post_activation_function_output(const LinearAlgebra::Matrix& pre_activation_function_output) const {
-	// 		return this->func(pre_activation_function_output);
-	// 	}
-	// }; //LayerNoCache
-
-	// LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& weights,const LinearAlgebra::Matrix& naive_derivatives,const LinearAlgebra::Matrix& from_prev_layer);
-	// LayerParams calc_partial_derivatives(const LinearAlgebra::Matrix& derivatives,const LinearAlgebra::Matrix& pre_activation_function_output, const LinearAlgebra::Matrix& from_prev_layer);
-
 	typedef struct {
 		LinearAlgebra::Matrix pre_act_func_output;
 		LinearAlgebra::Matrix post_act_func_output;
@@ -121,31 +88,6 @@ namespace MachineLearning {
 		LayerParams partial_derivatives; 
 	} LayerBackDataCache;
 
-	// class Layer : public LayerNoCache {
-	// 	LayerForDataCache for_data;
-	// 	LayerBackDataCache back_data;
-	// public:
-	// 	using LayerNoCache::LayerNoCache;
-		// LinearAlgebra::Matrix update_forprop_data_cache(const LinearAlgebra::Matrix& x_data) {
-		// 	this->for_data.pre_act_func_output = this->calc_pre_activation_function_output(x_data);
-		// 	this->for_data.post_act_func_output = this->calc_post_activation_function_output(this->for_data.pre_act_func_output);
-		// 	return this->for_data.post_act_func_output;
-		// }
-		// LinearAlgebra::Matrix update_backprop_data_cache(const LinearAlgebra::Matrix& from_prev_layer) {
-		// 	this->back_data.derivatives = this->func.ddx(this->for_data.pre_act_func_output);
-		// 	this->back_data.partial_derivatives = this->calc_partial_derivatives(from_prev_layer);
-		// 	return this->calc_derivatives_to_pass_on(from_prev_layer);
-		// }
-	// 	const LinearAlgebra::Matrix& get_post_act_func_output() const {
-	// 		return this->for_data.post_act_func_output;
-	// 	}
-	// 	LinearAlgebra::Matrix calc_derivatives_to_pass_on(const LinearAlgebra::Matrix& from_prev_layer) {
-	// 		return MachineLearning::calc_derivatives_to_pass_on(this->get_weights(),this->back_data.derivatives,from_prev_layer);
-	// 	}
-	// 	LayerParams calc_partial_derivatives(const LinearAlgebra::Matrix& from_prev_layer) {
-	// 		return MachineLearning::calc_partial_derivatives(this->back_data.derivatives,this->for_data.pre_act_func_output,from_prev_layer);
-	// 	}
-	// }; //Layer
 
 	typedef struct {
 		std::list<MachineLearning::LayerParams>::const_iterator parameters,parameters_end;
