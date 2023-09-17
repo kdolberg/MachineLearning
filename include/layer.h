@@ -75,6 +75,10 @@ namespace MachineLearning {
 			this->biases += b.biases;
 			return (*this);
 		}
+		bool operator==(LayerParams& ls) {
+			return (this->get_weights()==ls.get_weights()) && (this->get_biases()==ls.get_biases());
+		}
+
 	}; //LayerParams
 
 	typedef struct {
@@ -101,7 +105,11 @@ namespace MachineLearning {
 	};
 
 	class ForPropIter : public std::list<LayerStruct>::iterator {
+	public:
 		using std::list<LayerStruct>::iterator::iterator;
+		ForPropIter(const std::list<LayerStruct>::iterator& i) {
+			this->std::list<LayerStruct>::iterator::operator=(i);
+		}
 		const LinearAlgebra::Matrix& get_input() const {
 			return std::prev(*this)->fordata.pre_act_func_output;
 		}
@@ -115,13 +123,10 @@ namespace MachineLearning {
 		void update_forward_data_cache() {
 			this->update_forward_data_cache(this->get_input());
 		}
-		ForPropIter& operator=(const std::list<LayerStruct>::iterator& i) {
-			this->std::list<LayerStruct>::iterator::operator=(i);
-			return (*this);
-		}
 	};
 	
 	class BackPropIter : public std::list<LayerStruct>::reverse_iterator {
+	public:
 		using std::list<LayerStruct>::reverse_iterator::reverse_iterator;
 		const LinearAlgebra::Matrix& get_input() const {
 			return std::prev(*this)->backdata.derivatives_for_next_layer;
