@@ -8,15 +8,40 @@ void la_matrix_tests() {
 	std::cout << LinearAlgebra::transpose(x) << std::endl;
 }
 
-void net_tests() {
-	// LinearAlgebra::Matrix x1 = {{5,5},{5,5}};
-	// LinearAlgebra::Matrix x2 = {{1,1},{1,1}};
-	// LinearAlgebra::Matrix x3 = {{5,5},{5,5.000001f}};
-	// LinearAlgebra::Matrix y1 = {{8,8},{8,8}};
-	// LinearAlgebra::Matrix y2 = {{4,4},{4,4}};
-	// TEST_RETURN_FUNC(MachineLearning::error(x1,x2),==,y1);
-	// TEST_RETURN_FUNC((x1==x3),==,true);
-	// TEST_RETURN_FUNC(MachineLearning::error_ddx(x1,x2),==,y2);
+typedef struct NetUintIter {
+	std::vector<MachineLearning::uint>::const_iterator def;
+	MachineLearning::Net::const_iterator n;
+	NetUintIter& operator++() {
+		++this->def;
+		++this->n;
+		return (*this);
+	}
+	bool operator==(const NetUintIter& iter) {
+		if((iter.n)==(this->n)) {
+			assert((std::next(iter.def)==this->def) || (iter.def==std::next(this->def)));
+			return true;
+		} else {
+			return false;
+		}
+	}
+} NetUintIter;
+
+bool Net_constructor_gives_correct_num_inputs() {
+	std::vector<MachineLearning::uint> def = {5,4,3,2,1};
+	MachineLearning::Net n(def);
+	bool all_nums_correct = true;
+	for (NetUintIter i = {def.cbegin(),n.cbegin()}; i != (NetUintIter){def.cend(),n.cend()}; ++i) {
+		std::cout << "# inputs: " << i.n->params.get_num_inputs() << std::endl;
+		std::cout << (i.n)->params << std::endl;
+		all_nums_correct = all_nums_correct && (i.n->params.get_num_inputs()==*(i.def));
+	}
+	return all_nums_correct;
+}
+
+
+void Net_tests() {
+	TEST_RETURN_FUNC(Net_constructor_gives_correct_num_inputs(),==,true);
+
 }
 
 void activation_function_tests() {
@@ -26,41 +51,103 @@ void activation_function_tests() {
 	TEST_RETURN_FUNC(relu((LinearAlgebra::Matrix){{-1,2},{3,-4}}),==,((LinearAlgebra::Matrix){{-0.1f,2.0f},{3.0f,-0.4f}}));
 }
 
-void LayerParams_tests() {
-	LinearAlgebra::Matrix w = {{1,1},{1,1}};
-	LinearAlgebra::Matrix b = {{1},{1}};
-	LinearAlgebra::VerticalVector x_vv = {1,1};
-	LinearAlgebra::Matrix x_m = {{1},{1}};
-	MachineLearning::LayerParams lp(w,b);
-	LinearAlgebra::transpose(b);
-	// MachineLearning::LayerParams lp2(LinearAlgebra::transpose(b),(LinearAlgebra::Matrix){{1}});
-	TEST_RETURN_FUNC(lp(x_vv),==,((LinearAlgebra::VerticalVector){3,3}));
-	TEST_RETURN_FUNC(lp(x_vv),!=,((LinearAlgebra::VerticalVector){3,3.1}));
-	TEST_RETURN_FUNC(lp(x_m),==,((LinearAlgebra::VerticalVector){3,3}));
-	TEST_RETURN_FUNC(lp(x_m),!=,((LinearAlgebra::VerticalVector){3,3.1}));
-	// TEST_RETURN_FUNC(lp2(b),==,(LinearAlgebra::Matrix){{3}});
+bool LayerParams_randomize_randomizes_correctly() {
+	bool ret = true;
+	MachineLearning::LayerParams lp1({{1,1},{1,1}},{{1},{1}});
+	lp1.randomize();
+	MachineLearning::LayerParams lp2 = lp1;
+	for (int i = 0; i < 1000; ++i) {
+		lp1.randomize();
+		lp2.randomize();
+		ret = ret && (lp1!=lp2);
+		ret = ret && (lp1.get_weights().size()==lp2.get_weights().size());
+		ret = ret && (lp1.get_biases().size()==lp2.get_biases().size());
+	}
+	return true;
 }
 
-void layer_tests() {
-	// MachineLearning::Layer l(5,5,MachineLearning::get_leaky_ReLU());
+void LayerParams_tests() {
+	{
+		LinearAlgebra::Matrix w = {{1,1},{1,1}};
+		LinearAlgebra::Matrix b = {{1},{1}};
+		LinearAlgebra::VerticalVector x_vv = {1,1};
+		LinearAlgebra::Matrix x_m = {{1},{1}};
+		MachineLearning::LayerParams lp(w,b);
+		TEST_RETURN_FUNC(lp(x_vv),==,((LinearAlgebra::VerticalVector){3,3}));
+		TEST_RETURN_FUNC(lp(x_vv),!=,((LinearAlgebra::VerticalVector){3,3.1}));
+		TEST_RETURN_FUNC(lp(x_m),==,((LinearAlgebra::VerticalVector){3,3}));
+		TEST_RETURN_FUNC(lp(x_m),!=,((LinearAlgebra::VerticalVector){3,3.1}));
+	}
+	TEST_RETURN_FUNC(LayerParams_randomize_randomizes_correctly(),==,true);
+	{
+		MachineLearning::LayerParams lp({{1,1},{1,1},{1,1}},{{1},{1},{1}});
+		TEST_RETURN_FUNC(lp.get_num_inputs(),==,lp.get_weights().get_num_cols());
+		TEST_RETURN_FUNC(lp.get_num_outputs(),==,lp.get_weights().get_num_rows());
+		TEST_RETURN_FUNC(lp.get_num_outputs(),==,lp.get_biases().get_num_rows());
+		TEST_RETURN_FUNC(lp.get_num_outputs(),==,3);
+		TEST_RETURN_FUNC(lp.get_num_inputs(),==,2);
+	} {
+		MachineLearning::LayerParams lp1(
+		{// w
+			{0.4,0.2,10},
+			{5,2,8},
+			{10,3,1}
+		},{// b
+			{82.5},
+			{7.9},
+			{-50.4}
+		});
+		MachineLearning::LayerParams lp2(
+		{// w
+			{0.4,0.2,10},
+			{5,2,8},
+			{10,3,1}
+		},{// b
+			{82.5},
+			{7.9},
+			{-50.4}
+		});
+		MachineLearning::LayerParams lp3(
+		{// w
+			{0.4,0.2,10 + TOLERANCE*0.9},
+			{5,2,8},
+			{10,3,1 + TOLERANCE*0.9}
+		},{// b
+			{82.5},
+			{7.9 - TOLERANCE*0.9},
+			{-50.4}
+		});
+		MachineLearning::LayerParams lp4(
+		{// w
+			{0.4,0.2,10 + TOLERANCE*1.1},
+			{5,2,8},
+			{10,3,1}
+		},{// b
+			{82.5},
+			{7.9},
+			{-50.4}
+		});
+		TEST_RETURN_FUNC(lp1,==,lp2);
+		TEST_RETURN_FUNC(lp1,==,lp3);
+		TEST_RETURN_FUNC(lp1,!=,lp4);
+	}
 }
 
 void ForPropIter_tests() {
 	std::vector<MachineLearning::uint> def = {5,4,3,2,1};
 	MachineLearning::Net n(def);
-	// MachineLearning::ForPropIter fpi = n.begin();
+	MachineLearning::ForPropIter fpi = n.begin();
+	for(; fpi != n.end(); ++fpi) {
+		// std::cout << (*fpi).params << std::endl;
+	}
 }
 
 int main(int argc, char const *argv[]) {
 	la_matrix_tests();
-	net_tests();
+	Net_tests();
 	activation_function_tests();
-	layer_tests();
 	LayerParams_tests();
+	ForPropIter_tests();
 	print_report_card();
-
-	// std::cout << "Let's look for a seg fault\n";
-	// LinearAlgebra::Matrix a = {{1,1}};
-	// a.at_transpose(MINDEX(0,0));
 	return 0;
 }
