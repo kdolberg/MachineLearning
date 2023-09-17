@@ -8,13 +8,13 @@ CXX = g++
 SCALAR_TYPE=float
 DEFINE_SCALAR_TYPE_MACRO = -DSCALAR_TYPE=$(SCALAR_TYPE)
 FLAGS = -DNOFLAGS -DUNIT_TEST
-CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -DUNIT_TEST -Wall -g -O0
+CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -DUNIT_TEST -Wall -g -O0 -MD -MP
 
 # directory of header files
 INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I./include -I./../UnitTest -I./../UnitTest/inc -I./../confirm
 
 # sources and objects
-H_FILES = activation_function.h layer.h machine_learning.h main.h net.h types.h
+ML_H_FILES = include/activation_function.h include/layer.h include/machine_learning.h include/main.h include/net.h include/types.h
 LINALG_DIR = ../Utilities
 LINALG_OBJS = obj/la_basic_types.la obj/la_matrix.la obj/la_matrix_like.la obj/la_vector.la obj/la_vector_overloads.la
 ML_OBJ = obj/activation_function.ml obj/layer.ml # obj/net.ml
@@ -29,7 +29,7 @@ TEST_OBJECTS = obj/test_main.ml_test obj/test.unit_test
 $(TARGET): $(OBJECTS) obj/main.ml
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TARGET) $(OBJECTS)
 
-obj/%.ml: src/%.cpp
+obj/%.ml: src/%.cpp $(ML_H_FILES)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 obj/%.la: ../Utilities/src/%.cpp
