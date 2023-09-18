@@ -78,7 +78,6 @@ namespace MachineLearning {
 		bool operator==(LayerParams& ls) {
 			return (this->get_weights()==ls.get_weights()) && (this->get_biases()==ls.get_biases());
 		}
-
 	}; //LayerParams
 
 	typedef struct {
@@ -161,7 +160,6 @@ namespace MachineLearning {
 			}
 		}
 	}; 
-
 } //MachineLearning
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::LayerParams& lp);
