@@ -10,14 +10,24 @@ namespace MachineLearning {
 		std::function<LinearAlgebra::scalar_t(LinearAlgebra::scalar_t)> derivative;
 	} ActivationFunctionStruct;
 
+	/**
+	 * @brief Class used to define a layer's activation function.
+	 */
 	class ActivationFunction : ActivationFunctionStruct {
 	public:
 		using ActivationFunctionStruct::ActivationFunctionStruct;
-		ActivationFunction(){}
-		ActivationFunction(const ActivationFunctionStruct& afs) { // I don't think this constructor is used. Delete if so
-			this->function = afs.function;
-			this->derivative = afs.derivative;
-		}
+
+		/**
+		 * COMMENTED OUT THESE CONSTRUCTORS.
+		 * I DON'T THINK THEY ARE USED.
+		 * DELETE THIS COMMENT AND THE ONE BELOW ONCE THAT IS CONFIRMED.
+		 * */
+
+		// ActivationFunction(){}
+		// ActivationFunction(const ActivationFunctionStruct& afs) { // I don't think this constructor is used. Delete if so
+		// 	this->function = afs.function;
+		// 	this->derivative = afs.derivative;
+		// }
 		LinearAlgebra::scalar_t operator()(LinearAlgebra::scalar_t in) const {
 			return this->function(in);
 		}
