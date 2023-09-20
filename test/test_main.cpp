@@ -136,9 +136,9 @@ void LayerParams_tests() {
 void PropIter_tests() {
 	LinearAlgebra::Matrix x_in_sidways = {{1,1},{5,5},{10,10},{0.5,0.5}};
 	LinearAlgebra::Matrix y_out = {{5},{5},{5},{5}};
-	LinearAlgebra::Matrix y_correct = {{1},{1},{1},{1}};
+	LinearAlgebra::Matrix y_incorrect = {{1},{1},{1},{1}};
 
-	MachineLearning::TrainingDataset td = {LinearAlgebra::transpose(x_in_sidways),y_out};
+	MachineLearning::TrainingDataset td = {LinearAlgebra::transpose(x_in_sidways),LinearAlgebra::transpose(y_out)};
 	std::vector<MachineLearning::uint> def = {2,1,1,1,1,1};
 	MachineLearning::Net n(def,true);
 
@@ -151,7 +151,7 @@ void PropIter_tests() {
 		fpi.update_data_cache();
 	}
 	MachineLearning::BackPropIter bpi = n.rbegin();
-	bpi.update_data_cache_output_layer(y_correct - td.y);
+	bpi.update_data_cache_output_layer(LinearAlgebra::transpose(y_incorrect) - td.y);
 	++bpi;
 	std::cout << "BACKWARD\n";
 	for(; bpi != std::prev(n.rend()); ++bpi) {

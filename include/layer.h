@@ -253,7 +253,7 @@ namespace MachineLearning {
 			this->backdata().derivatives_for_layer_below.resize(MINDEX(this->get_num_inputs(),this->get_num_data_points()));
 			LinearAlgebra::Matrix pd_weights(this->get_weights().size());
 			LinearAlgebra::Matrix pd_biases(this->get_biases().size());
-
+			PRINT_LOC(this->backdata().naive_derivatives.size());PRINT_LOC(derivatives_from_layer_above.size());
 			assert(this->backdata().naive_derivatives.size()==derivatives_from_layer_above.size());
 
 			for (uint data_index = 0; data_index < this->get_num_data_points(); ++data_index) {
