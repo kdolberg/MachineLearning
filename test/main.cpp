@@ -1,7 +1,4 @@
-// #include "net.h"
-#include "layer.h"
-#include "UnitTest.h"
-#include "net.h"
+#include "main.h"
 
 void la_matrix_tests() {
 	LinearAlgebra::Matrix x = {{1},{1},{1},{1}};
@@ -39,10 +36,13 @@ void la_matrix_tests() {
 // 	return all_nums_correct;
 // }
 
-// void Net_tests() {
-// 	TEST_RETURN_FUNC(Net_constructor_gives_correct_num_inputs(),==,true);
-
-// }
+void Net_tests() {
+	// TEST_RETURN_FUNC(Net_constructor_gives_correct_num_inputs(),==,true);
+	MachineLearning::Net n((MachineLearning::NetDef){2,1,1,1,1,1},1.0f);
+	operator<<(std::cout,n);
+	// LinearAlgebra::Matrix x(2),y(MINDEX(1,2));
+	// TrainingDataset set = {x,y};
+}
 
 void activation_function_tests() {
 	MachineLearning::ActivationFunction relu = MachineLearning::get_leaky_ReLU();
@@ -133,6 +133,10 @@ void LayerParams_tests() {
 	}
 }
 
+MachineLearning::Net make_uniform_net(LinearAlgebra::scalar_t num) {
+	return MachineLearning::Net();
+}
+
 void PropIter_tests() {
 	LinearAlgebra::Matrix x_in = {{1,1},{5,5},{10,10},{0.5,0.5}};
 	LinearAlgebra::Matrix y_out = {{5},{5},{5},{5}};
@@ -158,7 +162,7 @@ void PropIter_tests() {
 
 int main(int argc, char const *argv[]) {
 	la_matrix_tests();
-	// Net_tests();
+	Net_tests();
 	activation_function_tests();
 	LayerParams_tests();
 	PropIter_tests();
