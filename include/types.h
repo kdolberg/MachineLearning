@@ -6,6 +6,8 @@
 
 #define UNUSED(var) {(void)(var);}
 
+#define PRINT_LOC(...) std::cerr __VA_OPT__(<< #__VA_ARGS__ << "=" << __VA_ARGS__ << " ") << __FILE__ << " " << __FUNCTION__ << " " << __LINE__ << std::endl;
+
 namespace MachineLearning {
 	typedef LinearAlgebra::uint uint;
 
