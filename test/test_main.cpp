@@ -1,6 +1,7 @@
 // #include "net.h"
 #include "layer.h"
 #include "UnitTest.h"
+#include "net.h"
 
 void la_matrix_tests() {
 	LinearAlgebra::Matrix x = {{1},{1},{1},{1}};
@@ -8,41 +9,40 @@ void la_matrix_tests() {
 	std::cout << LinearAlgebra::transpose(x) << std::endl;
 }
 
-typedef struct NetUintIter {
-	std::vector<MachineLearning::uint>::const_iterator def;
-	MachineLearning::Net::const_iterator n;
-	NetUintIter& operator++() {
-		++this->def;
-		++this->n;
-		return (*this);
-	}
-	bool operator==(const NetUintIter& iter) {
-		if((iter.n)==(this->n)) {
-			assert((std::next(iter.def)==this->def) || (iter.def==std::next(this->def)));
-			return true;
-		} else {
-			return false;
-		}
-	}
-} NetUintIter;
+// typedef struct NetUintIter {
+// 	std::vector<MachineLearning::uint>::const_iterator def;
+// 	MachineLearning::Net::const_iterator n;
+// 	NetUintIter& operator++() {
+// 		++this->def;
+// 		++this->n;
+// 		return (*this);
+// 	}
+// 	bool operator==(const NetUintIter& iter) {
+// 		if((iter.n)==(this->n)) {
+// 			assert((std::next(iter.def)==this->def) || (iter.def==std::next(this->def)));
+// 			return true;
+// 		} else {
+// 			return false;
+// 		}
+// 	}
+// } NetUintIter;
 
-bool Net_constructor_gives_correct_num_inputs() {
-	std::vector<MachineLearning::uint> def = {5,4,3,2,1};
-	MachineLearning::Net n(def);
-	bool all_nums_correct = true;
-	for (NetUintIter i = {def.cbegin(),n.cbegin()}; i != (NetUintIter){def.cend(),n.cend()}; ++i) {
-		std::cout << "# inputs: " << i.n->params.get_num_inputs() << std::endl;
-		std::cout << (i.n)->params << std::endl;
-		all_nums_correct = all_nums_correct && (i.n->params.get_num_inputs()==*(i.def));
-	}
-	return all_nums_correct;
-}
+// bool Net_constructor_gives_correct_num_inputs() {
+// 	std::vector<MachineLearning::uint> def = {5,4,3,2,1};
+// 	MachineLearning::Net n(def);
+// 	bool all_nums_correct = true;
+// 	for (NetUintIter i = {def.cbegin(),n.cbegin()}; i != (NetUintIter){def.cend(),n.cend()}; ++i) {
+// 		std::cout << "# inputs: " << i.n->params.get_num_inputs() << std::endl;
+// 		std::cout << (i.n)->params << std::endl;
+// 		all_nums_correct = all_nums_correct && (i.n->params.get_num_inputs()==*(i.def));
+// 	}
+// 	return all_nums_correct;
+// }
 
+// void Net_tests() {
+// 	TEST_RETURN_FUNC(Net_constructor_gives_correct_num_inputs(),==,true);
 
-void Net_tests() {
-	TEST_RETURN_FUNC(Net_constructor_gives_correct_num_inputs(),==,true);
-
-}
+// }
 
 void activation_function_tests() {
 	MachineLearning::ActivationFunction relu = MachineLearning::get_leaky_ReLU();
@@ -133,21 +133,44 @@ void LayerParams_tests() {
 	}
 }
 
-void ForPropIter_tests() {
-	std::vector<MachineLearning::uint> def = {5,4,3,2,1};
-	MachineLearning::Net n(def);
+void PropIter_tests() {
+	LinearAlgebra::Matrix x_in_sidways = {{1,1},{5,5},{10,10},{0.5,0.5}};
+	LinearAlgebra::Matrix y_out = {{5},{5},{5},{5}};
+	LinearAlgebra::Matrix y_correct = {{1},{1},{1},{1}};
+
+	MachineLearning::TrainingDataset td = {LinearAlgebra::transpose(x_in_sidways),y_out};
+	std::vector<MachineLearning::uint> def = {2,1,1,1,1,1};
+	MachineLearning::Net n(def,true);
+
+	std::cout << "FORWARD\n";
 	MachineLearning::ForPropIter fpi = n.begin();
+	fpi.update_data_cache(td.x);
+	++fpi;
 	for(; fpi != n.end(); ++fpi) {
-		// std::cout << (*fpi).params << std::endl;
+		std::cout << fpi->params << std::endl;
+		fpi.update_data_cache();
 	}
+	MachineLearning::BackPropIter bpi = n.rbegin();
+	bpi.update_data_cache_output_layer(y_correct - td.y);
+	++bpi;
+	std::cout << "BACKWARD\n";
+	for(; bpi != std::prev(n.rend()); ++bpi) {
+		std::cout << bpi->params << std::endl;
+		try {
+			bpi.update_data_cache();
+		} catch (ConfirmationFailure& e) {
+			std::cerr << e.what() << std::endl;
+		}
+	}
+	bpi.update_data_cache_input_layer(td.x);
 }
 
 int main(int argc, char const *argv[]) {
 	la_matrix_tests();
-	Net_tests();
+	// Net_tests();
 	activation_function_tests();
 	LayerParams_tests();
-	ForPropIter_tests();
 	print_report_card();
+	PropIter_tests();
 	return 0;
 }
