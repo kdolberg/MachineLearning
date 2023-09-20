@@ -8,7 +8,7 @@ CXX = g++
 SCALAR_TYPE=float
 DEFINE_SCALAR_TYPE_MACRO = -DSCALAR_TYPE=$(SCALAR_TYPE)
 FLAGS = -DNOFLAGS -DUNIT_TEST
-CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -DUNIT_TEST -Wall -g -O0 -MD -MP
+CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -DUNIT_TEST -Wall -g -O2 -MD -MP
 
 # directory of header files
 INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I./include -I./../UnitTest -I./../UnitTest/inc -I./../confirm
@@ -23,7 +23,7 @@ OBJECTS = $(ML_OBJ) $(LINALG_OBJS)
 # target executable
 TARGET = a
 
-TEST = test_exec
+TEST = test
 TEST_OBJECTS = obj/test_main.ml_test obj/test.unit_test
 
 $(TARGET): $(OBJECTS) obj/main.ml
@@ -42,7 +42,7 @@ obj/%.unit_test: ../UnitTest/src/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -f $(ML_OBJ) $(TEST_OBJECTS) $(TARGET)
+	rm -f $(ML_OBJ) $(TEST_OBJECTS) $(TARGET) $(TEST).exe
 
 clean_linalg:
 	rm -f $(LINALG_OBJS)
@@ -65,9 +65,7 @@ run: $(TARGET)
 	./$(TARGET).exe
 
 $(TEST): $(OBJECTS) $(TEST_OBJECTS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TEST) $(OBJECTS) $(TEST_OBJECTS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OBJECTS) $(TEST_OBJECTS) -o $(TEST)
+	gdb $(TEST).exe
 
-test: $(TEST) $(TEST_OBJECTS)
-	./$(TEST).exe
-
-.PHONY: clean clean_linalg linalg clean_all run all make_linalg test
+.PHONY: clean clean_linalg linalg clean_all run all make_linalg test build_test
