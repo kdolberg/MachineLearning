@@ -86,8 +86,9 @@ namespace MachineLearning {
 	} LayerForDataCache;
 
 	typedef struct {
-		LinearAlgebra::Matrix derivatives_for_next_layer;
-		LayerParams partial_derivatives; 
+		LinearAlgebra::Matrix derivatives_for_layer_below;
+		LinearAlgebra::Matrix naive_derivatives;
+		LayerParams partial_derivatives;
 	} LayerBackDataCache;
 
 	class LayerStruct {
@@ -101,83 +102,171 @@ namespace MachineLearning {
 			//Default activation function
 			this->actfunc = get_leaky_ReLU();
 		}
-	};
+		LayerStruct(const LinearAlgebra::Matrix& weights, const LinearAlgebra::Matrix& biases) {
+			this->params = MachineLearning::LayerParams(weights,biases);
+			//Default activation function
+			this->actfunc = get_leaky_ReLU();
+		}
+	};				
 
-	class PropIter {
-		virtual MachineLearning::LayerStruct& operator*() = 0;
-		virtual const LinearAlgebra::Matrix& get_input() const = 0;
+	template <typename T>
+	class PropIter : public T {
+	public:
+		using T::T;				
+		PropIter(const T& i) {
+			this->T::operator=(i);
+		}
+	protected:
+		LinearAlgebra::uint get_num_inputs() const {
+			return this->params().get_num_inputs();
+		}
+		LinearAlgebra::uint get_num_outputs() const {
+			return this->params().get_num_outputs();
+		}
+		const LayerParams& params() const {
+			return (*this)->params;
+		}
+		const LayerForDataCache& fordata() const {
+			return (*this)->fordata;
+		}
+		const LayerBackDataCache& backdata() const {
+			return (*this)->backdata;
+		}
+		const ActivationFunction& actfunc() const {
+			return (*this)->actfunc;
+		}
+		LayerParams& params() {
+			return (*this)->params;
+		}
+		LayerForDataCache& fordata() {
+			return (*this)->fordata;
+		}
+		LayerBackDataCache& backdata() {
+			return (*this)->backdata;
+		}
+		ActivationFunction& actfunc() {
+			return (*this)->actfunc;
+		}
+		const LinearAlgebra::Matrix& get_x_input() const {
+			return this->below().get_post_act_func_output();
+		}
+		const LinearAlgebra::Matrix& get_partial_derivatives() const {
+			return (*this)->backdata.partial_derivatives;
+		}
+		const LinearAlgebra::Matrix& get_derivatives_from_layer_above() const {
+			return this->above()->backdata.derivatives_for_layer_below;
+		}
 		const LinearAlgebra::Matrix& get_pre_act_func_output() const {
 			return (*this)->fordata.pre_act_func_output;
 		}
-		void update_data_cache(const LinearAlgebra::Matrix x_data) = 0;
-		void update_data_cache() {
-			this->update_data_cache(this->get_input());
+		const LinearAlgebra::Matrix& get_post_act_func_output() const {
+			return (*this)->fordata.post_act_func_output;
 		}
-	};
-
-	class ForPropIter : public MachineLearning::PropIter, public std::list<LayerStruct>::iterator {
 	public:
-		using std::list<LayerStruct>::iterator::iterator;
-		MachineLearning::LayerStruct& operator*() {
-			return this->std::list<LayerStruct>::iterator::operator*();
+		const LinearAlgebra::Matrix& get_weights() const {
+			return this->params().get_weights();
 		}
-		ForPropIter(const std::list<LayerStruct>::iterator& i) {
-			this->std::list<LayerStruct>::iterator::operator=(i);
+		const LinearAlgebra::Matrix& get_biases() const {
+			return this->params().get_biases();
 		}
-		const LinearAlgebra::Matrix& get_input() const {
-			return std::prev(*this)->fordata.post_act_func_output;
-		}
-		void update_data_cache(const LinearAlgebra::Matrix x_data) {
-			(*this)->fordata.pre_act_func_output = (*this)->params(x_data);
-			(*this)->fordata.post_act_func_output = (*this)->actfunc(this->get_pre_act_func_output());
-		}
-	};
-	
-	class BackPropIter : public MachineLearning::PropIter, public std::list<LayerStruct>::reverse_iterator {
-	public:
-		using std::list<LayerStruct>::reverse_iterator::reverse_iterator;
-		MachineLearning::LayerStruct& operator*() {
-			return this->std::list<LayerStruct>::reverse_iterator::operator*();
-		}
-		BackPropIter(const std::list<LayerStruct>::reverse_iterator& i) {
-			this->std::list<LayerStruct>::reverse_iterator::operator=(i);
-		}
-		const LinearAlgebra::Matrix& get_input() const {
-			return std::prev(*this)->backdata.derivatives_for_next_layer;
-		}
-		void update_data_cache(const LinearAlgebra::Matrix x_data) {
-			LinearAlgebra::Matrix tmp_naive_derivatives = calc_naive_derivatives();
-			(*this).backdata.partial_derivatives = calc_partial_derivatives(tmp_naive_derivatives);
-			/*(*this).backdata.derivatives_for_next_layer = [THING]*/
-		}
-		LayerParams calc_partial_derivatives(const LinearAlgebra::Matrix& naive_derivatives) {
-			LinearAlgebra::Matrix w_ret;
-			LinearAlgebra::Matrix b_ret;
-			/*Calculate the partials*/
-			LayerParams ret(w_ret,b_ret);
+		PropIter<T> above() const {
+			PropIter<T> ret;
+			if(std::is_same<T,std::list<LayerStruct>::iterator>::value) {
+				ret = std::next(*this);
+			} else {
+				ret = std::prev(*this);
+			}
 			return ret;
 		}
-		LinearAlgebra::Matrix calc_derivatives_for_next_layer(const LinearAlgebra::Matrix& naive_derivatives) {
-			
+		PropIter<T> below() const {
+			PropIter<T> ret;
+			if(std::is_same<T,std::list<LayerStruct>::reverse_iterator>::value) {
+				ret = std::next(*this);
+			} else {
+				ret = std::prev(*this);
+			}
+			return ret;
+
 		}
-		LayerParams calc_naive_derivatives() {
-			return (*this).actfunc.ddx(this->get_pre_act_func_output());
+	protected:
+		virtual void update_data_cache() {} // Change to pure virtual
+	};
+
+	class ForPropIter : public MachineLearning::PropIter<std::list<LayerStruct>::iterator> {
+	public:
+		// Constructors
+		using PropIter::PropIter;				
+
+		// Original functions
+		/**
+		 * @brief Updates the forward propagation data cache
+		 * @param Input data AKA post-activation output from the previous layer (unless this is the input layer)
+		 */
+		void update_data_cache(const LinearAlgebra::Matrix& x_data) {
+			this->fordata().pre_act_func_output = (*this)->params(x_data);
+			this->fordata().post_act_func_output = (*this)->actfunc(this->get_pre_act_func_output());
+		}
+		void update_data_cache() {
+			this->update_data_cache(this->get_x_input());
 		}
 	};
 
-	class Net : public std::list<MachineLearning::LayerStruct> {
-	public:
-		using std::list<MachineLearning::LayerStruct>::list;
-		Net() /*: std::list<MachineLearning::LayerParams>::list()*/ {}
-		Net(std::vector<uint> def) : Net() {
-			for (uint i = 0; i < def.size()-1; ++i) {
-				uint num_inputs = def[i];
-				uint num_outputs = def[i+1];
-				MachineLearning::LayerStruct tmp(num_inputs,num_outputs);
-				this->push_back(tmp);
-			}
+	class BackPropIter : public MachineLearning::PropIter<std::list<LayerStruct>::reverse_iterator> {
+	protected:
+		LinearAlgebra::uint get_num_data_points() const {
+			assert(this->get_post_act_func_output().get_num_rows()>0);
+			assert(this->get_post_act_func_output().get_num_cols()>0);
+			return this->get_post_act_func_output().get_num_cols();
 		}
-	}; 
+	public:
+		using PropIter::PropIter;
+		void update_data_cache(const LinearAlgebra::Matrix& derivatives_from_layer_above, const LinearAlgebra::Matrix& x_data) {
+			PRINT_LOC(x_data);
+			this->backdata().naive_derivatives = this->actfunc().ddx(x_data);
+			this->backdata().derivatives_for_layer_below.resize(MINDEX(this->get_num_inputs(),this->get_num_data_points()));
+			LinearAlgebra::Matrix pd_weights(this->get_weights().size());
+			LinearAlgebra::Matrix pd_biases(this->get_biases().size());
+
+			assert(this->backdata().naive_derivatives.size()==derivatives_from_layer_above.size());
+
+			for (uint data_index = 0; data_index < this->get_num_data_points(); ++data_index) {
+				PRINT_LOC(data_index);
+				for (uint node_index = 0; node_index < this->get_num_outputs(); ++node_index) {
+					PRINT_LOC(node_index);
+					// Initialize naive derivative mindex
+					LinearAlgebra::mindex_t nd_m = MINDEX(node_index,data_index);
+					PRINT_LOC(nd_m);
+					PRINT_LOC(this->backdata().naive_derivatives.size());
+					PRINT_LOC(derivatives_from_layer_above.size());
+					LinearAlgebra::scalar_t f_prime_X_g_prime_tmp = (this->backdata().naive_derivatives[nd_m])*(derivatives_from_layer_above[nd_m]);
+					PRINT_LOC(f_prime_X_g_prime_tmp);
+					for (uint weight_index = 0; weight_index < this->get_num_inputs(); ++weight_index) {
+						PRINT_LOC(weight_index);
+						// Initialize weights and x_data mindices
+						LinearAlgebra::mindex_t w_m = MINDEX(node_index,weight_index);
+						LinearAlgebra::mindex_t x_m = MINDEX(weight_index,data_index);
+
+						// Do calculations for partial derivatives
+						pd_weights[w_m] = (x_data[x_m])*f_prime_X_g_prime_tmp;
+
+						// Do calculations for derivatives to be passed on to layer below
+						this->backdata().derivatives_for_layer_below[w_m] = this->get_weights()[w_m]*f_prime_X_g_prime_tmp;
+
+					} // weight_index
+				} // node_index
+			} // data_index
+			this->backdata().partial_derivatives = (LayerParams){pd_weights,pd_biases};
+		}
+		void update_data_cache() {
+			this->update_data_cache(this->get_derivatives_from_layer_above(),this->get_x_input());
+		}
+		void update_data_cache_input_layer(const LinearAlgebra::Matrix& x_data) {
+			this->update_data_cache(this->get_derivatives_from_layer_above(),x_data);
+		}
+		void update_data_cache_output_layer(const LinearAlgebra::Matrix& derivatives_from_error_func) {
+			this->update_data_cache(derivatives_from_error_func,this->get_x_input());
+		}
+	};
 } //MachineLearning
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::LayerParams& lp);
