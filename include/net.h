@@ -10,6 +10,7 @@
 namespace MachineLearning {
 
 	typedef std::list<MachineLearning::LayerParams> Gradient;
+	typedef std::vector<MachineLearning::uint> NetDef;
 
 	// /**
 	//  * @brief Calculates the error function
@@ -54,7 +55,7 @@ namespace MachineLearning {
 	public:
 		using std::list<LayerStruct>::list;
 		Net() : std::list<LayerStruct>::list() {}
-		Net(std::vector<uint> def) : Net() {
+		Net(NetDef def) : Net() {
 			for (uint i = 0; i < def.size()-1; ++i) {
 				uint num_inputs = def[i];
 				uint num_outputs = def[i+1];
@@ -62,7 +63,7 @@ namespace MachineLearning {
 				this->push_back(tmp);
 			}
 		}
-		Net(std::vector<uint> def, bool rand) : Net(def) {
+		Net(NetDef def, bool rand) : Net(def) {
 			if(rand) {
 				for (Net::iterator i = this->begin(); i != this->end(); ++i) {
 					i->params.randomize();

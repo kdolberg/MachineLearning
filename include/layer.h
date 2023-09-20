@@ -122,13 +122,13 @@ namespace MachineLearning {
 		/**
 		 * @brief Returns the number of inputs of the layer in question
 		 */
-		LinearAlgebra::uint get_num_inputs() const {
+		uint get_num_inputs() const {
 			return this->params().get_num_inputs();
 		}
 		/**
 		 * @brief Returns the number of outputs of the layer in question
 		 */
-		LinearAlgebra::uint get_num_outputs() const {
+		uint get_num_outputs() const {
 			return this->params().get_num_outputs();
 		}
 		/**
@@ -242,7 +242,7 @@ namespace MachineLearning {
 
 	class BackPropIter : public MachineLearning::PropIter<std::list<LayerStruct>::reverse_iterator> {
 	protected:
-		LinearAlgebra::uint get_num_data_points() const {
+		uint get_num_data_points() const {
 			assert(this->get_post_act_func_output().get_num_rows()>0);
 			assert(this->get_post_act_func_output().get_num_cols()>0);
 			return this->get_post_act_func_output().get_num_cols();
@@ -268,7 +268,7 @@ namespace MachineLearning {
 					// PRINT_LOC(nd_m);
 					// PRINT_LOC(this->backdata().naive_derivatives.size());
 					// PRINT_LOC(derivatives_from_layer_above.size());
-					LinearAlgebra::scalar_t f_prime_X_g_prime_tmp = (this->backdata().naive_derivatives[nd_m])*(derivatives_from_layer_above[nd_m]);
+					scalar_t f_prime_X_g_prime_tmp = (this->backdata().naive_derivatives[nd_m])*(derivatives_from_layer_above[nd_m]);
 					// PRINT_LOC(f_prime_X_g_prime_tmp);
 					for (uint weight_index = 0; weight_index < this->get_num_inputs(); ++weight_index) {
 						// PRINT_LOC(weight_index);
