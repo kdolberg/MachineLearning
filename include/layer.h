@@ -8,10 +8,12 @@
 #define COLUMNS_IN_BASE_MATRIX 1
 
 namespace MachineLearning {
+	class Net;
 	/**
 	 * @brief Defines the structure of a layer's parameters
 	 */
 	class LayerParams {
+		friend MachineLearning::Net;
 	private:
 		LinearAlgebra::Matrix weights;
 		LinearAlgebra::Matrix biases;
