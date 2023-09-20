@@ -24,10 +24,10 @@ namespace MachineLearning {
 		 * */
 
 		// ActivationFunction(){}
-		// ActivationFunction(const ActivationFunctionStruct& afs) { // I don't think this constructor is used. Delete if so
-		// 	this->function = afs.function;
-		// 	this->derivative = afs.derivative;
-		// }
+		ActivationFunction(const ActivationFunctionStruct& afs) { // I don't think this constructor is used. Delete if so
+			this->function = afs.function;
+			this->derivative = afs.derivative;
+		}
 		LinearAlgebra::scalar_t operator()(LinearAlgebra::scalar_t in) const {
 			return this->function(in);
 		}
@@ -45,6 +45,11 @@ namespace MachineLearning {
 		LinearAlgebra::scalar_t ddx(LinearAlgebra::scalar_t in) const {
 			return this->derivative(in);
 		}
+		/**
+		 * @brief Calculates (d/dt){THIS_FUNCTION(t)}
+		 * @param t Any matrix-like object
+		 * @return 
+		 */
 		template <LinearAlgebra::MATRIXLIKE T>
 		T ddx(const T& t) const {
 			assert(T::is_matrix_like());
@@ -58,11 +63,13 @@ namespace MachineLearning {
 		}
 	};
 	/**
-	 * @brief Returns the sigmoid function
+	 * @brief Returns the sigmoid ActivationFunction
+	 * @return ____ ActivationFunction
 	 */
 	ActivationFunction get_sigmoid();
 	/**
-	 * Returns the leaky ReLU function
+	 * Returns the leaky ReLU ActivationFunction
+	 * @return ____ ActivationFunction
 	 */
 	ActivationFunction get_leaky_ReLU();
 } //MachineLearning
