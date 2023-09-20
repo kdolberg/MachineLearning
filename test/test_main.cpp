@@ -141,26 +141,17 @@ void PropIter_tests() {
 	MachineLearning::TrainingDataset td = {LinearAlgebra::transpose(x_in),LinearAlgebra::transpose(y_out)};
 	std::vector<MachineLearning::uint> def = {2,1,1,1,1,1};
 	MachineLearning::Net n(def,true);
-
-	std::cout << "FORWARD\n";
 	MachineLearning::ForPropIter fpi = n.begin();
 	fpi.update_data_cache(td.x);
 	++fpi;
 	for(; fpi != n.end(); ++fpi) {
-		std::cout << fpi->params << std::endl;
 		fpi.update_data_cache();
 	}
 	MachineLearning::BackPropIter bpi = n.rbegin();
 	bpi.update_data_cache_output_layer(LinearAlgebra::transpose(y_incorrect) - td.y);
 	++bpi;
-	std::cout << "BACKWARD\n";
 	for(; bpi != std::prev(n.rend()); ++bpi) {
-		std::cout << bpi->params << std::endl;
-		try {
-			bpi.update_data_cache();
-		} catch (ConfirmationFailure& e) {
-			std::cerr << e.what() << std::endl;
-		}
+		bpi.update_data_cache();
 	}
 	bpi.update_data_cache_input_layer(td.x);
 }
@@ -170,7 +161,7 @@ int main(int argc, char const *argv[]) {
 	// Net_tests();
 	activation_function_tests();
 	LayerParams_tests();
-	print_report_card();
 	PropIter_tests();
+	print_report_card();
 	return 0;
 }
