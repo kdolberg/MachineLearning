@@ -117,33 +117,60 @@ namespace MachineLearning {
 			this->T::operator=(i);
 		}
 	protected:
+		/**
+		 * @brief Returns the number of inputs of the layer in question
+		 */
 		LinearAlgebra::uint get_num_inputs() const {
 			return this->params().get_num_inputs();
 		}
+		/**
+		 * @brief Returns the number of outputs of the layer in question
+		 */
 		LinearAlgebra::uint get_num_outputs() const {
 			return this->params().get_num_outputs();
 		}
+		/**
+		 * @brief Returns the LayerParams object in the LayerStruct in question
+		 */
 		const LayerParams& params() const {
 			return (*this)->params;
 		}
+		/**
+		 * @brief Returns the LayerForDataCache
+		 */
 		const LayerForDataCache& fordata() const {
 			return (*this)->fordata;
 		}
+		/**
+		 * @brief Returns the LayerBackDataCache
+		 */
 		const LayerBackDataCache& backdata() const {
 			return (*this)->backdata;
 		}
+		/**
+		 * @brief Returns the ActivationFunction
+		 */
 		const ActivationFunction& actfunc() const {
 			return (*this)->actfunc;
 		}
+		/**
+		 * @brief Returns the LayerParams object in the LayerStruct in question
+		 */
 		LayerParams& params() {
 			return (*this)->params;
 		}
 		LayerForDataCache& fordata() {
 			return (*this)->fordata;
 		}
+		/**
+		 * @brief Returns the LayerBackDataCache
+		 */
 		LayerBackDataCache& backdata() {
 			return (*this)->backdata;
 		}
+		/**
+		 * @brief Returns the ActivationFunction
+		 */
 		ActivationFunction& actfunc() {
 			return (*this)->actfunc;
 		}
