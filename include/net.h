@@ -70,13 +70,19 @@ namespace MachineLearning {
 				}
 			}
 		}
-		// std::string str() const {
-		// 	std::stringstream ss;
-		// 	for (std::list<Layer>::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
-		// 		ss << (MachineLearning::LayerParams)(*i) << std::endl;
-		// 	}
-		// 	return ss.str();
-		// }
+		Net(NetDef def, scalar_t s) : Net(def) {
+			for (Net::iterator i = this->begin(); i != this->end(); ++i) {
+				i->params.weights.set_contents(s);
+				i->params.biases.set_contents(s);
+			}
+		}
+		std::string str() const {
+			std::stringstream ss;
+			for (Net::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
+				ss << i->params << std::endl;
+			}
+			return ss.str();
+		}
 		// void train(const TrainingDataset& data);
 		// void train(const TrainingDataset& data, int iters);
 		// Gradient get_gradient() const;
