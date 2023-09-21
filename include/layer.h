@@ -215,7 +215,7 @@ namespace MachineLearning {
 			return MachineLearning::below(*this);
 		}
 	protected:
-		virtual void update_data_cache() = 0; // Change to pure virtual
+		virtual void update_data_cache() = 0;
 	};
 
 	class ForPropIter : public MachineLearning::PropIter<std::list<LayerStruct>::iterator> {
