@@ -3,6 +3,6 @@
 
 #include "layer.h"
 #include "UnitTest.h"
-#include "net.h"
+#include "NetTest.h"
 
 #endif //MAIN_H

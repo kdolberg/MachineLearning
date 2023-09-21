@@ -6,44 +6,6 @@ void la_matrix_tests() {
 	std::cout << LinearAlgebra::transpose(x) << std::endl;
 }
 
-typedef struct NetUintIter {
-	std::vector<MachineLearning::uint>::const_iterator def;
-	MachineLearning::Net::const_iterator n;
-	NetUintIter& operator++() {
-		++this->def;
-		++this->n;
-		return (*this);
-	}
-	bool operator==(const NetUintIter& iter) {
-		if((iter.n)==(this->n)) {
-			assert((std::next(iter.def)==this->def) || (iter.def==std::next(this->def)));
-			return true;
-		} else {
-			return false;
-		}
-	}
-} NetUintIter;
-
-bool Net_constructor_gives_correct_num_inputs() {
-	std::vector<MachineLearning::uint> def = {5,4,3,2,1};
-	MachineLearning::Net n(def);
-	bool all_nums_correct = true;
-	for (NetUintIter i = {def.cbegin(),n.cbegin()}; i != (NetUintIter){def.cend(),n.cend()}; ++i) {
-		std::cout << "# inputs: " << i.n->params.get_num_inputs() << std::endl;
-		std::cout << (i.n)->params << std::endl;
-		all_nums_correct = all_nums_correct && (i.n->params.get_num_inputs()==*(i.def));
-	}
-	return all_nums_correct;
-}
-
-void Net_tests() {
-	TEST_RETURN_FUNC(Net_constructor_gives_correct_num_inputs(),==,true);
-	MachineLearning::Net n((MachineLearning::NetDef){2,1,1,1,1,1},1.0f);
-	operator<<(std::cout,n);
-	// LinearAlgebra::Matrix x(2),y(MINDEX(1,2));
-	// TrainingDataset set = {x,y};
-}
-
 void activation_function_tests() {
 	MachineLearning::ActivationFunction relu = MachineLearning::get_leaky_ReLU();
 	TEST_RETURN_FUNC(relu(0.5f),==,0.5f);
@@ -174,7 +136,7 @@ void PropIter_tests() {
 
 int main(int argc, char const *argv[]) {
 	la_matrix_tests();
-	Net_tests();
+	NetTest::execute_all_tests();
 	activation_function_tests();
 	LayerParams_tests();
 	PropIter_tests();
