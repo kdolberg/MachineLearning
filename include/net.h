@@ -21,14 +21,12 @@ namespace MachineLearning {
 	// LinearAlgebra::Matrix error		(	const LinearAlgebra::Matrix& net_output_data,
 	// 									const LinearAlgebra::Matrix& dataset_y_data		);
 
-	// /**
-	//  * @brief Derivative of LinearAlgebra::Matrix MachineLearning::error (const LinearAlgebra::Matrix& net_output_data,const LinearAlgebra::Matrix& dataset_y_data)
-	//  * @param net_output_data Output datset from the neural net for the current dataset and current parameters
-	//  * @param dataset_y_data Y-data from the training dataset
-	//  * @return Matrix representing derivatives of the error vector (column) for each datapoint
-	//  */
-	// LinearAlgebra::Matrix error_ddx	(	const LinearAlgebra::Matrix& net_output_data,
-	// 									const LinearAlgebra::Matrix& dataset_y_data		);
+	/**
+	 * @brief Derivative of LinearAlgebra::Matrix MachineLearning::error (const LinearAlgebra::Matrix& net_output_data,const LinearAlgebra::Matrix& dataset_y_data)
+	 * @param net_output_data Output datset from the neural net for the current dataset and current parameters
+	 * @param dataset_y_data Y-data from the training dataset
+	 * @return Matrix representing derivatives of the error vector (column) for each datapoint
+	 */
 
 	// /**
 	//  * @brief Performs forward propagation
@@ -90,7 +88,6 @@ namespace MachineLearning {
 
 } // MachineLearning
 
-// MachineLearning::Net& operator+=(MachineLearning::Net& a, MachineLearning::Gradient& b);
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
 

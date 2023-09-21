@@ -13,9 +13,21 @@ namespace MachineLearning {
 	class BackPropIter;
 	class ForPropIter;
 
+	/**
+	 * @brief Returns an iterator pointing to the PREVIOUS element
+	 */
 	BackPropIter above(BackPropIter it);
+	/**
+	 * @brief Returns an iterator pointing to the NEXT element
+	 */
 	BackPropIter below(BackPropIter it);
+	/**
+	 * @brief Returns an iterator pointing to the NEXT element
+	 */
 	ForPropIter above(ForPropIter it);
+	/**
+	 * @brief Returns an iterator pointing to the PREVIOUS element
+	 */
 	ForPropIter below(ForPropIter it);
 
 	class Net;
@@ -218,6 +230,9 @@ namespace MachineLearning {
 		virtual void update_data_cache() = 0;
 	};
 
+	/**
+	 * @brief Special iterator class with member functions that implement the forward propgation algorithm
+	 */
 	class ForPropIter : public MachineLearning::PropIter<std::list<LayerStruct>::iterator> {
 	public:
 		// Constructors
@@ -238,6 +253,9 @@ namespace MachineLearning {
 		}
 	};
 
+	/**
+	 * @brief Iterator with special member functions to implement the backpropagation algorithm
+	 */
 	class BackPropIter : public MachineLearning::PropIter<std::list<LayerStruct>::reverse_iterator> {
 	protected:
 		uint get_num_data_points() const {
@@ -247,6 +265,12 @@ namespace MachineLearning {
 		}
 	public:
 		using PropIter<std::list<LayerStruct>::reverse_iterator>::PropIter;
+
+		/**
+		 * @brief This function is the red-meat of backpropagation
+		 * @param derivatives_from_layer_above Derivatives inherited from the previous layer. If this is the output layer, this will be the dE/dy
+		 * @param x_data The original input data for this layer.
+		 */
 		void update_data_cache(const LinearAlgebra::Matrix& derivatives_from_layer_above, const LinearAlgebra::Matrix& x_data) {
 			// PRINT_LOC(x_data);
 			this->backdata().naive_derivatives = this->actfunc().ddx(this->get_pre_act_func_output());
