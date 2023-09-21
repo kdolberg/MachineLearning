@@ -2,7 +2,6 @@
 #define TYPES_H
 
 #include "linear_algebra.h"
-#include "activation_function.h"
 
 #define UNUSED(var) {(void)(var);}
 

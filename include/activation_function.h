@@ -2,7 +2,7 @@
 #define ACTIVATION_FUNCTION_H
 
 #include <functional>
-#include "linear_algebra.h"
+#include "types.h"
 
 namespace MachineLearning {
 	typedef struct {
@@ -17,14 +17,7 @@ namespace MachineLearning {
 	public:
 		using ActivationFunctionStruct::ActivationFunctionStruct;
 
-		/**
-		 * COMMENTED OUT THESE CONSTRUCTORS.
-		 * I DON'T THINK THEY ARE USED.
-		 * DELETE THIS COMMENT AND THE ONE BELOW ONCE THAT IS CONFIRMED.
-		 * */
-
-		// ActivationFunction(){}
-		ActivationFunction(const ActivationFunctionStruct& afs) { // I don't think this constructor is used. Delete if so
+		ActivationFunction(const ActivationFunctionStruct& afs) {
 			this->function = afs.function;
 			this->derivative = afs.derivative;
 		}
