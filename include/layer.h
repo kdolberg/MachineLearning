@@ -272,28 +272,17 @@ namespace MachineLearning {
 		 * @param x_data The original input data for this layer.
 		 */
 		void update_data_cache(const LinearAlgebra::Matrix& derivatives_from_layer_above, const LinearAlgebra::Matrix& x_data) {
-			// PRINT_LOC(x_data);
 			this->backdata().naive_derivatives = this->actfunc().ddx(this->get_pre_act_func_output());
 			this->backdata().derivatives_for_layer_below.resize(MINDEX(this->get_num_inputs(),this->get_num_data_points()));
 			LinearAlgebra::Matrix pd_weights(this->get_weights().size());
 			LinearAlgebra::Matrix pd_biases(this->get_biases().size());
-			// PRINT_LOC(this->backdata().naive_derivatives.size());
-			// PRINT_LOC(derivatives_from_layer_above.size());
 			assert(this->backdata().naive_derivatives.size()==derivatives_from_layer_above.size());
-
 			for (uint data_index = 0; data_index < this->get_num_data_points(); ++data_index) {
-				// PRINT_LOC(data_index);
 				for (uint node_index = 0; node_index < this->get_num_outputs(); ++node_index) {
-					// PRINT_LOC(node_index);
 					// Initialize naive derivative mindex
 					LinearAlgebra::mindex_t nd_m = MINDEX(node_index,data_index);
-					// PRINT_LOC(nd_m);
-					// PRINT_LOC(this->backdata().naive_derivatives.size());
-					// PRINT_LOC(derivatives_from_layer_above.size());
 					scalar_t f_prime_X_g_prime_tmp = (this->backdata().naive_derivatives[nd_m])*(derivatives_from_layer_above[nd_m]);
-					// PRINT_LOC(f_prime_X_g_prime_tmp);
 					for (uint weight_index = 0; weight_index < this->get_num_inputs(); ++weight_index) {
-						// PRINT_LOC(weight_index);
 						// Initialize weights and x_data mindices
 						LinearAlgebra::mindex_t w_m = MINDEX(node_index,weight_index);
 						LinearAlgebra::mindex_t x_m = MINDEX(weight_index,data_index);
