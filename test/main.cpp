@@ -141,7 +141,7 @@ void ForProp_test() {
 	{
 		MachineLearning::NetDef def = {2,1};
 		MachineLearning::Net n(def,1.0f);
-		MachineLearning::ForPropIter fpi = n.begin();
+		MachineLearning::ForPropIter fpi = (MachineLearning::ForPropIter)n.std::list<MachineLearning::LayerStruct>::begin();
 		LinearAlgebra::Matrix input = {{1},{1}};
 		TEST_VOID_FUNC(fpi.update_data_cache(input),fpi.get_post_act_func_output(),==,((LinearAlgebra::Matrix){{3}}));
 		TEST_RETURN_FUNC(n.forward_propagate(input),==,((LinearAlgebra::Matrix){{3}}));
@@ -157,16 +157,16 @@ void PropIter_tests() {
 	MachineLearning::TrainingDataset td = {LinearAlgebra::transpose(x_in),LinearAlgebra::transpose(y_out)};
 	std::vector<MachineLearning::uint> def = {2,1,1,1,1,1};
 	MachineLearning::Net n(def,true);
-	MachineLearning::ForPropIter fpi = n.begin();
+	MachineLearning::ForPropIter fpi = (MachineLearning::ForPropIter)n.std::list<MachineLearning::LayerStruct>::begin();
 	fpi.update_data_cache(td.x);
 	++fpi;
-	for(; fpi != n.end(); ++fpi) {
+	for(; fpi != (MachineLearning::ForPropIter)n.std::list<MachineLearning::LayerStruct>::end(); ++fpi) {
 		fpi.update_data_cache();
 	}
-	MachineLearning::BackPropIter bpi = n.rbegin();
+	MachineLearning::BackPropIter bpi = (MachineLearning::BackPropIter)n.std::list<MachineLearning::LayerStruct>::rbegin();
 	bpi.update_data_cache_output_layer(LinearAlgebra::transpose(y_incorrect) - td.y);
 	++bpi;
-	for(; bpi != std::prev(n.rend()); ++bpi) {
+	for(; bpi != std::prev(n.std::list<MachineLearning::LayerStruct>::rend()); ++bpi) {
 		bpi.update_data_cache();
 	}
 	bpi.update_data_cache_input_layer(td.x);

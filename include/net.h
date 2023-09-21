@@ -88,6 +88,7 @@ namespace MachineLearning {
 			}
 			return ss.str();
 		}
+	protected:
 		// void train(const TrainingDataset& data);
 		// void train(const TrainingDataset& data, int iters);
 		/**
@@ -106,6 +107,7 @@ namespace MachineLearning {
 		ForPropIter begin() {
 			return (this->std::list<LayerStruct>::begin());
 		}
+	public:
 		LinearAlgebra::Matrix forward_propagate(const LinearAlgebra::Matrix& x_data) {
 			for (ForPropIter fpi = this->begin(); fpi != this->end(); ++fpi) {
 				if(fpi == this->begin()) {
