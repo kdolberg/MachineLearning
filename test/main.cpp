@@ -137,7 +137,19 @@ MachineLearning::Net make_uniform_net(LinearAlgebra::scalar_t num) {
 	return MachineLearning::Net();
 }
 
+void ForProp_test() {
+	{
+		MachineLearning::NetDef def = {2,1};
+		MachineLearning::Net n(def,1.0f);
+		MachineLearning::ForPropIter fpi = n.begin();
+		LinearAlgebra::Matrix input = {{1},{1}};
+		TEST_VOID_FUNC(fpi.update_data_cache(input),fpi.get_post_act_func_output(),==,((LinearAlgebra::Matrix){{3}}));
+		TEST_RETURN_FUNC(n.forward_propagate(input),==,((LinearAlgebra::Matrix){{3}}));
+	}
+}
+
 void PropIter_tests() {
+	ForProp_test();
 	LinearAlgebra::Matrix x_in = {{1,1},{5,5},{10,10},{0.5,0.5}};
 	LinearAlgebra::Matrix y_out = {{5},{5},{5},{5}};
 	LinearAlgebra::Matrix y_incorrect = {{1},{1},{1},{1}};
