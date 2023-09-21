@@ -198,6 +198,7 @@ namespace MachineLearning {
 		ActivationFunction& actfunc() {
 			return (*this)->actfunc;
 		}
+	public:
 		const LinearAlgebra::Matrix& get_x_input() const {
 			return this->below().get_post_act_func_output();
 		}
@@ -213,7 +214,6 @@ namespace MachineLearning {
 		const LinearAlgebra::Matrix& get_post_act_func_output() const {
 			return (*this)->fordata.post_act_func_output;
 		}
-	public:
 		const LinearAlgebra::Matrix& get_weights() const {
 			return this->params().get_weights();
 		}
@@ -227,7 +227,7 @@ namespace MachineLearning {
 			return MachineLearning::below(*this);
 		}
 	protected:
-		virtual void update_data_cache() = 0;
+		virtual void update_data_cache() {}
 	};
 
 	/**
