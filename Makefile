@@ -60,6 +60,6 @@ clean_all:
 all: $(TARGET)
 
 run: $(TARGET)
-	gdb $(TARGET).exe
+	gdb $(TARGET).exe -x gdb_cmd
 
 .PHONY: clean clean_linalg linalg clean_all run all make_linalg test build_test
