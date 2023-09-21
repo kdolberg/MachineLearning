@@ -7,6 +7,10 @@
 #include "layer.h"
 #include "activation_function.h"
 
+#define LEARNING_RATE 0.1
+
+class NetTest;
+
 namespace MachineLearning {
 
 	typedef std::list<MachineLearning::LayerParams> Gradient;
@@ -27,6 +31,8 @@ namespace MachineLearning {
 	 * @param dataset_y_data Y-data from the training dataset
 	 * @return Matrix representing derivatives of the error vector (column) for each datapoint
 	 */
+	LinearAlgebra::Matrix error_ddx	(	const LinearAlgebra::Matrix& net_output_data,
+										const LinearAlgebra::Matrix& dataset_y_data		);
 
 	// /**
 	//  * @brief Performs forward propagation
@@ -50,6 +56,7 @@ namespace MachineLearning {
 
 
 	class Net : public std::list<LayerStruct> {
+		friend NetTest;
 	public:
 		using std::list<LayerStruct>::list;
 		Net() : std::list<LayerStruct>::list() {}
@@ -83,11 +90,60 @@ namespace MachineLearning {
 		}
 		// void train(const TrainingDataset& data);
 		// void train(const TrainingDataset& data, int iters);
-		// Gradient get_gradient() const;
+		/**
+		 * @brief
+		 * @return
+		 */
+		BackPropIter rend() {
+			return (this->std::list<LayerStruct>::rend());
+		}
+		BackPropIter rbegin() {
+			return (this->std::list<LayerStruct>::rbegin());
+		}
+		ForPropIter end() {
+			return (this->std::list<LayerStruct>::end());
+		}
+		ForPropIter begin() {
+			return (this->std::list<LayerStruct>::begin());
+		}
+		LinearAlgebra::Matrix forward_propagate(const LinearAlgebra::Matrix& x_data) {
+			for (ForPropIter fpi = this->begin(); fpi != this->end(); ++fpi) {
+				if(fpi == this->begin()) {
+					fpi.update_data_cache(x_data);
+				} else {
+					fpi.update_data_cache();
+				}
+			}
+			return this->back().fordata.post_act_func_output;
+		}
+		void backward_propagate(const LinearAlgebra::Matrix& x_data,const LinearAlgebra::Matrix& dEdy) {
+			for (BackPropIter bpi = this->rbegin(); bpi != this->rend(); ++bpi) {
+				if (bpi==this->rbegin()) {
+					bpi.update_data_cache_output_layer(dEdy);
+				} else if (bpi==this->rend().above()) {
+					bpi.update_data_cache_input_layer(x_data);
+				} else {
+					bpi.update_data_cache();
+				}
+			}
+		}
+		void learn(const TrainingDataset& data) {
+			LinearAlgebra::Matrix net_y_out = this->forward_propagate(data.x);
+			LinearAlgebra::Matrix dEdy = error_ddx(data.x,net_y_out);
+			this->backward_propagate(data.x,dEdy);
+		}
+		Gradient extract_gradient() const {
+			Gradient ret;
+			for (auto i = this->cbegin(); i != this->cend(); ++i) {
+				ret.push_back(i->backdata.partial_derivatives);
+			}
+			return ret;
+		}
 	}; // Net
 
 } // MachineLearning
 
+MachineLearning::Net& operator+=(MachineLearning::Net& a, MachineLearning::Gradient& b);
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
 
