@@ -3,11 +3,21 @@
 
 #include <list>
 #include "types.h"
+#include "activation_function.h"
 #include "confirm.h"
 
 #define COLUMNS_IN_BASE_MATRIX 1
 
 namespace MachineLearning {
+
+	class BackPropIter;
+	class ForPropIter;
+
+	BackPropIter above(BackPropIter it);
+	BackPropIter below(BackPropIter it);
+	ForPropIter above(ForPropIter it);
+	ForPropIter below(ForPropIter it);
+
 	class Net;
 	/**
 	 * @brief Defines the structure of a layer's parameters
@@ -199,32 +209,23 @@ namespace MachineLearning {
 			return this->params().get_biases();
 		}
 		PropIter<T> above() const {
-			PropIter<T> ret;
-			if(std::is_same<T,std::list<LayerStruct>::iterator>::value) {
-				ret = std::next(*this);
-			} else {
-				ret = std::prev(*this);
-			}
-			return ret;
+			return MachineLearning::above(*this);
 		}
 		PropIter<T> below() const {
-			PropIter<T> ret;
-			if(std::is_same<T,std::list<LayerStruct>::reverse_iterator>::value) {
-				ret = std::next(*this);
-			} else {
-				ret = std::prev(*this);
-			}
-			return ret;
-
+			return MachineLearning::below(*this);
 		}
 	protected:
-		virtual void update_data_cache() {} // Change to pure virtual
+		virtual void update_data_cache() = 0; // Change to pure virtual
 	};
 
 	class ForPropIter : public MachineLearning::PropIter<std::list<LayerStruct>::iterator> {
 	public:
 		// Constructors
-		using PropIter::PropIter;				
+		using PropIter<std::list<LayerStruct>::iterator>::PropIter;
+
+		virtual void update_data_cache() {
+			this->update_data_cache(this->get_x_input());
+		}
 
 		// Original functions
 		/**
@@ -234,9 +235,6 @@ namespace MachineLearning {
 		void update_data_cache(const LinearAlgebra::Matrix& x_data) {
 			this->fordata().pre_act_func_output = (*this)->params(x_data);
 			this->fordata().post_act_func_output = (*this)->actfunc(this->get_pre_act_func_output());
-		}
-		void update_data_cache() {
-			this->update_data_cache(this->get_x_input());
 		}
 	};
 
@@ -248,7 +246,7 @@ namespace MachineLearning {
 			return this->get_post_act_func_output().get_num_cols();
 		}
 	public:
-		using PropIter::PropIter;
+		using PropIter<std::list<LayerStruct>::reverse_iterator>::PropIter;
 		void update_data_cache(const LinearAlgebra::Matrix& derivatives_from_layer_above, const LinearAlgebra::Matrix& x_data) {
 			// PRINT_LOC(x_data);
 			this->backdata().naive_derivatives = this->actfunc().ddx(this->get_pre_act_func_output());
@@ -287,7 +285,7 @@ namespace MachineLearning {
 			} // data_index
 			this->backdata().partial_derivatives = (LayerParams){pd_weights,pd_biases};
 		}
-		void update_data_cache() {
+		virtual void update_data_cache() {
 			this->update_data_cache(this->get_derivatives_from_layer_above(),this->get_x_input());
 		}
 		void update_data_cache_input_layer(const LinearAlgebra::Matrix& x_data) {

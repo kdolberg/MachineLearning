@@ -20,3 +20,16 @@ std::ostream& operator<<(std::ostream& os,const MachineLearning::LayerParams& lp
 	}
 	return os;
 }
+
+MachineLearning::BackPropIter MachineLearning::above(MachineLearning::BackPropIter it){
+	return (--it);
+}
+MachineLearning::BackPropIter MachineLearning::below(MachineLearning::BackPropIter it){
+	return (++it);
+}
+MachineLearning::ForPropIter MachineLearning::above(MachineLearning::ForPropIter it){
+	return (++it);
+}
+MachineLearning::ForPropIter MachineLearning::below(MachineLearning::ForPropIter it){
+	return (--it);
+}
