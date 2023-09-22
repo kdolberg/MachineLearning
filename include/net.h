@@ -122,25 +122,13 @@ namespace MachineLearning {
 			return this->back().fordata.post_act_func_output;
 		}
 		void backward_propagate(const LinearAlgebra::Matrix& x_data,const LinearAlgebra::Matrix& dEdy) {
-			LinearAlgebra::Matrix derivatives_from_layer_above = dEdy;
-			LinearAlgebra::Matrix curr_x_data = x_data;
-			for (BackPropIter bpi = this->rbegin(); bpi != this->rend(); ++bpi) {
-				// if (bpi==this->rbegin()) {
-				// 	bpi.update_data_cache_output_layer(dEdy);
-				// } else if (bpi==this->rend().above()) {
-				// 	bpi.update_data_cache_input_layer(x_data);
-				// } else {
-				// 	bpi.update_data_cache();
-				// }
-				bpi.update_data_cache(derivatives_from_layer_above,curr_x_data);
-				derivatives_from_layer_above = bpi->backdata.derivatives_for_layer_below;
-				curr_x_data = 
+			BackPropIter bpi = this->rbegin();
+			bpi.update_data_cache_output_layer(dEdy);
+			++bpi;
+			for (; MachineLearning::next(bpi) != this->rend(); ++bpi) {
+				bpi.update_data_cache();
 			}
-		}
-		void learn(const TrainingDataset& data) {
-			LinearAlgebra::Matrix net_y_out = this->forward_propagate(data.x);
-			LinearAlgebra::Matrix dEdy = error_ddx(data.x,net_y_out);
-			this->backward_propagate(data.x,dEdy);
+			bpi.update_data_cache_input_layer(x_data);
 		}
 		Gradient calculate_gradient(const TrainingDataset& data) {
 			LinearAlgebra::Matrix net_y_out = this->forward_propagate(data.x);
@@ -151,6 +139,7 @@ namespace MachineLearning {
 		Gradient extract_gradient() const {
 			Gradient ret;
 			for (Net::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
+				std::cout << i->backdata.partial_derivatives << std::endl;
 				ret.push_back(i->backdata.partial_derivatives);
 			}
 			return ret;

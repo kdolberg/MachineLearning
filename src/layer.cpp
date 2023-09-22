@@ -34,6 +34,19 @@ MachineLearning::ForPropIter MachineLearning::below(MachineLearning::ForPropIter
 	return (--it);
 }
 
+// ForPropIter MachineLearning::next(ForPropIter it){
+// 	return (++it);
+// }
+// BackPropIter MachineLearning::next(BackPropIter it){
+// 	return (++it);
+// }
+// ForPropIter MachineLearning::prev(ForPropIter it){
+// 	return (--it);
+// }
+// BackPropIter MachineLearning::prev(BackPropIter it){
+// 	return (--it);
+// }
+
 bool operator==(const MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b) {
 	return (a.get_weights()==b.get_weights()) && (a.get_biases()==b.get_biases());
 }

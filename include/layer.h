@@ -15,6 +15,19 @@ namespace MachineLearning {
 	class BackPropIter;
 	class ForPropIter;
 
+	template <typename T>
+	T next(T it) {
+		return (++it);
+	}
+	template <typename T>
+	T prev(T it) {
+		return (--it);
+	}
+
+	// ForPropIter next(ForPropIter it);
+	// BackPropIter next(BackPropIter it);
+	// ForPropIter prev(ForPropIter it);
+	// BackPropIter prev(BackPropIter it);
 	/**
 	 * @brief Returns an iterator pointing to the PREVIOUS element
 	 */
