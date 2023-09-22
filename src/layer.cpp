@@ -33,3 +33,11 @@ MachineLearning::ForPropIter MachineLearning::above(MachineLearning::ForPropIter
 MachineLearning::ForPropIter MachineLearning::below(MachineLearning::ForPropIter it){
 	return (--it);
 }
+
+bool operator==(const MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b) {
+	return (a.get_weights()==b.get_weights()) && (a.get_biases()==b.get_biases());
+}
+
+// bool operator==(const MachineLearning::LayerParams a, const MachineLearning::LayerParams b) {
+// 	return (a.get_weights()==b.get_weights()) && (a.get_biases()==b.get_biases());
+// }

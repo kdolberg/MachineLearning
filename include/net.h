@@ -16,14 +16,17 @@ namespace MachineLearning {
 	typedef std::list<MachineLearning::LayerParams> Gradient;
 	typedef std::vector<MachineLearning::uint> NetDef;
 
-	// /**
-	//  * @brief Calculates the error function
-	//  * @param net_output_data Output datset from the neural net for the current dataset and current parameters
-	//  * @param dataset_y_data Y-data from the training dataset
-	//  * @return Matrix representing the error vector (column) for each datapoint
-	//  */
-	// LinearAlgebra::Matrix error		(	const LinearAlgebra::Matrix& net_output_data,
-	// 									const LinearAlgebra::Matrix& dataset_y_data		);
+	/**
+	 * @brief Calculates the error function
+	 * @param net_output_data Output datset from the neural net for the current dataset and current parameters
+	 * @param dataset_y_data Y-data from the training dataset
+	 * @return Matrix representing the error vector (column) for each datapoint
+	 */
+	LinearAlgebra::Matrix error		(	const LinearAlgebra::Matrix& net_output_data,
+										const LinearAlgebra::Matrix& dataset_y_data		);
+
+	scalar_t error_avg				(	const LinearAlgebra::Matrix& net_output_data,
+										const LinearAlgebra::Matrix& dataset_y_data		);
 
 	/**
 	 * @brief Derivative of LinearAlgebra::Matrix MachineLearning::error (const LinearAlgebra::Matrix& net_output_data,const LinearAlgebra::Matrix& dataset_y_data)
@@ -119,14 +122,19 @@ namespace MachineLearning {
 			return this->back().fordata.post_act_func_output;
 		}
 		void backward_propagate(const LinearAlgebra::Matrix& x_data,const LinearAlgebra::Matrix& dEdy) {
+			LinearAlgebra::Matrix derivatives_from_layer_above = dEdy;
+			LinearAlgebra::Matrix curr_x_data = x_data;
 			for (BackPropIter bpi = this->rbegin(); bpi != this->rend(); ++bpi) {
-				if (bpi==this->rbegin()) {
-					bpi.update_data_cache_output_layer(dEdy);
-				} else if (bpi==this->rend().above()) {
-					bpi.update_data_cache_input_layer(x_data);
-				} else {
-					bpi.update_data_cache();
-				}
+				// if (bpi==this->rbegin()) {
+				// 	bpi.update_data_cache_output_layer(dEdy);
+				// } else if (bpi==this->rend().above()) {
+				// 	bpi.update_data_cache_input_layer(x_data);
+				// } else {
+				// 	bpi.update_data_cache();
+				// }
+				bpi.update_data_cache(derivatives_from_layer_above,curr_x_data);
+				derivatives_from_layer_above = bpi->backdata.derivatives_for_layer_below;
+				curr_x_data = 
 			}
 		}
 		void learn(const TrainingDataset& data) {
@@ -134,9 +142,15 @@ namespace MachineLearning {
 			LinearAlgebra::Matrix dEdy = error_ddx(data.x,net_y_out);
 			this->backward_propagate(data.x,dEdy);
 		}
+		Gradient calculate_gradient(const TrainingDataset& data) {
+			LinearAlgebra::Matrix net_y_out = this->forward_propagate(data.x);
+			LinearAlgebra::Matrix dEdy = error_ddx(data.y,net_y_out);
+			this->backward_propagate(data.x,dEdy);
+			return this->extract_gradient();
+		}
 		Gradient extract_gradient() const {
 			Gradient ret;
-			for (auto i = this->cbegin(); i != this->cend(); ++i) {
+			for (Net::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
 				ret.push_back(i->backdata.partial_derivatives);
 			}
 			return ret;
@@ -148,6 +162,8 @@ namespace MachineLearning {
 MachineLearning::Net& operator+=(MachineLearning::Net& a, MachineLearning::Gradient& b);
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
+
+std::ostream& operator<<(std::ostream& os, const MachineLearning::Gradient g);
 
 // MachineLearning::NetGradIter& operator++(MachineLearning::NetGradIter& ni);
 

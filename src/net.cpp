@@ -4,12 +4,25 @@
 // 	return layers.back().get_post_act_func_output();
 // }
 
-// LinearAlgebra::Matrix MachineLearning::error(const LinearAlgebra::Matrix& net_output_data,const LinearAlgebra::Matrix& dataset_y_data) {
-// 	return LinearAlgebra::hadamard_square(dataset_y_data-net_output_data)*static_cast<LinearAlgebra::scalar_t>(0.5f);
-// }
-// LinearAlgebra::Matrix MachineLearning::error_ddx(const LinearAlgebra::Matrix& net_output_data, const LinearAlgebra::Matrix& dataset_y_data) {
-// 	return (net_output_data-dataset_y_data);
-// }
+LinearAlgebra::Matrix MachineLearning::error(const LinearAlgebra::Matrix& net_output_data,const LinearAlgebra::Matrix& dataset_y_data) {
+	return LinearAlgebra::hadamard_square(dataset_y_data-net_output_data)*static_cast<LinearAlgebra::scalar_t>(0.5f);
+}
+LinearAlgebra::Matrix MachineLearning::error_ddx(const LinearAlgebra::Matrix& net_output_data, const LinearAlgebra::Matrix& dataset_y_data) {
+	return (net_output_data-dataset_y_data);
+}
+
+MachineLearning::scalar_t MachineLearning::error_avg(const LinearAlgebra::Matrix& net_output_data, const LinearAlgebra::Matrix& dataset_y_data) {
+	LinearAlgebra::Matrix E = MachineLearning::error(net_output_data,dataset_y_data);
+	MachineLearning::uint N = 0;
+	scalar_t sum = 0.0f;
+	for (LinearAlgebra::mindex_t i = {0,0}; i.row < E.get_num_rows(); ++i.row) {
+		for (i.col = 0; i.col < E.get_num_cols(); ++i.col) {
+			sum += E[i];
+			++N;
+		}
+	}
+	return (sum/N);
+}
 
 // /**
 //  * @brief Computetes forward propagation for one layer
@@ -57,6 +70,13 @@
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n) {
 	os << n.str();
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const MachineLearning::Gradient g) {
+	for (MachineLearning::Gradient::const_iterator i = g.cbegin(); i != g.cend(); ++i) {
+		os << (*i) << std::endl;
+	}
 	return os;
 }
 
