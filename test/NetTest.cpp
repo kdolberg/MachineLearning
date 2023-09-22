@@ -20,13 +20,36 @@ typedef struct NetUintIter {
 
 #define H 0.001f
 
+#define NUMERICAL_DDX(__exp__,__x__,__h__,__ret__) {\
+	auto __E1__ = __exp__;\
+	auto tmp = __x__;\
+	__x__+=__h__;\
+	auto __E2__ = __exp__;\
+	__x__ = tmp;\
+	__ret__ = (__E2__-__E1__)/__h__;\
+}
+
+LinearAlgebra::scalar_t numerical_sigmoid_ddx(LinearAlgebra::scalar_t x) {
+	MachineLearning::ActivationFunction sig = MachineLearning::get_sigmoid();
+	LinearAlgebra::scalar_t ret;
+	NUMERICAL_DDX(sig(x),x,H,ret);
+	return ret;
+}
+
+LinearAlgebra::scalar_t analytic_sigmoid_ddx(LinearAlgebra::scalar_t x) {
+	MachineLearning::ActivationFunction sig = MachineLearning::get_sigmoid();
+	return sig.ddx(x);
+}
+
 LinearAlgebra::scalar_t numerical_ddx(MachineLearning::Net& n,const MachineLearning::TrainingDataset& td, MachineLearning::scalar_t * wb_ptr) {
-	LinearAlgebra::scalar_t E_avg1 = MachineLearning::error_avg(n.forward_propagate(td.x),td.y);
-	LinearAlgebra::scalar_t tmp = (*wb_ptr);
-	(*wb_ptr) += H;
-	LinearAlgebra::scalar_t E_avg2 = MachineLearning::error_avg(n.forward_propagate(td.x),td.y);
-	(*wb_ptr) = tmp;
-	return ((E_avg2-E_avg1)/H);
+	LinearAlgebra::scalar_t ret;
+	NUMERICAL_DDX(MachineLearning::error_avg(n.forward_propagate(td.x),td.y),H,(*wb_ptr),ret);
+	return ret;
+}
+
+void test_numerical_ddx() {
+	LinearAlgebra::scalar_t x = 0.8f;
+	TEST_RETURN_FUNC(numerical_sigmoid_ddx(x),analytic_sigmoid_ddx(x));
 }
 
 MachineLearning::Gradient NetTest::numerical_gradient(MachineLearning::Net n, MachineLearning::TrainingDataset td) {
@@ -75,5 +98,6 @@ void NetTest::calculate_gradient() {
 void NetTest::execute_all_tests() {
 	TEST_RETURN_FUNC(Net_constructor_gives_correct_num_inputs(),==,true);
 	forward_propagate();
+	test_numerical_ddx();
 	calculate_gradient();
 }
