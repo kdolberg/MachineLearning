@@ -38,6 +38,7 @@ namespace MachineLearning {
 	 */
 	class LayerParams {
 		friend MachineLearning::Net;
+		friend NetTest;
 	private:
 		LinearAlgebra::Matrix weights;
 		LinearAlgebra::Matrix biases;
@@ -101,7 +102,7 @@ namespace MachineLearning {
 			this->biases += b.biases;
 			return (*this);
 		}
-		bool operator==(LayerParams& ls) {
+		bool operator==(const LayerParams& ls) const {
 			return (this->get_weights()==ls.get_weights()) && (this->get_biases()==ls.get_biases());
 		}
 	}; //LayerParams
