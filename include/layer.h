@@ -8,6 +8,8 @@
 
 #define COLUMNS_IN_BASE_MATRIX 1
 
+class NetTest;
+
 namespace MachineLearning {
 
 	class BackPropIter;
