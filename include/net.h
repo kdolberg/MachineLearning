@@ -9,7 +9,9 @@
 
 #define LEARNING_RATE 0.1
 
-class NetTest;
+namespace NetTest {
+	class PrivateAPI;
+}
 
 namespace MachineLearning {
 
@@ -59,7 +61,8 @@ namespace MachineLearning {
 
 
 	class Net : public std::list<LayerStruct> {
-		friend NetTest;
+		TrainingDataset td;
+		friend NetTest::PrivateAPI;
 	public:
 		using std::list<LayerStruct>::list;
 		Net() : std::list<LayerStruct>::list() {}
