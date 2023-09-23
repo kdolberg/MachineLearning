@@ -53,8 +53,8 @@ namespace MachineLearning {
 	 */
 	class LayerParams {
 		friend MachineLearning::Net;
-		friend NetTest;
-	private:
+		friend NetTest::PrivateAPI;
+	protected:
 		LinearAlgebra::Matrix weights;
 		LinearAlgebra::Matrix biases;
 	public:
