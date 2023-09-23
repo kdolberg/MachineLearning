@@ -54,10 +54,9 @@ namespace MachineLearning {
 	class LayerParams {
 		friend MachineLearning::Net;
 		friend NetTest::PrivateAPI;
-	protected:
+	public:
 		LinearAlgebra::Matrix weights;
 		LinearAlgebra::Matrix biases;
-	public:
 		LayerParams() {}
 		LayerParams(uint num_inputs,uint num_outputs) : LayerParams() {
 			LinearAlgebra::mindex_t weight_matrix_dims = MINDEX(num_outputs,num_inputs);
