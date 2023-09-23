@@ -60,100 +60,57 @@ namespace MachineLearning {
 
 
 
-	class Net : public std::list<LayerStruct> {
-		TrainingDataset td;
+	class Net : public std::list<LayerParams> {
 		friend NetTest::PrivateAPI;
+	protected:
+		std::list<LinearAlgebra::Matrix> pre_act_func_output;
+		std::list<LinearAlgebra::Matrix> post_act_func_output;
+		std::list<LayerParams> partial_derivatives;
 	public:
-		using std::list<LayerStruct>::list;
-		Net() : std::list<LayerStruct>::list() {}
+		TrainingDataset td;
+		LinearAlgebra::scalar_t learning_rate;
+		Net() {
+			// Set the learning rate to the default rate.
+			this->learning_rate = LEARNING_RATE;
+		}
 		Net(NetDef def) : Net() {
 			for (uint i = 0; i < def.size()-1; ++i) {
 				uint num_inputs = def[i];
 				uint num_outputs = def[i+1];
-				LayerStruct tmp(num_inputs,num_outputs);
+				LayerParams tmp(num_inputs,num_outputs);
 				this->push_back(tmp);
 			}
 		}
 		Net(NetDef def, bool rand) : Net(def) {
 			if(rand) {
 				for (Net::iterator i = this->begin(); i != this->end(); ++i) {
-					i->params.randomize();
+					i->randomize();
 				}
 			}
 		}
 		Net(NetDef def, scalar_t s) : Net(def) {
 			for (Net::iterator i = this->begin(); i != this->end(); ++i) {
-				i->params.weights.set_contents(s);
-				i->params.biases.set_contents(s);
+				i->weights.set_contents(s);
+				i->biases.set_contents(s);
 			}
 		}
 		std::string str() const {
 			std::stringstream ss;
 			for (Net::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
-				ss << i->params << std::endl;
+				ss << (*i) << std::endl;
 			}
 			return ss.str();
 		}
-	protected:
-		// void train(const TrainingDataset& data);
-		// void train(const TrainingDataset& data, int iters);
-		/**
-		 * @brief
-		 * @return
-		 */
-		BackPropIter rend() {
-			return (this->std::list<LayerStruct>::rend());
-		}
-		BackPropIter rbegin() {
-			return (this->std::list<LayerStruct>::rbegin());
-		}
-		ForPropIter end() {
-			return (this->std::list<LayerStruct>::end());
-		}
-		ForPropIter begin() {
-			return (this->std::list<LayerStruct>::begin());
-		}
-	public:
 		void load_training_data(const TrainingDataset& td) {
+			this->clear_data_caches();
 			this->td = td;
 		}
-		LinearAlgebra::Matrix forward_propagate(const LinearAlgebra::Matrix& x_data) {
-			for (ForPropIter fpi = this->begin(); fpi != this->end(); ++fpi) {
-				if(fpi == this->begin()) {
-					fpi.update_data_cache(x_data);
-				} else {
-					fpi.update_data_cache();
-				}
-			}
-			return this->back().fordata.post_act_func_output;
-		}
-		void backward_propagate(const LinearAlgebra::Matrix& x_data,const LinearAlgebra::Matrix& dEdy) {
-			BackPropIter bpi = this->rbegin();
-			bpi.update_data_cache_output_layer(dEdy);
-			++bpi;
-			for (; MachineLearning::next(bpi) != this->rend(); ++bpi) {
-				bpi.update_data_cache();
-			}
-			bpi.update_data_cache_input_layer(x_data);
-		}
-		Gradient calculate_gradient(const TrainingDataset& data) {
-			this->load_training_data(data);
-			return this->calculate_gradient();
-		}
-		Gradient calculate_gradient() {
-			LinearAlgebra::Matrix net_y_out = this->forward_propagate(this->td.x);
-			LinearAlgebra::Matrix dEdy = error_ddx(this->td.y,net_y_out);
-			this->backward_propagate(this->td.x,dEdy);
-			return this->extract_gradient();
-		}
-		Gradient extract_gradient() const {
-			Gradient ret;
-			for (Net::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
-				std::cout << i->backdata.partial_derivatives << std::endl;
-				ret.push_back(i->backdata.partial_derivatives);
-			}
-			return ret;
-		}
+		Gradient calculate_gradient();
+		LinearAlgebra::scalar_t error() const;
+	protected:
+		LinearAlgebra::Matrix get_last_output() const;
+		void clear_data_caches();
+		LinearAlgebra::Matrix error_ddx() const;
 	}; // Net
 
 } // MachineLearning
