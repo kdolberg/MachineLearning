@@ -24,6 +24,32 @@ MachineLearning::scalar_t MachineLearning::error_avg(const LinearAlgebra::Matrix
 	return (sum/N);
 }
 
+LinearAlgebra::Matrix MachineLearning::Net::get_last_output() const {
+	return this->post_act_func_output.back();
+}
+
+MachineLearning::scalar_t MachineLearning::Net::error() const {
+	CONFIRM(!(this->get_last_output().empty()))
+	return MachineLearning::error_avg(this->get_last_output(),this->td.y);
+}
+
+LinearAlgebra::Matrix MachineLearning::Net::error_ddx() const {
+	CONFIRM(!(this->get_last_output().empty()));
+	CONFIRM(!(this->td.y.empty()));
+	return MachineLearning::error_ddx(this->get_last_output(),this->td.y);
+}
+
+void MachineLearning::Net::clear_data_caches() {
+	this->pre_act_func_output.clear();
+	this->post_act_func_output.clear();
+	this->partial_derivatives.clear();
+}
+
+MachineLearning::Gradient MachineLearning::Net::calculate_gradient() {
+	MachineLearning::Gradient ret;
+	return ret;
+}
+
 // /**
 //  * @brief Computetes forward propagation for one layer
 //  */
