@@ -137,9 +137,13 @@ namespace MachineLearning {
 			bpi.update_data_cache_input_layer(x_data);
 		}
 		Gradient calculate_gradient(const TrainingDataset& data) {
-			LinearAlgebra::Matrix net_y_out = this->forward_propagate(data.x);
-			LinearAlgebra::Matrix dEdy = error_ddx(data.y,net_y_out);
-			this->backward_propagate(data.x,dEdy);
+			this->load_training_data(data);
+			return this->calculate_gradient();
+		}
+		Gradient calculate_gradient() {
+			LinearAlgebra::Matrix net_y_out = this->forward_propagate(this->td.x);
+			LinearAlgebra::Matrix dEdy = error_ddx(this->td.y,net_y_out);
+			this->backward_propagate(this->td.x,dEdy);
 			return this->extract_gradient();
 		}
 		Gradient extract_gradient() const {
