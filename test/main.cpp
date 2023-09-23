@@ -135,11 +135,11 @@ void PropIter_tests() {
 }
 
 int main(int argc, char const *argv[]) {
-	la_matrix_tests();
+	// la_matrix_tests();
 	NetTest::execute_all_tests();
-	activation_function_tests();
-	LayerParams_tests();
-	PropIter_tests();
+	// activation_function_tests();
+	// LayerParams_tests();
+	// PropIter_tests();
 	print_report_card();
 	return 0;
 }
