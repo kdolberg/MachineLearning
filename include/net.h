@@ -114,6 +114,9 @@ namespace MachineLearning {
 			return (this->std::list<LayerStruct>::begin());
 		}
 	public:
+		void load_training_data(const TrainingDataset& td) {
+			this->td = td;
+		}
 		LinearAlgebra::Matrix forward_propagate(const LinearAlgebra::Matrix& x_data) {
 			for (ForPropIter fpi = this->begin(); fpi != this->end(); ++fpi) {
 				if(fpi == this->begin()) {
