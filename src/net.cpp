@@ -54,6 +54,83 @@ MachineLearning::Gradient MachineLearning::Net::calculate_gradient() {
 	this->backward_propagate();
 	return this->partial_derivatives;
 }
+
+void MachineLearning::Net::forward_propagate() {
+	//Empty all datacaches since we're starting from scratch
+	this->clear_data_caches();
+
+	//Add the input to the post_act_func_output
+	this->post_act_func_output.push_back(this->td.x);
+	for (auto i = this->begin(); i != this->end(); ++i) {
+		this->pre_act_func_output.push_back(i->operator()(this->post_act_func_output.back()));
+		this->post_act_func_output.push_back(this->af(this->pre_act_func_output.back()));
+	}
+}
+
+MachineLearning::uint MachineLearning::Net::get_num_outputs() const {
+	return this->back().get_num_outputs();
+}
+
+MachineLearning::uint MachineLearning::Net::get_num_data_points() const {
+	CONFIRM(!(this->td.y.empty()));
+	CONFIRM(!(this->td.x.empty()));
+	CONFIRM(this->td.x.get_num_cols()==this->td.y.get_num_cols());
+	return this->td.x.get_num_cols();
+}
+
+void MachineLearning::Net::backward_propagate() {
+	CONFIRM(!(this->td.y.empty()));
+	CONFIRM(!(this->td.x.empty()));
+	CONFIRM(!(this->pre_act_func_output.empty()));
+	CONFIRM(!(this->post_act_func_output.empty()));
+	CONFIRM(this->partial_derivatives.empty());
+
+	// Calculate the error
+	LinearAlgebra::Matrix dEdy = this->error_ddx();
+
+	// Iterators
+	auto pre_act_func_output = this->pre_act_func_output.crbegin();
+	auto post_act_func_output = this->post_act_func_output.crbegin();
+
+	// Indeces
+	uint bias_column_index = 0; // This is always zero.
+	uint curr_layer_output_index;
+	uint curr_layer_input_index;
+	uint upper_layer_output_index;
+	uint data_index;
+	uint this_should_trigger_a_warning;
+	std::cout << this_should_trigger_a_warning << std::endl;
+
+	// Mindex pointers
+	LinearAlgebra::ref_mindex biases_m = {curr_layer_output_index,bias_column_index};
+	LinearAlgebra::ref_mindex weights_m = {curr_layer_output_index,curr_layer_input_index};
+	LinearAlgebra::ref_mindex curr_input_m = {curr_layer_input_index,data_index};
+	LinearAlgebra::ref_mindex naive_derivatives_m = {curr_layer_output_index,data_index};
+	LinearAlgebra::ref_mindex dEdy_m = {upper_layer_output_index,data_index};
+
+	for (auto layer = this->crbegin(); layer != this->crend(); ++layer, ++pre_act_func_output, ++post_act_func_output) {
+
+		LayerParams curr_partials(layer->get_num_inputs(),layer->get_num_outputs());
+		LinearAlgebra::Matrix naive_derivatives = this->af.ddx(*pre_act_func_output);
+		LinearAlgebra::Matrix curr_input = *(std::next(post_act_func_output));
+
+		for (data_index = 0; data_index < this->get_num_data_points(); ++data_index) {
+
+			for (curr_layer_output_index = 0; curr_layer_output_index < layer->get_num_outputs(); ++curr_layer_output_index) {
+
+				for (curr_layer_input_index = 0; curr_layer_input_index < layer->get_num_inputs(); ++curr_layer_input_index) {
+
+					curr_partials.weights[weights_m] = curr_input[curr_input_m]*naive_derivatives[naive_derivatives_m]*dEdy[dEdy_m];
+
+				}
+
+				curr_partials.biases[biases_m] = naive_derivatives[naive_derivatives_m]*dEdy[dEdy_m];
+
+			}
+		}
+
+		this->partial_derivatives.push_back(curr_partials);
+	}
 }
 
 // /**

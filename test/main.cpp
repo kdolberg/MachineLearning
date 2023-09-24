@@ -1,9 +1,10 @@
 #include "main.h"
 
 void la_matrix_tests() {
-	LinearAlgebra::Matrix x = {{1},{1},{1},{1}};
-	std::cout << x << std::endl;
-	std::cout << LinearAlgebra::transpose(x) << std::endl;
+	LinearAlgebra::Matrix m;
+	LinearAlgebra::Matrix n(MINDEX(5,4));
+	TEST_RETURN_FUNC(m.empty(),==,true);
+	TEST_RETURN_FUNC(n.empty(),==,false);
 }
 
 void activation_function_tests() {
@@ -101,45 +102,59 @@ MachineLearning::Net make_uniform_net(LinearAlgebra::scalar_t num) {
 
 void ForProp_test() {
 	{
-		MachineLearning::NetDef def = {2,1};
-		MachineLearning::Net n(def,1.0f);
-		MachineLearning::ForPropIter fpi = (MachineLearning::ForPropIter)n.std::list<MachineLearning::LayerStruct>::begin();
-		LinearAlgebra::Matrix input = {{1},{1}};
-		TEST_VOID_FUNC(fpi.update_data_cache(input),fpi.get_post_act_func_output(),==,((LinearAlgebra::Matrix){{3}}));
-		TEST_RETURN_FUNC(n.forward_propagate(input),==,((LinearAlgebra::Matrix){{3}}));
+		// MachineLearning::NetDef def = {2,1};
+		// MachineLearning::Net n(def,1.0f);
+		// MachineLearning::ForPropIter fpi = (MachineLearning::ForPropIter)n.std::list<MachineLearning::LayerStruct>::begin();
+		// LinearAlgebra::Matrix input = {{1},{1}};
+		// TEST_VOID_FUNC(fpi.update_data_cache(input),fpi.get_post_act_func_output(),==,((LinearAlgebra::Matrix){{3}}));
+		// TEST_RETURN_FUNC(n.forward_propagate(input),==,((LinearAlgebra::Matrix){{3}}));
 	}
 }
 
 void PropIter_tests() {
-	ForProp_test();
-	LinearAlgebra::Matrix x_in = {{1,1},{5,5},{10,10},{0.5,0.5}};
-	LinearAlgebra::Matrix y_out = {{5},{5},{5},{5}};
-	LinearAlgebra::Matrix y_incorrect = {{1},{1},{1},{1}};
+	// ForProp_test();
+	// LinearAlgebra::Matrix x_in = {{1,1},{5,5},{10,10},{0.5,0.5}};
+	// LinearAlgebra::Matrix y_out = {{5},{5},{5},{5}};
+	// LinearAlgebra::Matrix y_incorrect = {{1},{1},{1},{1}};
 
-	MachineLearning::TrainingDataset td = {LinearAlgebra::transpose(x_in),LinearAlgebra::transpose(y_out)};
-	std::vector<MachineLearning::uint> def = {2,1,1,1,1,1};
-	MachineLearning::Net n(def,true);
-	MachineLearning::ForPropIter fpi = (MachineLearning::ForPropIter)n.std::list<MachineLearning::LayerStruct>::begin();
-	fpi.update_data_cache(td.x);
-	++fpi;
-	for(; fpi != (MachineLearning::ForPropIter)n.std::list<MachineLearning::LayerStruct>::end(); ++fpi) {
-		fpi.update_data_cache();
+	// MachineLearning::TrainingDataset td = {LinearAlgebra::transpose(x_in),LinearAlgebra::transpose(y_out)};
+	// std::vector<MachineLearning::uint> def = {2,1,1,1,1,1};
+	// MachineLearning::Net n(def,true);
+	// MachineLearning::ForPropIter fpi = (MachineLearning::ForPropIter)n.std::list<MachineLearning::LayerStruct>::begin();
+	// fpi.update_data_cache(td.x);
+	// ++fpi;
+	// for(; fpi != (MachineLearning::ForPropIter)n.std::list<MachineLearning::LayerStruct>::end(); ++fpi) {
+	// 	fpi.update_data_cache();
+	// }
+	// MachineLearning::BackPropIter bpi = (MachineLearning::BackPropIter)n.std::list<MachineLearning::LayerStruct>::rbegin();
+	// bpi.update_data_cache_output_layer(LinearAlgebra::transpose(y_incorrect) - td.y);
+	// ++bpi;
+	// for(; bpi != std::prev(n.std::list<MachineLearning::LayerStruct>::rend()); ++bpi) {
+	// 	bpi.update_data_cache();
+	// }
+	// bpi.update_data_cache_input_layer(td.x);
+}
+
+void tmp() {
+	LinearAlgebra::Matrix m = {{1,2},{3,4}};
+	PRINT_VAR(m);
+	LinearAlgebra::mindex_t i = {0,1};
+	PRINT_VAR(m[i]);
+	LinearAlgebra::uint j = 0;
+	LinearAlgebra::uint k = 0;
+	LinearAlgebra::ref_mindex l = {j,k};
+
+	for (j = 0; j < m.get_num_rows(); ++j) {
+		for (k = 0; k < m.get_num_cols(); ++k) {
+			std::cout << m[l] << " ";
+		}
+		std::cout << std::endl;
 	}
-	MachineLearning::BackPropIter bpi = (MachineLearning::BackPropIter)n.std::list<MachineLearning::LayerStruct>::rbegin();
-	bpi.update_data_cache_output_layer(LinearAlgebra::transpose(y_incorrect) - td.y);
-	++bpi;
-	for(; bpi != std::prev(n.std::list<MachineLearning::LayerStruct>::rend()); ++bpi) {
-		bpi.update_data_cache();
-	}
-	bpi.update_data_cache_input_layer(td.x);
 }
 
 int main(int argc, char const *argv[]) {
 	// la_matrix_tests();
 	NetTest::execute_all_tests();
-	// activation_function_tests();
-	// LayerParams_tests();
-	// PropIter_tests();
 	print_report_card();
 	return 0;
 }

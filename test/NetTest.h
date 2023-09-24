@@ -9,7 +9,8 @@ namespace NetTest {
 		static void calculate_gradient();
 
 		// Supporting functions
-		static MachineLearning::Gradient numerical_gradient_ddx(MachineLearning::Net& n,const MachineLearning::TrainingDataset& td);
+		static LinearAlgebra::scalar_t numerical_derivative(MachineLearning::Net& n, LinearAlgebra::scalar_t *wb_ptr);
+		static MachineLearning::Gradient numerical_gradient(MachineLearning::Net& n);
 	};
 
 	class PublicAPI {
