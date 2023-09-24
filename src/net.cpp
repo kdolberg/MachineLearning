@@ -30,6 +30,7 @@ LinearAlgebra::Matrix MachineLearning::Net::get_last_output() const {
 
 MachineLearning::scalar_t MachineLearning::Net::error() const {
 	CONFIRM(!(this->get_last_output().empty()))
+	CONFIRM(this->get_last_output().size()==this->td.y.size());
 	return MachineLearning::error_avg(this->get_last_output(),this->td.y);
 }
 
