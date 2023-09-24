@@ -47,8 +47,13 @@ void MachineLearning::Net::clear_data_caches() {
 }
 
 MachineLearning::Gradient MachineLearning::Net::calculate_gradient() {
-	MachineLearning::Gradient ret;
-	return ret;
+	CONFIRM(!(this->td.x.empty()));
+	CONFIRM(!(this->td.y.empty()));
+	this->clear_data_caches();
+	this->forward_propagate();
+	this->backward_propagate();
+	return this->partial_derivatives;
+}
 }
 
 // /**
