@@ -1,0 +1,7 @@
+*.exe
+*.o
+*.stackdump
+*.ml
+test_stubs
+obj
+bin
