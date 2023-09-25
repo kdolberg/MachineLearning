@@ -1,26 +1,23 @@
-# Git version
-# GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
-
-# compiler
+# Compiler
 CXX = g++
 
-# compiler flags
+# Compiler flags
 SCALAR_TYPE=float
 DEFINE_SCALAR_TYPE_MACRO = -DSCALAR_TYPE=$(SCALAR_TYPE)
 FLAGS = -DNOFLAGS
 CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -Wall -g -O2 -MMD -MP
 
-# directory of header files
+# Directory of header files
 INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I./include -I./../UnitTest -I./../UnitTest/inc -I./../confirm
 
-# sources and objects
+# Sources and objects
 LINALG_OBJ = obj/la_basic_types.la obj/la_matrix.la obj/la_matrix_like.la obj/la_vector.la obj/la_vector_overloads.la
 ML_OBJ = obj/activation_function.ml obj/layer.ml obj/net.ml
 ML_TEST_OBJ = obj/main.ml_test obj/NetTest.ml_test
 UNIT_TEST_OBJ = obj/test.unit_test
 OBJECTS = $(ML_OBJ) $(LINALG_OBJ) $(ML_TEST_OBJ) $(UNIT_TEST_OBJ)
 
-# target executable
+# Target executable
 TARGET = test
 
 $(TARGET): $(OBJECTS)
