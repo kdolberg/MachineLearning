@@ -80,8 +80,6 @@ MachineLearning::uint MachineLearning::Net::get_num_data_points() const {
 	return this->td.x.get_num_cols();
 }
 
-typedef LinearAlgebra::ref_mindex ref_mindex;
-
 void MachineLearning::Net::backward_propagate() {
 	CONFIRM(!(this->td.y.empty()));
 	CONFIRM(!(this->td.x.empty()));

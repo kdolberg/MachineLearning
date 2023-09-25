@@ -14,6 +14,8 @@ namespace MachineLearning {
 
 	typedef LinearAlgebra::mindex_t mindex;
 
+	typedef LinearAlgebra::ref_mindex ref_mindex;
+
 	typedef struct {
 		LinearAlgebra::Matrix x;
 		LinearAlgebra::Matrix y;
