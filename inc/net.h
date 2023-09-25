@@ -28,7 +28,7 @@ namespace MachineLearning {
 	LinearAlgebra::Matrix error		(	const LinearAlgebra::Matrix& net_output_data,
 										const LinearAlgebra::Matrix& dataset_y_data		);
 
-	scalar_t error_avg				(	const LinearAlgebra::Matrix& net_output_data,
+	scalar error_avg				(	const LinearAlgebra::Matrix& net_output_data,
 										const LinearAlgebra::Matrix& dataset_y_data		);
 
 	/**
@@ -40,27 +40,6 @@ namespace MachineLearning {
 	LinearAlgebra::Matrix error_ddx	(	const LinearAlgebra::Matrix& net_output_data,
 										const LinearAlgebra::Matrix& dataset_y_data		);
 
-	// /**
-	//  * @brief Performs forward propagation
-	//  * @param layers List of all layers in this net
-	//  * @param x_data Input data from the training dataset
-	//  */
-	// void forprop					(	std::list<Layer>::iterator i,
-	// 									std::list<Layer>::iterator end,
-	// 									const LinearAlgebra::Matrix& x_data				);
-
-	// void forprop					(	std::list<Layer>& layers,
-	// 									const LinearAlgebra::Matrix& x_data				);
-	// /**
-	//  * @brief Peforms backpropagation
-	//  * @param layers List of all layers in this net
-	//  * @param y_data Output data from the training dataset
-	//  */
-	// void backprop					(	std::list<MachineLearning::Layer>& layers,
-	// 									const LinearAlgebra::Matrix& y_data				);
-
-
-
 	class Net : public std::list<LayerParams> {
 		friend NetTest::PrivateAPI;
 	protected:
@@ -70,7 +49,7 @@ namespace MachineLearning {
 		MachineLearning::ActivationFunction af;
 	public:
 		TrainingDataset td;
-		LinearAlgebra::scalar_t learning_rate;
+		scalar learning_rate;
 		Net() {
 			// Set the learning rate to the default rate.
 			this->learning_rate = LEARNING_RATE;
@@ -91,7 +70,7 @@ namespace MachineLearning {
 				}
 			}
 		}
-		Net(NetDef def, scalar_t s) : Net(def) {
+		Net(NetDef def, scalar s) : Net(def) {
 			for (Net::iterator i = this->begin(); i != this->end(); ++i) {
 				i->weights.set_contents(s);
 				i->biases.set_contents(s);
@@ -109,7 +88,7 @@ namespace MachineLearning {
 			this->td = td;
 		}
 		Gradient calculate_gradient();
-		LinearAlgebra::scalar_t error() const;
+		scalar error() const;
 		uint get_num_data_points() const;
 		uint get_num_outputs() const;
 		uint get_num_inputs() const;
@@ -130,7 +109,5 @@ MachineLearning::Gradient operator-(const MachineLearning::Gradient& A, const Ma
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
 
 std::ostream& operator<<(std::ostream& os, const MachineLearning::Gradient g);
-
-// MachineLearning::NetGradIter& operator++(MachineLearning::NetGradIter& ni);
 
 #endif //NET_H

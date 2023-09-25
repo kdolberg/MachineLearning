@@ -10,7 +10,7 @@
 namespace MachineLearning {
 	typedef LinearAlgebra::uint uint;
 
-	typedef LinearAlgebra::scalar_t scalar_t;
+	typedef LinearAlgebra::scalar_t scalar;
 
 	typedef struct {
 		LinearAlgebra::Matrix x;

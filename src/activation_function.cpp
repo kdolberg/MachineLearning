@@ -8,7 +8,7 @@
 /**
  * @brief Calculates the leaky ReLU function for the input value x
  */
-LinearAlgebra::scalar_t leaky_ReLU(LinearAlgebra::scalar_t x) {
+MachineLearning::scalar leaky_ReLU(MachineLearning::scalar x) {
 	if(x>0) {
 		return x;
 	} else {
@@ -19,7 +19,7 @@ LinearAlgebra::scalar_t leaky_ReLU(LinearAlgebra::scalar_t x) {
 /**
  * @brief Calculates derivative of leaky ReLU function
  */
-LinearAlgebra::scalar_t leaky_ReLU_ddx(LinearAlgebra::scalar_t x) {
+MachineLearning::scalar leaky_ReLU_ddx(MachineLearning::scalar x) {
 	if(x>0) {
 		return 1;
 	} else {
@@ -30,14 +30,14 @@ LinearAlgebra::scalar_t leaky_ReLU_ddx(LinearAlgebra::scalar_t x) {
 /**
  * @brief Calculates sigmoid function
  */
-LinearAlgebra::scalar_t sigmoid(LinearAlgebra::scalar_t x) {
+MachineLearning::scalar sigmoid(MachineLearning::scalar x) {
 	return 1.0/(1.0+exp(0-x));
 }
 
 /**
  * @brief Calculates derivative of sigmoid function
  */
-LinearAlgebra::scalar_t sigmoid_ddx(LinearAlgebra::scalar_t x) {
+MachineLearning::scalar sigmoid_ddx(MachineLearning::scalar x) {
 	return sigmoid(x)*(1-sigmoid(x));
 }
 

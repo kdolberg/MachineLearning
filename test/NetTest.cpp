@@ -2,26 +2,26 @@
 
 #define H 0.00001f
 
-LinearAlgebra::scalar_t numerical_derivative(MachineLearning::ActivationFunction af, LinearAlgebra::scalar_t x) {
-	LinearAlgebra::scalar_t y1 = af(x);
-	LinearAlgebra::scalar_t y2 = af(x+H);
+MachineLearning::scalar numerical_derivative(MachineLearning::ActivationFunction af, MachineLearning::scalar x) {
+	MachineLearning::scalar y1 = af(x);
+	MachineLearning::scalar y2 = af(x+H);
 	return (y2-y1)/H;
 }
 
-LinearAlgebra::scalar_t NetTest::PrivateAPI::numerical_derivative(MachineLearning::Net& n,MachineLearning::scalar_t * wb_ptr) {
+MachineLearning::scalar NetTest::PrivateAPI::numerical_derivative(MachineLearning::Net& n,MachineLearning::scalar * wb_ptr) {
 	n.forward_propagate();
-	LinearAlgebra::scalar_t E1 = n.error();
-	LinearAlgebra::scalar_t tmp = (*wb_ptr);
+	MachineLearning::scalar E1 = n.error();
+	MachineLearning::scalar tmp = (*wb_ptr);
 	(*wb_ptr) += H;
 	n.forward_propagate();
-	LinearAlgebra::scalar_t E2 = n.error();
+	MachineLearning::scalar E2 = n.error();
 	(*wb_ptr) = tmp;
 	return ((E2-E1)/H);
 }
 
 void NetTest::numerical_derivative_test() {
 	MachineLearning::ActivationFunction sig = MachineLearning::get_sigmoid();
-	LinearAlgebra::scalar_t x = 0.5f;
+	MachineLearning::scalar x = 0.5f;
 	TEST_RETURN_FUNC(std::abs(sig.ddx(x)-numerical_derivative(sig,x)),<,0.05f);
 }
 

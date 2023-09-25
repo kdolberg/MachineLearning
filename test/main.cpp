@@ -96,7 +96,7 @@ void LayerParams_tests() {
 	}
 }
 
-MachineLearning::Net make_uniform_net(LinearAlgebra::scalar_t num) {
+MachineLearning::Net make_uniform_net(MachineLearning::scalar num) {
 	return MachineLearning::Net();
 }
 

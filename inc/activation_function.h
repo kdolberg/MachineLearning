@@ -6,8 +6,8 @@
 
 namespace MachineLearning {
 	typedef struct {
-		std::function<scalar_t(scalar_t)> function;
-		std::function<scalar_t(scalar_t)> derivative;
+		std::function<scalar(scalar)> function;
+		std::function<scalar(scalar)> derivative;
 	} ActivationFunctionStruct;
 
 	/**
@@ -21,7 +21,7 @@ namespace MachineLearning {
 			this->function = afs.function;
 			this->derivative = afs.derivative;
 		}
-		scalar_t operator()(scalar_t in) const {
+		scalar operator()(scalar in) const {
 			return this->function(in);
 		}
 		template <LinearAlgebra::MATRIXLIKE T>
@@ -35,7 +35,7 @@ namespace MachineLearning {
 			}
 			return ret;
 		}
-		scalar_t ddx(scalar_t in) const {
+		scalar ddx(scalar in) const {
 			return this->derivative(in);
 		}
 		/**
