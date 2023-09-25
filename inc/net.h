@@ -47,8 +47,8 @@ namespace MachineLearning {
 		std::list<LinearAlgebra::Matrix> post_act_func_output;
 		std::list<LayerParams> partial_derivatives;
 		MachineLearning::ActivationFunction af;
-	public:
 		TrainingDataset td;
+	public:
 		scalar learning_rate;
 		Net() {
 			// Set the learning rate to the default rate.
@@ -78,6 +78,7 @@ namespace MachineLearning {
 		}
 		std::string str() const;
 		void load_training_data(const MachineLearning::TrainingDataset& td);
+		const TrainingDataset& get_training_data() const;
 		Gradient calculate_gradient();
 		scalar error() const;
 		uint get_num_data_points() const;

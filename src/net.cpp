@@ -168,3 +168,7 @@ void MachineLearning::Net::load_training_data(const MachineLearning::TrainingDat
 	this->clear_data_caches();
 	this->td = td;
 }
+
+const MachineLearning::TrainingDataset& MachineLearning::Net::get_training_data() const {
+	return this->td;
+}
