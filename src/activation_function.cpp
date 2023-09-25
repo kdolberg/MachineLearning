@@ -5,6 +5,16 @@
 #define LEAKINESS 0.1
 #endif //LEAKINESS
 
+// ActivationFunction methods
+
+MachineLearning::scalar MachineLearning::ActivationFunction::operator()(scalar in) const {
+	return this->function(in);
+}
+
+MachineLearning::scalar MachineLearning::ActivationFunction::ddx(scalar in) const {
+	return this->derivative(in);
+}
+
 /**
  * @brief Calculates the leaky ReLU function for the input value x
  */

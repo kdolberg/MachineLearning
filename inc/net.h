@@ -76,17 +76,8 @@ namespace MachineLearning {
 				i->biases.set_contents(s);
 			}
 		}
-		std::string str() const {
-			std::stringstream ss;
-			for (Net::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
-				ss << (*i) << std::endl;
-			}
-			return ss.str();
-		}
-		void load_training_data(const TrainingDataset& td) {
-			this->clear_data_caches();
-			this->td = td;
-		}
+		std::string str() const;
+		void load_training_data(const MachineLearning::TrainingDataset& td);
 		Gradient calculate_gradient();
 		scalar error() const;
 		uint get_num_data_points() const;

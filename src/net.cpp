@@ -158,3 +158,15 @@ MachineLearning::Gradient operator-(const MachineLearning::Gradient& A, const Ma
 	}
 	return ret;
 }
+
+std::string MachineLearning::Net::str() const {
+	std::stringstream ss;
+	for (Net::const_iterator i = this->cbegin(); i != this->cend(); ++i) {
+		ss << (*i) << std::endl;
+	}
+	return ss.str();
+}
+void MachineLearning::Net::load_training_data(const MachineLearning::TrainingDataset& td) {
+	this->clear_data_caches();
+	this->td = td;
+}

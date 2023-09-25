@@ -21,9 +21,8 @@ namespace MachineLearning {
 			this->function = afs.function;
 			this->derivative = afs.derivative;
 		}
-		scalar operator()(scalar in) const {
-			return this->function(in);
-		}
+		scalar operator()(scalar in) const;
+
 		template <LinearAlgebra::MATRIXLIKE T>
 		T operator()(const T& t) const {
 			assert(T::is_matrix_like());
@@ -35,9 +34,7 @@ namespace MachineLearning {
 			}
 			return ret;
 		}
-		scalar ddx(scalar in) const {
-			return this->derivative(in);
-		}
+		scalar ddx(scalar in) const;
 		/**
 		 * @brief Calculates (d/dt){THIS_FUNCTION(t)}
 		 * @param t Any matrix-like object
@@ -54,7 +51,7 @@ namespace MachineLearning {
 			}
 			return ret;
 		}
-	};
+	}; // ActivationFunction
 	/**
 	 * @brief Returns the sigmoid ActivationFunction
 	 * @return ____ ActivationFunction

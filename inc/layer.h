@@ -45,47 +45,23 @@ namespace MachineLearning {
 			return ret;
 		}
 	public:
-		void randomize() {
-			this->weights.randomize();
-			this->biases.randomize();
-		}
-		const LinearAlgebra::Matrix& get_weights() const {
-			return this->weights;
-		}
-		const LinearAlgebra::Matrix& get_biases() const {
-			return this->biases;
-		}
+		void randomize();
+		const LinearAlgebra::Matrix& get_weights() const;
+		const LinearAlgebra::Matrix& get_biases() const;
 		/**
 		 * @brief 
 		 */
-		LinearAlgebra::Matrix operator()(const LinearAlgebra::Matrix& in_signal) const {
-			return this->call_op<LinearAlgebra::Matrix>(in_signal);
-		}
-		LinearAlgebra::HorizontalVector operator()(const LinearAlgebra::HorizontalVector& in_signal) const {
-			return this->call_op<LinearAlgebra::HorizontalVector>(in_signal);
-		}
-		LinearAlgebra::VerticalVector operator()(const LinearAlgebra::VerticalVector& in_signal) const {
-			return this->call_op<LinearAlgebra::VerticalVector>(in_signal);
-		}
+		LinearAlgebra::Matrix operator()(const LinearAlgebra::Matrix& in_signal) const;
+		LinearAlgebra::HorizontalVector operator()(const LinearAlgebra::HorizontalVector& in_signal) const;
+		LinearAlgebra::VerticalVector operator()(const LinearAlgebra::VerticalVector& in_signal) const;
 		/**
 		 * @brief Returns the number of inputs for this layer
 		 * @return The number of inputs for this layer (AKA the number of column in the matrix of weights)
 		 */
-		uint get_num_inputs() const {
-			return this->get_weights().get_num_cols();
-		}
-		uint get_num_outputs() const {
-			assert(this->get_weights().get_num_rows()==this->get_biases().get_num_rows());
-			return this->get_weights().get_num_rows();
-		}
-		MachineLearning::LayerParams& operator+=(const MachineLearning::LayerParams& b) {
-			this->weights += b.weights;
-			this->biases += b.biases;
-			return (*this);
-		}
-		bool operator==(const LayerParams& ls) const {
-			return (this->get_weights()==ls.get_weights()) && (this->get_biases()==ls.get_biases());
-		}
+		uint get_num_inputs() const;
+		uint get_num_outputs() const;
+		MachineLearning::LayerParams& operator+=(const MachineLearning::LayerParams& b);
+		bool operator==(const LayerParams& ls) const;
 	}; //LayerParams
 
 } //MachineLearning
