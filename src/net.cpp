@@ -87,19 +87,20 @@ void MachineLearning::Net::backward_propagate() {
 	CONFIRM(!(this->post_act_func_output.empty()));
 	CONFIRM(this->partial_derivatives.empty());
 
-	// Calculate the error
+	// Calculate the derivative of the error function with respect to the output from forward propagation
 	LinearAlgebra::Matrix dEdy = this->error_ddx();
 
 	// Iterators
 	auto pre_act_func_output = this->pre_act_func_output.crbegin();
 	auto post_act_func_output = this->post_act_func_output.crbegin();
+	auto layer_iter = this->crbegin();
 
 	// Indeces
 	const uint bias_column_index = 0; // This is always zero.
 	
 	// Mindex pointers
 
-	for (auto layer_iter = this->crbegin(); layer_iter != this->crend(); ++layer_iter, ++pre_act_func_output, ++post_act_func_output) {
+	for (; layer_iter != this->crend(); ++layer_iter, ++pre_act_func_output, ++post_act_func_output) {
 
 		LinearAlgebra::Matrix derivatives_for_next_layer(MINDEX(layer_iter->get_num_inputs(),this->get_num_data_points()));
 		LayerParams curr_partials(layer_iter->get_num_inputs(),layer_iter->get_num_outputs());
