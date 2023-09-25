@@ -54,12 +54,12 @@ namespace MachineLearning {
 	}; // ActivationFunction
 	/**
 	 * @brief Returns the sigmoid ActivationFunction
-	 * @return ____ ActivationFunction
+	 * @return sigmoid ActivationFunction
 	 */
 	ActivationFunction get_sigmoid();
 	/**
 	 * Returns the leaky ReLU ActivationFunction
-	 * @return ____ ActivationFunction
+	 * @return leaky ReLU ActivationFunction
 	 */
 	ActivationFunction get_leaky_ReLU();
 } //MachineLearning
