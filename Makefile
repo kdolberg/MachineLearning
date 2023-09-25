@@ -46,17 +46,13 @@ clean:
 clean_linalg:
 	rm -f $(LINALG_OBJ)
 
-make_linalg: $(LINALG_OBJ)
+linalg: $(LINALG_OBJ)
 
-linalg:
-	$(MAKE) make_linalg
-
-clean_all:
-	rm -f $(OBJECTS)
+clean_all: clean clean_linalg
 
 all: $(TARGET)
 
 run: $(TARGET)
 	gdb $(TARGET).exe -x gdb_cmd
 
-.PHONY: clean clean_linalg linalg clean_all run all make_linalg test build_test
+.PHONY: clean clean_linalg linalg clean_all run all
