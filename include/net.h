@@ -3,6 +3,7 @@
 
 #include <list>
 #include <utility>
+#include <iostream>
 #include "types.h"
 #include "layer.h"
 #include "activation_function.h"
@@ -111,6 +112,7 @@ namespace MachineLearning {
 		LinearAlgebra::scalar_t error() const;
 		uint get_num_data_points() const;
 		uint get_num_outputs() const;
+		uint get_num_inputs() const;
 	protected:
 		void forward_propagate();
 		void backward_propagate();
@@ -122,6 +124,8 @@ namespace MachineLearning {
 } // MachineLearning
 
 MachineLearning::Net& operator+=(MachineLearning::Net& a, MachineLearning::Gradient& b);
+
+MachineLearning::Gradient operator-(const MachineLearning::Gradient& A, const MachineLearning::Gradient& B);
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
 

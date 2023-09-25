@@ -54,3 +54,17 @@ bool operator==(const MachineLearning::LayerParams& a, const MachineLearning::La
 // bool operator==(const MachineLearning::LayerParams a, const MachineLearning::LayerParams b) {
 // 	return (a.get_weights()==b.get_weights()) && (a.get_biases()==b.get_biases());
 // }
+
+MachineLearning::LayerParams operator-(const MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b) {
+	MachineLearning::LayerParams ret = {a.get_weights()-b.get_weights(),a.get_biases()-b.get_biases()};
+	return ret;
+}
+
+MachineLearning::LayerParams operator/(const MachineLearning::LayerParams& lp, LinearAlgebra::uint u) {
+	return lp*(1.0f/u);
+}
+
+MachineLearning::LayerParams operator*(const MachineLearning::LayerParams& lp, LinearAlgebra::scalar_t u) {
+	MachineLearning::LayerParams ret = {lp.get_weights()*u,lp.get_biases()*u};
+	return ret;
+}

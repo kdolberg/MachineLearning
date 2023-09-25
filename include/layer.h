@@ -315,18 +315,27 @@ namespace MachineLearning {
 			} // data_index
 			this->backdata().partial_derivatives = (LayerParams){pd_weights,pd_biases};
 		}
+
 		virtual void update_data_cache() {
 			this->update_data_cache(this->get_derivatives_from_layer_above(),this->get_x_input());
 		}
+
 		void update_data_cache_input_layer(const LinearAlgebra::Matrix& x_data) {
 			this->update_data_cache(this->get_derivatives_from_layer_above(),x_data);
 		}
+
 		void update_data_cache_output_layer(const LinearAlgebra::Matrix& derivatives_from_error_func) {
 			this->update_data_cache(derivatives_from_error_func,this->get_x_input());
 		}
 	};
-} //MachineLearning
+}; //MachineLearning
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::LayerParams& lp);
+
+MachineLearning::LayerParams operator-(const MachineLearning::LayerParams& a, const MachineLearning::LayerParams& b);
+
+MachineLearning::LayerParams operator/(const MachineLearning::LayerParams& lp, LinearAlgebra::uint u);
+
+MachineLearning::LayerParams operator*(const MachineLearning::LayerParams& lp, LinearAlgebra::scalar_t u);
 
 #endif //LAYER_H

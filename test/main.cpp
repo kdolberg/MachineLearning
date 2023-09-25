@@ -135,23 +135,6 @@ void PropIter_tests() {
 	// bpi.update_data_cache_input_layer(td.x);
 }
 
-void tmp() {
-	LinearAlgebra::Matrix m = {{1,2},{3,4}};
-	PRINT_VAR(m);
-	LinearAlgebra::mindex_t i = {0,1};
-	PRINT_VAR(m[i]);
-	LinearAlgebra::uint j = 0;
-	LinearAlgebra::uint k = 0;
-	LinearAlgebra::ref_mindex l = {j,k};
-
-	for (j = 0; j < m.get_num_rows(); ++j) {
-		for (k = 0; k < m.get_num_cols(); ++k) {
-			std::cout << m[l] << " ";
-		}
-		std::cout << std::endl;
-	}
-}
-
 int main(int argc, char const *argv[]) {
 	// la_matrix_tests();
 	NetTest::execute_all_tests();

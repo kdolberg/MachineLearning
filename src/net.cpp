@@ -1,5 +1,7 @@
 #include "net.h"
 
+#include "UnitTest.h" // delete this line later
+
 // const LinearAlgebra::Matrix& get_final_output_data(const std::list<MachineLearning::Layer>& layers) {
 // 	return layers.back().get_post_act_func_output();
 // }
@@ -21,7 +23,7 @@ MachineLearning::scalar_t MachineLearning::error_avg(const LinearAlgebra::Matrix
 			++N;
 		}
 	}
-	return (sum/N);
+	return (sum/(1.0f*N));
 }
 
 LinearAlgebra::Matrix MachineLearning::Net::get_last_output() const {
@@ -71,12 +73,18 @@ MachineLearning::uint MachineLearning::Net::get_num_outputs() const {
 	return this->back().get_num_outputs();
 }
 
+MachineLearning::uint MachineLearning::Net::get_num_inputs() const {
+	return this->front().get_num_inputs();
+}
+
 MachineLearning::uint MachineLearning::Net::get_num_data_points() const {
 	CONFIRM(!(this->td.y.empty()));
 	CONFIRM(!(this->td.x.empty()));
 	CONFIRM(this->td.x.get_num_cols()==this->td.y.get_num_cols());
 	return this->td.x.get_num_cols();
 }
+
+typedef LinearAlgebra::ref_mindex ref_mindex;
 
 void MachineLearning::Net::backward_propagate() {
 	CONFIRM(!(this->td.y.empty()));
@@ -93,43 +101,40 @@ void MachineLearning::Net::backward_propagate() {
 	auto post_act_func_output = this->post_act_func_output.crbegin();
 
 	// Indeces
-	uint bias_column_index = 0; // This is always zero.
-	uint curr_layer_output_index;
-	uint curr_layer_input_index;
-	uint upper_layer_output_index;
-	uint data_index;
-	uint this_should_trigger_a_warning;
-	std::cout << this_should_trigger_a_warning << std::endl;
-
+	const uint bias_column_index = 0; // This is always zero.
+	
 	// Mindex pointers
-	LinearAlgebra::ref_mindex biases_m = {curr_layer_output_index,bias_column_index};
-	LinearAlgebra::ref_mindex weights_m = {curr_layer_output_index,curr_layer_input_index};
-	LinearAlgebra::ref_mindex curr_input_m = {curr_layer_input_index,data_index};
-	LinearAlgebra::ref_mindex naive_derivatives_m = {curr_layer_output_index,data_index};
-	LinearAlgebra::ref_mindex dEdy_m = {upper_layer_output_index,data_index};
 
-	for (auto layer = this->crbegin(); layer != this->crend(); ++layer, ++pre_act_func_output, ++post_act_func_output) {
+	for (auto layer_iter = this->crbegin(); layer_iter != this->crend(); ++layer_iter, ++pre_act_func_output, ++post_act_func_output) {
 
-		LayerParams curr_partials(layer->get_num_inputs(),layer->get_num_outputs());
-		LinearAlgebra::Matrix naive_derivatives = this->af.ddx(*pre_act_func_output);
+		LinearAlgebra::Matrix derivatives_for_next_layer(MINDEX(layer_iter->get_num_inputs(),this->get_num_data_points()));
+		LayerParams curr_partials(layer_iter->get_num_inputs(),layer_iter->get_num_outputs());
+		LinearAlgebra::Matrix dfdx = this->af.ddx(*pre_act_func_output);
+		LinearAlgebra::Matrix dfdx_dEdy = LinearAlgebra::hadamard_product(dfdx,dEdy);
 		LinearAlgebra::Matrix curr_input = *(std::next(post_act_func_output));
 
-		for (data_index = 0; data_index < this->get_num_data_points(); ++data_index) {
+		for (uint data_index = 0; data_index < this->get_num_data_points(); ++data_index) {
 
-			for (curr_layer_output_index = 0; curr_layer_output_index < layer->get_num_outputs(); ++curr_layer_output_index) {
+			for (uint output_index = 0; output_index < layer_iter->get_num_outputs(); ++output_index) {
+				ref_mindex dfdx_dEdy_m	=	{	output_index	,	data_index			};
+				ref_mindex biases_m		=	{	output_index	,	bias_column_index	};
 
-				for (curr_layer_input_index = 0; curr_layer_input_index < layer->get_num_inputs(); ++curr_layer_input_index) {
+				curr_partials.biases[biases_m] += dfdx_dEdy[dfdx_dEdy_m];
 
-					curr_partials.weights[weights_m] = curr_input[curr_input_m]*naive_derivatives[naive_derivatives_m]*dEdy[dEdy_m];
+				for	(uint input_index = 0; input_index < layer_iter->get_num_inputs(); ++input_index) {
+					ref_mindex weights_m					=	{	output_index	,	input_index		};
+					ref_mindex curr_input_m					=	{	input_index		,	data_index		};
+					ref_mindex derivatives_for_next_layer_m	=	{	input_index		,	data_index		};
+
+					derivatives_for_next_layer[derivatives_for_next_layer_m] += layer_iter->weights[weights_m]*dfdx_dEdy[dfdx_dEdy_m];
+					curr_partials.weights[weights_m] += curr_input[curr_input_m]*dfdx_dEdy[dfdx_dEdy_m];
 
 				}
 
-				curr_partials.biases[biases_m] = naive_derivatives[naive_derivatives_m]*dEdy[dEdy_m];
-
 			}
 		}
-
-		this->partial_derivatives.push_back(curr_partials);
+		dEdy = derivatives_for_next_layer;
+		this->partial_derivatives.push_front(curr_partials/this->get_num_data_points());
 	}
 }
 
@@ -176,7 +181,6 @@ void MachineLearning::Net::backward_propagate() {
 // 	}
 // 	return a;
 // }
-
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n) {
 	os << n.str();
 	return os;
@@ -187,6 +191,19 @@ std::ostream& operator<<(std::ostream& os, const MachineLearning::Gradient g) {
 		os << (*i) << std::endl;
 	}
 	return os;
+}
+
+MachineLearning::Gradient operator-(const MachineLearning::Gradient& A, const MachineLearning::Gradient& B) {
+	assert(A.size()==B.size());
+	MachineLearning::Gradient ret;
+	auto a = A.begin();
+	auto b = B.begin();
+	while (a != A.end()) {
+		ret.push_back((*a)-(*b));
+		++a;
+		++b;
+	}
+	return ret;
 }
 
 // MachineLearning::Gradient MachineLearning::Net::get_gradient() const {
