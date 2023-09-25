@@ -78,9 +78,9 @@ void NetTest::PrivateAPI::calculate_gradient() {
 	MachineLearning::TrainingDataset td = {x,y};
 	n.load_training_data(td);
 
-	// TEST_RETURN_FUNC(n.calculate_gradient(),==,numerical_gradient(n));
-
 	PRINT_VAR(percent_error(n.calculate_gradient(),numerical_gradient(n)));
+
+	TEST_RETURN_FUNC(n.calculate_gradient(),==,numerical_gradient(n));
 }
 
 void calculate_gradient_random() {
