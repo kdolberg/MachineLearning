@@ -13,7 +13,7 @@ MachineLearning::scalar MachineLearning::error_avg(const LinearAlgebra::Matrix& 
 	LinearAlgebra::Matrix E = MachineLearning::error(net_output_data,dataset_y_data);
 	MachineLearning::uint N = 0;
 	scalar sum = 0.0f;
-	for (LinearAlgebra::mindex_t i = {0,0}; i.row < E.get_num_rows(); ++i.row) {
+	for (MachineLearning::mindex i = {0,0}; i.row < E.get_num_rows(); ++i.row) {
 		for (i.col = 0; i.col < E.get_num_cols(); ++i.col) {
 			sum += E[i];
 			++N;

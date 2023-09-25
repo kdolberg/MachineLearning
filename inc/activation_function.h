@@ -28,7 +28,7 @@ namespace MachineLearning {
 		T operator()(const T& t) const {
 			assert(T::is_matrix_like());
 			T ret(t.matrix_size());
-			for (LinearAlgebra::mindex_t i = {0,0}; i.row < t.get_num_rows(); ++i.row) {
+			for (MachineLearning::mindex i = {0,0}; i.row < t.get_num_rows(); ++i.row) {
 				for (i.col = 0; i.col < t.get_num_cols(); ++i.col) {
 					ret[i] = this->function(t[i]);
 				}
@@ -47,7 +47,7 @@ namespace MachineLearning {
 		T ddx(const T& t) const {
 			assert(T::is_matrix_like());
 			T ret(t.matrix_size());
-			for (LinearAlgebra::mindex_t i = {0,0}; i.row < t.get_num_rows(); ++i.row) {
+			for (MachineLearning::mindex i = {0,0}; i.row < t.get_num_rows(); ++i.row) {
 				for (i.col = 0; i.col < t.get_num_cols(); ++i.col) {
 					ret[i] = this->derivative(t[i]);
 				}

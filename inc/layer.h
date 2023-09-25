@@ -26,7 +26,7 @@ namespace MachineLearning {
 		LinearAlgebra::Matrix biases;
 		LayerParams() {}
 		LayerParams(uint num_inputs,uint num_outputs) : LayerParams() {
-			LinearAlgebra::mindex_t weight_matrix_dims = MINDEX(num_outputs,num_inputs);
+			MachineLearning::mindex weight_matrix_dims = MINDEX(num_outputs,num_inputs);
 			this->weights = LinearAlgebra::Matrix(weight_matrix_dims);
 			this->biases = LinearAlgebra::Matrix(MINDEX(weight_matrix_dims.row,COLUMNS_IN_BASE_MATRIX));
 		}

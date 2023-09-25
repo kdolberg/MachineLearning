@@ -29,11 +29,11 @@ MachineLearning::Gradient NetTest::PrivateAPI::numerical_gradient(MachineLearnin
 	MachineLearning::Gradient ret;
 	for (MachineLearning::Net::iterator i = n.begin(); i != n.end(); ++i) {
 		LinearAlgebra::Matrix w_tmp(i->weights.size()), b_tmp(i->biases.size());
-		for (LinearAlgebra::mindex_t wbi = {0,0}; wbi.row < i->weights.get_num_rows(); ++wbi.row) {
+		for (MachineLearning::mindex wbi = {0,0}; wbi.row < i->weights.get_num_rows(); ++wbi.row) {
 			for (wbi.col = 0; wbi.col < i->weights.get_num_cols(); ++wbi.col) {
 				w_tmp[wbi] = numerical_derivative(n,&(i->weights[wbi]));
 			}
-			LinearAlgebra::mindex_t bbi = MINDEX(wbi.row,0);
+			MachineLearning::mindex bbi = MINDEX(wbi.row,0);
 			b_tmp[bbi] = numerical_derivative(n,&(i->biases[bbi]));
 		}
 		ret.push_back(MachineLearning::LayerParams({w_tmp,b_tmp}));
@@ -44,7 +44,7 @@ MachineLearning::Gradient NetTest::PrivateAPI::numerical_gradient(MachineLearnin
 LinearAlgebra::Matrix percent_error(const LinearAlgebra::Matrix& a, const LinearAlgebra::Matrix& b) {
 	assert(a.size()==b.size());
 	LinearAlgebra::Matrix ret(a.size());
-	for (LinearAlgebra::mindex_t i = {0,0}; i.row < a.get_num_rows(); ++i.row) {
+	for (MachineLearning::mindex i = {0,0}; i.row < a.get_num_rows(); ++i.row) {
 		for (i.col = 0; i.col < a.get_num_cols(); ++i.col) {
 			ret[i] = 100.0f*(a[i]-b[i])/a[i];
 		}
