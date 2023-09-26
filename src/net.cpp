@@ -53,6 +53,17 @@ MachineLearning::Gradient MachineLearning::Net::calculate_gradient() {
 	return this->partial_derivatives;
 }
 
+LinearAlgebra::Matrix MachineLearning::Net::operator()(const LinearAlgebra::Matrix& x_in) const {
+	LinearAlgebra::Matrix ret = x_in;
+	for (auto i = this->cbegin(); i != this->cend(); ++i) {
+		ret = this->af(i->operator()(ret));
+	}
+	return ret;
+}
+LinearAlgebra::Matrix MachineLearning::Net::operator()() const {
+	return this->operator()(this->td.x);
+}
+
 void MachineLearning::Net::forward_propagate() {
 	//Empty all datacaches since we're starting from scratch
 	this->clear_data_caches();
@@ -90,16 +101,14 @@ void MachineLearning::Net::backward_propagate() {
 	// Calculate the derivative of the error function with respect to the output from forward propagation
 	LinearAlgebra::Matrix dEdy = this->error_ddx();
 
-	// Iterators
+	const uint bias_column_index = 0; // The biases of a layer are a single column. The index of that column is always 0.
+
+	// Iterators to be used in the backpropagation for loop
 	auto pre_act_func_output = this->pre_act_func_output.crbegin();
 	auto post_act_func_output = this->post_act_func_output.crbegin();
 	auto layer_iter = this->crbegin();
 
-	// Indeces
-	const uint bias_column_index = 0; // This is always zero.
-	
-	// Mindex pointers
-
+	// Backpropagation loop
 	for (; layer_iter != this->crend(); ++layer_iter, ++pre_act_func_output, ++post_act_func_output) {
 
 		LinearAlgebra::Matrix derivatives_for_next_layer(MINDEX(layer_iter->get_num_inputs(),this->get_num_data_points()));
@@ -172,4 +181,24 @@ void MachineLearning::Net::load_training_data(const MachineLearning::TrainingDat
 
 const MachineLearning::TrainingDataset& MachineLearning::Net::get_training_data() const {
 	return this->td;
+}
+
+MachineLearning::scalar max(const MachineLearning::Gradient& n) {
+	auto i = n.cbegin();
+	MachineLearning::scalar ret = max(*i);
+	++i;
+	for (; i != n.cend(); ++i) {
+		ret = std::max(ret,max(*i));
+	}
+	return ret;
+}
+
+MachineLearning::scalar min(const MachineLearning::Gradient& n) {
+	auto i = n.cbegin();
+	MachineLearning::scalar ret = min(*i);
+	++i;
+	for (; i != n.cend(); ++i) {
+		ret = std::min(ret,min(*i));
+	}
+	return ret;
 }

@@ -7,10 +7,6 @@ namespace NetTest {
 	class PrivateAPI {
 	public:
 		static void calculate_gradient();
-
-		// Supporting functions
-		static MachineLearning::scalar numerical_derivative(MachineLearning::Net& n, MachineLearning::scalar *wb_ptr);
-		static MachineLearning::Gradient numerical_gradient(MachineLearning::Net& n);
 	};
 
 	class PublicAPI {
@@ -19,6 +15,5 @@ namespace NetTest {
 		static void load_training_data();
 		static void learn();
 	};
-	void numerical_derivative_test();
 	void execute_all_tests();
 };

@@ -4,6 +4,7 @@
 #include <list>
 #include <utility>
 #include <iostream>
+#include <algorithm>
 #include "types.h"
 #include "layer.h"
 #include "activation_function.h"
@@ -46,9 +47,9 @@ namespace MachineLearning {
 		std::list<LinearAlgebra::Matrix> pre_act_func_output;
 		std::list<LinearAlgebra::Matrix> post_act_func_output;
 		std::list<LayerParams> partial_derivatives;
-		MachineLearning::ActivationFunction af;
 		TrainingDataset td;
 	public:
+		MachineLearning::ActivationFunction af;
 		scalar learning_rate;
 		Net() {
 			// Set the learning rate to the default rate.
@@ -84,6 +85,8 @@ namespace MachineLearning {
 		uint get_num_data_points() const;
 		uint get_num_outputs() const;
 		uint get_num_inputs() const;
+		LinearAlgebra::Matrix operator()(const LinearAlgebra::Matrix&) const;
+		LinearAlgebra::Matrix operator()() const;
 	protected:
 		void forward_propagate();
 		void backward_propagate();
@@ -101,5 +104,9 @@ MachineLearning::Gradient operator-(const MachineLearning::Gradient& A, const Ma
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
 
 std::ostream& operator<<(std::ostream& os, const MachineLearning::Gradient g);
+
+MachineLearning::scalar max(const MachineLearning::Gradient& n);
+
+MachineLearning::scalar min(const MachineLearning::Gradient& n);
 
 #endif //NET_H

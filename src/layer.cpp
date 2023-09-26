@@ -70,3 +70,13 @@ MachineLearning::LayerParams operator*(const MachineLearning::LayerParams& lp, M
 	MachineLearning::LayerParams ret = {lp.get_weights()*u,lp.get_biases()*u};
 	return ret;
 }
+
+#include <algorithm>
+
+MachineLearning::scalar max(const MachineLearning::LayerParams& lp) {
+	return std::max(max(lp.get_weights()),max(lp.get_biases()));
+}
+
+MachineLearning::scalar min(const MachineLearning::LayerParams& lp) {
+	return std::min(min(lp.get_weights()),min(lp.get_biases()));
+}
