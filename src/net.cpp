@@ -202,3 +202,31 @@ MachineLearning::scalar min(const MachineLearning::Gradient& n) {
 	}
 	return ret;
 }
+
+MachineLearning::scalar MachineLearning::Net::learn(const TrainingDataset& td) {
+	this->load_training_data(td);
+	MachineLearning::Gradient g = this->calculate_gradient();
+	g *= this->learning_rate;
+	(*this) += g;
+	this->clear_data_caches();
+	return this->error();
+}
+MachineLearning::scalar MachineLearning::Net::learn() {
+	return this->learn(this->get_training_data());
+}
+
+MachineLearning::Gradient& operator*=(MachineLearning::Gradient& g,MachineLearning::scalar s) {
+	for (auto i = g.begin(); i != g.end(); ++i) {
+		(*i) *= s;
+	}
+	return g;
+}
+
+MachineLearning::Net& MachineLearning::Net::operator+=(const MachineLearning::Gradient& g) {
+	auto i = this->begin();
+	auto j = g.cbegin();
+	for (; i != this->end(); ++i,++j) {
+		(*i) += (*j);
+	}
+	return (*this);
+}

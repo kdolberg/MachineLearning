@@ -80,3 +80,18 @@ MachineLearning::scalar max(const MachineLearning::LayerParams& lp) {
 MachineLearning::scalar min(const MachineLearning::LayerParams& lp) {
 	return std::min(min(lp.get_weights()),min(lp.get_biases()));
 }
+
+std::ostream& operator<<(std::ostream& os,const MachineLearning::TrainingDataset& td) {
+	assert(td.x.get_num_cols()==td.y.get_num_cols());
+	assert(td.x.get_num_rows()>0);
+	assert(td.y.get_num_rows()>0);
+	os << td.x << std::endl;
+	os << td.y << std::endl;
+	return os;
+}
+
+MachineLearning::LayerParams operator*=(MachineLearning::LayerParams& lp, MachineLearning::scalar u) {
+	lp.weights *= u;
+	lp.biases *= u;
+	return lp;
+}

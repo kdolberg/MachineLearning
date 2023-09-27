@@ -87,6 +87,10 @@ namespace MachineLearning {
 		uint get_num_inputs() const;
 		LinearAlgebra::Matrix operator()(const LinearAlgebra::Matrix&) const;
 		LinearAlgebra::Matrix operator()() const;
+		scalar learn(const TrainingDataset& td);
+		scalar learn();
+		MachineLearning::Net& operator+=(const MachineLearning::Gradient& g);
+
 	protected:
 		void forward_propagate();
 		void backward_propagate();
@@ -97,8 +101,6 @@ namespace MachineLearning {
 
 } // MachineLearning
 
-MachineLearning::Net& operator+=(MachineLearning::Net& a, MachineLearning::Gradient& b);
-
 MachineLearning::Gradient operator-(const MachineLearning::Gradient& A, const MachineLearning::Gradient& B);
 
 std::ostream& operator<<(std::ostream& os,const MachineLearning::Net& n);
@@ -108,5 +110,7 @@ std::ostream& operator<<(std::ostream& os, const MachineLearning::Gradient g);
 MachineLearning::scalar max(const MachineLearning::Gradient& n);
 
 MachineLearning::scalar min(const MachineLearning::Gradient& n);
+
+MachineLearning::Gradient& operator*=(MachineLearning::Gradient& g,MachineLearning::scalar s);
 
 #endif //NET_H

@@ -74,8 +74,12 @@ MachineLearning::LayerParams operator/(const MachineLearning::LayerParams& lp, L
 
 MachineLearning::LayerParams operator*(const MachineLearning::LayerParams& lp, MachineLearning::scalar u);
 
+MachineLearning::LayerParams operator*=(MachineLearning::LayerParams& lp, MachineLearning::scalar u);
+
 MachineLearning::scalar max(const MachineLearning::LayerParams& lp);
 
 MachineLearning::scalar min(const MachineLearning::LayerParams& lp);
+
+std::ostream& operator<<(std::ostream& os,const MachineLearning::TrainingDataset& td);
 
 #endif //LAYER_H

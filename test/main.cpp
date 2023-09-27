@@ -137,7 +137,9 @@ void PropIter_tests() {
 
 int main(int argc, char const *argv[]) {
 	// la_matrix_tests();
-	NetTest::execute_all_tests();
-	print_report_card();
+	// NetTest::execute_all_tests();
+	// print_report_card();
+
+	NetTest::Performance::execute_all_tests();
 	return 0;
 }
