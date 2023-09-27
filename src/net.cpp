@@ -50,7 +50,9 @@ MachineLearning::Gradient MachineLearning::Net::calculate_gradient() {
 	this->clear_data_caches();
 	this->forward_propagate();
 	this->backward_propagate();
-	return this->partial_derivatives;
+	MachineLearning::Gradient ret = (this->partial_derivatives);
+	ret *= ((-1.0f)*(this->learning_rate));
+	return ret;
 }
 
 LinearAlgebra::Matrix MachineLearning::Net::operator()(const LinearAlgebra::Matrix& x_in) const {
@@ -206,13 +208,16 @@ MachineLearning::scalar min(const MachineLearning::Gradient& n) {
 MachineLearning::scalar MachineLearning::Net::learn(const TrainingDataset& td) {
 	this->load_training_data(td);
 	MachineLearning::Gradient g = this->calculate_gradient();
-	g *= this->learning_rate;
 	(*this) += g;
-	this->clear_data_caches();
 	return this->error();
 }
 MachineLearning::scalar MachineLearning::Net::learn() {
 	return this->learn(this->get_training_data());
+}
+
+const MachineLearning::Gradient& MachineLearning::Net::get_partial_derivatives() const {
+	assert(!this->partial_derivatives.empty());
+	return this->partial_derivatives;
 }
 
 MachineLearning::Gradient& operator*=(MachineLearning::Gradient& g,MachineLearning::scalar s) {

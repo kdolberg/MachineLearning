@@ -28,12 +28,15 @@ MachineLearning::TrainingDataset NetTest::Performance::xor_dataset() {
 void NetTest::Performance::learn_xor() {
 	MachineLearning::TrainingDataset td = xor_dataset();
 
-	MachineLearning::NetDef def = {2,100,100,50,1};
+	MachineLearning::NetDef def = {2,200,200,100,50,1};
 	MachineLearning::Net n(def,true);
-
-	for (int i = 0; i < 10; ++i) {
+	n.learn(td);
+	for (int i = 0; (i < 1000) && (n.error() > 0.1); ++i) {
+		std::cout << i << ": ";
 		PRINT_VAR(n.learn(td));
 	}
+
+	PRINT_VAR(n());
 }
 
 void NetTest::Performance::execute_all_tests() {

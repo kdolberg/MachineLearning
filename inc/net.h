@@ -9,7 +9,7 @@
 #include "layer.h"
 #include "activation_function.h"
 
-#define LEARNING_RATE 0.1
+#define LEARNING_RATE 0.00001
 
 namespace NetTest {
 	class PrivateAPI;
@@ -90,7 +90,7 @@ namespace MachineLearning {
 		scalar learn(const TrainingDataset& td);
 		scalar learn();
 		MachineLearning::Net& operator+=(const MachineLearning::Gradient& g);
-
+		const MachineLearning::Gradient& get_partial_derivatives() const;
 	protected:
 		void forward_propagate();
 		void backward_propagate();
