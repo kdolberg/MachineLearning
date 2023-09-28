@@ -3,7 +3,7 @@
 #include "UnitTest.h" // delete this line later
 
 LinearAlgebra::Matrix MachineLearning::error(const LinearAlgebra::Matrix& net_output_data,const LinearAlgebra::Matrix& dataset_y_data) {
-	return LinearAlgebra::hadamard_square(dataset_y_data-net_output_data)*static_cast<scalar>(0.5f);
+	return LinearAlgebra::hadamard_square(net_output_data- dataset_y_data)*static_cast<scalar>(0.5f);
 }
 LinearAlgebra::Matrix MachineLearning::error_ddx(const LinearAlgebra::Matrix& net_output_data, const LinearAlgebra::Matrix& dataset_y_data) {
 	return (net_output_data-dataset_y_data);
@@ -57,8 +57,9 @@ MachineLearning::Gradient MachineLearning::Net::calculate_gradient() {
 
 LinearAlgebra::Matrix MachineLearning::Net::operator()(const LinearAlgebra::Matrix& x_in) const {
 	LinearAlgebra::Matrix ret = x_in;
+	auto af = this->afs.cbegin();
 	for (auto i = this->cbegin(); i != this->cend(); ++i) {
-		ret = this->af(i->operator()(ret));
+		ret = af->operator()(i->operator()(ret));
 	}
 	return ret;
 }
@@ -72,9 +73,10 @@ void MachineLearning::Net::forward_propagate() {
 
 	//Add the input to the post_act_func_output
 	this->post_act_func_output.push_back(this->td.x);
-	for (auto i = this->begin(); i != this->end(); ++i) {
+	auto af = this->afs.cbegin();
+	for (auto i = this->begin(); i != this->end(); ++i,++af) {
 		this->pre_act_func_output.push_back(i->operator()(this->post_act_func_output.back()));
-		this->post_act_func_output.push_back(this->af(this->pre_act_func_output.back()));
+		this->post_act_func_output.push_back(af->operator()(this->pre_act_func_output.back()));
 	}
 }
 
@@ -109,13 +111,14 @@ void MachineLearning::Net::backward_propagate() {
 	auto pre_act_func_output = this->pre_act_func_output.crbegin();
 	auto post_act_func_output = this->post_act_func_output.crbegin();
 	auto layer_iter = this->crbegin();
+	auto af = this->afs.crbegin();
 
 	// Backpropagation loop
-	for (; layer_iter != this->crend(); ++layer_iter, ++pre_act_func_output, ++post_act_func_output) {
+	for (; layer_iter != this->crend(); ++layer_iter, ++pre_act_func_output, ++post_act_func_output, ++af) {
 
 		LinearAlgebra::Matrix derivatives_for_next_layer(MINDEX(layer_iter->get_num_inputs(),this->get_num_data_points()));
 		LayerParams curr_partials(layer_iter->get_num_inputs(),layer_iter->get_num_outputs());
-		LinearAlgebra::Matrix dfdx = this->af.ddx(*pre_act_func_output);
+		LinearAlgebra::Matrix dfdx = af->ddx(*pre_act_func_output);
 		LinearAlgebra::Matrix dfdx_dEdy = LinearAlgebra::hadamard_product(dfdx,dEdy);
 		LinearAlgebra::Matrix curr_input = *(std::next(post_act_func_output));
 
@@ -234,4 +237,11 @@ MachineLearning::Net& MachineLearning::Net::operator+=(const MachineLearning::Gr
 		(*i) += (*j);
 	}
 	return (*this);
+}
+
+std::ostream& operator<<(std::ostream& os, const std::list<MachineLearning::ActivationFunction>& afs) {
+	for (auto i = afs.cbegin(); i != afs.cend(); ++i) {
+		os << (*i) << " ";
+	}
+	return os;
 }

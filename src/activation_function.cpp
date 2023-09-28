@@ -1,4 +1,5 @@
 #include <math.h>
+#include <sstream>
 #include "activation_function.h"
 
 #ifndef LEAKINESS
@@ -13,6 +14,10 @@ MachineLearning::scalar MachineLearning::ActivationFunction::operator()(scalar i
 
 MachineLearning::scalar MachineLearning::ActivationFunction::ddx(scalar in) const {
 	return this->derivative(in);
+}
+
+const std::string& MachineLearning::ActivationFunction::str() const {
+	return this->name;
 }
 
 /**
@@ -55,11 +60,18 @@ MachineLearning::scalar sigmoid_ddx(MachineLearning::scalar x) {
  * @brief Builds and returns an ActivationFunction object that containing the leaky ReLU function
  */
 MachineLearning::ActivationFunction MachineLearning::get_leaky_ReLU() {
-	static MachineLearning::ActivationFunction ret((ActivationFunctionStruct){leaky_ReLU,leaky_ReLU_ddx});
+	MachineLearning::ActivationFunction ret((ActivationFunctionStruct){leaky_ReLU,leaky_ReLU_ddx});
+	ret.name = "leaky_ReLU";
 	return ret;
 }
 
 MachineLearning::ActivationFunction MachineLearning::get_sigmoid() {
-	static MachineLearning::ActivationFunction ret((ActivationFunctionStruct){sigmoid,sigmoid_ddx});
+	MachineLearning::ActivationFunction ret((ActivationFunctionStruct){sigmoid,sigmoid_ddx});
+	ret.name = "sigmoid";
 	return ret;
+}
+
+std::ostream& operator<<(std::ostream& os, const MachineLearning::ActivationFunction& af) {
+	os << af.str();
+	return os;
 }

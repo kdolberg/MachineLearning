@@ -1,3 +1,6 @@
+#ifndef NETTEST_H
+#define NETTEST_H
+
 #include "UnitTest.h"
 #include "net.h"
 
@@ -18,3 +21,5 @@ namespace NetTest {
 	class Performance;
 	void execute_all_tests();
 };
+
+#endif // NETTEST_H

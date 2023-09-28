@@ -2,18 +2,35 @@
 #define ACTIVATION_FUNCTION_H
 
 #include <functional>
+#include <string>
 #include "types.h"
 
 namespace MachineLearning {
+	class ActivationFunction;
+
 	typedef struct {
 		std::function<scalar(scalar)> function;
 		std::function<scalar(scalar)> derivative;
 	} ActivationFunctionStruct;
 
 	/**
+	 * @brief Returns the sigmoid ActivationFunction
+	 * @return sigmoid ActivationFunction
+	 */
+	ActivationFunction get_sigmoid();
+	/**
+	 * Returns the leaky ReLU ActivationFunction
+	 * @return leaky ReLU ActivationFunction
+	 */
+	ActivationFunction get_leaky_ReLU();
+	/**
 	 * @brief Class used to define a layer's activation function.
 	 */
+
 	class ActivationFunction : ActivationFunctionStruct {
+		friend ActivationFunction get_leaky_ReLU();
+		friend ActivationFunction get_sigmoid();
+		std::string name;
 	public:
 		using ActivationFunctionStruct::ActivationFunctionStruct;
 
@@ -51,17 +68,10 @@ namespace MachineLearning {
 			}
 			return ret;
 		}
+		const std::string& str() const;
 	}; // ActivationFunction
-	/**
-	 * @brief Returns the sigmoid ActivationFunction
-	 * @return sigmoid ActivationFunction
-	 */
-	ActivationFunction get_sigmoid();
-	/**
-	 * Returns the leaky ReLU ActivationFunction
-	 * @return leaky ReLU ActivationFunction
-	 */
-	ActivationFunction get_leaky_ReLU();
 } //MachineLearning
+
+std::ostream& operator<<(std::ostream& os, const MachineLearning::ActivationFunction& af);
 
 #endif //ACTIVATION_FUNCTION_H

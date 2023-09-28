@@ -49,12 +49,12 @@ namespace MachineLearning {
 		std::list<LayerParams> partial_derivatives;
 		TrainingDataset td;
 	public:
-		MachineLearning::ActivationFunction af;
+		std::list<MachineLearning::ActivationFunction> afs;
 		scalar learning_rate;
 		Net() {
 			// Set the learning rate to the default rate.
 			this->learning_rate = LEARNING_RATE;
-			this->af = MachineLearning::get_leaky_ReLU();
+			// this->af = MachineLearning::get_leaky_ReLU();
 		}
 		Net(NetDef def) : Net() {
 			for (uint i = 0; i < def.size()-1; ++i) {
@@ -62,6 +62,11 @@ namespace MachineLearning {
 				uint num_outputs = def[i+1];
 				LayerParams tmp(num_inputs,num_outputs);
 				this->push_back(tmp);
+				if(i==(def.size()-2)) {
+					this->afs.push_back(MachineLearning::get_sigmoid());
+				} else {
+					this->afs.push_back(MachineLearning::get_leaky_ReLU());
+				}
 			}
 		}
 		Net(NetDef def, bool rand) : Net(def) {
@@ -112,5 +117,7 @@ MachineLearning::scalar max(const MachineLearning::Gradient& n);
 MachineLearning::scalar min(const MachineLearning::Gradient& n);
 
 MachineLearning::Gradient& operator*=(MachineLearning::Gradient& g,MachineLearning::scalar s);
+
+std::ostream& operator<<(std::ostream& os, const std::list<MachineLearning::ActivationFunction>& afs);
 
 #endif //NET_H
