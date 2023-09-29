@@ -17,6 +17,7 @@ namespace NetTest {
 		static void Net_constructors();
 		static void load_training_data();
 		static void learn();
+		static void verify_save();
 	};
 	class Performance;
 	void execute_all_tests();

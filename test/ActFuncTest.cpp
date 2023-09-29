@@ -1,12 +1,31 @@
 #include "ActFuncTest.h"
 
-void ActFuncTest::PublicAPI::str() {
+void ActFuncTest::str() {
 	MachineLearning::ActivationFunction relu = MachineLearning::get_leaky_ReLU();
 	MachineLearning::ActivationFunction sig = MachineLearning::get_sigmoid();
 	TEST_RETURN_FUNC(relu.str(),==,"leaky_ReLU");
 	TEST_RETURN_FUNC(sig.str(),==,"sigmoid");
 }
 
+void ActFuncTest::leaky_ReLU() {
+	MachineLearning::ActivationFunction relu = MachineLearning::get_leaky_ReLU();
+	TEST_RETURN_FUNC(relu(0.5f),==,0.5f);
+	TEST_RETURN_FUNC(relu(-1.0f),==,-0.1f);
+	TEST_RETURN_FUNC(relu((LinearAlgebra::Matrix){{-1,2},{3,-4}}),==,((LinearAlgebra::Matrix){{-0.1f,2.0f},{3.0f,-0.4f}}));
+	TEST_RETURN_FUNC(relu.ddx(5.0f),==,1.0f);
+	TEST_RETURN_FUNC(relu.ddx(-7.0f),==,0.1f);
+}
+
+void ActFuncTest::sigmoid() {
+	MachineLearning::ActivationFunction sigm = MachineLearning::get_sigmoid();
+	TEST_RETURN_FUNC(sigm(0.5f),==,0.6224593312018958f);
+	TEST_RETURN_FUNC(sigm(-1.0f),==,0.26894142136992605f);
+	TEST_RETURN_FUNC(sigm.ddx(5.0f),==,0.006648056670778641f);
+	TEST_RETURN_FUNC(sigm.ddx(-7.0f),==,0.000910221180119593f);
+}
+
 void ActFuncTest::execute_all_tests() {
-	ActFuncTest::PublicAPI::str();
+	ActFuncTest::str();
+	ActFuncTest::leaky_ReLU();
+	ActFuncTest::sigmoid();
 }

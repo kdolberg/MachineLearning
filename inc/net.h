@@ -5,6 +5,7 @@
 #include <utility>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 #include "types.h"
 #include "layer.h"
 #include "activation_function.h"
@@ -42,6 +43,9 @@ namespace MachineLearning {
 										const LinearAlgebra::Matrix& dataset_y_data		);
 
 	class Net : public std::list<LayerParams> {
+	public:
+		static MachineLearning::Net load(const char * filename);
+	private:
 		friend NetTest::PrivateAPI;
 	protected:
 		std::list<LinearAlgebra::Matrix> pre_act_func_output;
@@ -82,6 +86,9 @@ namespace MachineLearning {
 				i->biases.set_contents(s);
 			}
 		}
+		Net(const char * filename) {
+			this->load(filename);
+		}
 		std::string str() const;
 		void load_training_data(const MachineLearning::TrainingDataset& td);
 		const TrainingDataset& get_training_data() const;
@@ -96,6 +103,7 @@ namespace MachineLearning {
 		scalar learn();
 		MachineLearning::Net& operator+=(const MachineLearning::Gradient& g);
 		const MachineLearning::Gradient& get_partial_derivatives() const;
+		bool save(const char * filename);
 	protected:
 		void forward_propagate();
 		void backward_propagate();
@@ -119,5 +127,7 @@ MachineLearning::scalar min(const MachineLearning::Gradient& n);
 MachineLearning::Gradient& operator*=(MachineLearning::Gradient& g,MachineLearning::scalar s);
 
 std::ostream& operator<<(std::ostream& os, const std::list<MachineLearning::ActivationFunction>& afs);
+
+std::ifstream& operator>>(std::ifstream& ifs, MachineLearning::Net& n);
 
 #endif //NET_H

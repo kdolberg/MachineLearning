@@ -7,13 +7,6 @@
 // 	TEST_RETURN_FUNC(n.empty(),==,false);
 // }
 
-// void activation_function_tests() {
-// 	MachineLearning::ActivationFunction relu = MachineLearning::get_leaky_ReLU();
-// 	TEST_RETURN_FUNC(relu(0.5f),==,0.5f);
-// 	TEST_RETURN_FUNC(relu(-1.0f),==,-0.1f);
-// 	TEST_RETURN_FUNC(relu((LinearAlgebra::Matrix){{-1,2},{3,-4}}),==,((LinearAlgebra::Matrix){{-0.1f,2.0f},{3.0f,-0.4f}}));
-// }
-
 // bool LayerParams_randomize_randomizes_correctly() {
 // 	bool ret = true;
 // 	MachineLearning::LayerParams lp1({{1,1},{1,1}},{{1},{1}});

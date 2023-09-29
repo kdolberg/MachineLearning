@@ -6,9 +6,13 @@
 #include "activation_function.h"
 
 namespace ActFuncTest {
-	namespace PublicAPI {
-		void str();
-	}
+	//Tests
+	void str();
+	void leaky_ReLU();
+	void sigmoid();
+	/**
+	 * @brief executes all tests in the ActFuncTest namespace
+	 */
 	void execute_all_tests();
 }
 
