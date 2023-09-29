@@ -41,7 +41,7 @@ obj/%.unit_test: ../UnitTest/src/%.cpp ../UnitTest/inc/%.h
 # -include $(UNIT_TEST_OBJ:.unit_test=.d)
 
 clean:
-	rm -f $(ML_OBJ) $(ML_TEST_OBJ) $(UNIT_TEST_OBJ) $(TARGET).exe
+	rm -f $(ML_OBJ) $(ML_TEST_OBJ) $(UNIT_TEST_OBJ) $(TARGET).exe 
 
 clean_linalg:
 	rm -f $(LINALG_OBJ)
