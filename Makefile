@@ -12,7 +12,7 @@ INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I
 
 # Sources and objects
 LINALG_OBJ = obj/la_basic_types.la obj/la_matrix.la obj/la_matrix_like.la obj/la_vector.la obj/la_vector_overloads.la
-ML_OBJ = obj/activation_function.ml obj/layer.ml obj/net.ml
+ML_OBJ = obj/activation_function.ml obj/layer.ml obj/net.ml obj/save_load.ml
 ML_TEST_OBJ = obj/main.ml_test obj/NetTest.ml_test obj/NetPerformance.ml_test obj/ActFuncTest.ml_test
 UNIT_TEST_OBJ = obj/test.unit_test
 OBJECTS = $(ML_OBJ) $(LINALG_OBJ) $(ML_TEST_OBJ) $(UNIT_TEST_OBJ)
