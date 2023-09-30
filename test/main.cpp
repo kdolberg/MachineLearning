@@ -11,5 +11,6 @@ void save_load_test() {
 }
 
 int main(int argc, char const *argv[]) {
+	NetTest::execute_all_tests();
 	return 0;
 }

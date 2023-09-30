@@ -59,18 +59,25 @@ void test_calculate_gradient_one_node_net_uniform_data(MachineLearning::uint num
 }
 
 void test_calculate_gradient_two_layers(MachineLearning::uint num_data_points) {
-	MachineLearning::uint num_inputs = 2;
+	MachineLearning::uint num_inputs = 1;
 	MachineLearning::uint num_outputs = 1;
-	MachineLearning::NetDef def = {num_inputs,2,num_outputs};
-	MachineLearning::Net n(def,1.0f); // single-node net with all parameters equal to 1
+	MachineLearning::NetDef def = {num_inputs,num_inputs,num_outputs};
+	MachineLearning::Net n(def,1.0f); // two-layer net
+	n.afs = (std::list<MachineLearning::ActivationFunction>){MachineLearning::get_leaky_ReLU(), MachineLearning::get_leaky_ReLU()};
 	LinearAlgebra::Matrix x(MINDEX(num_inputs,num_data_points)),y(MINDEX(1,num_data_points));
 	x.set_contents(1.0f);
 	y.set_contents(2.0f);
 	MachineLearning::TrainingDataset td = {x,y};
 	n.load_training_data(td);
-	MachineLearning::Gradient g = make_gradient(n);
+	MachineLearning::LayerParams lp_input,lp_output;
+	lp_output = {(LinearAlgebra::Matrix){{2.0f}},(LinearAlgebra::Matrix){1.0f}};
+	lp_input = {(LinearAlgebra::Matrix){{1.0f}},(LinearAlgebra::Matrix){1.0f}};
+	MachineLearning::Gradient g;
+	// DOUBLE-CHECK THESE "CORRECT" OUTPUTS.
+	g.push_back(lp_input);
+	g.push_back(lp_output);
 
-	TEST_RETURN_FUNC(n.calculate_gradient(),==,g);
+	TEST_VOID_FUNC(n.calculate_gradient(),n.get_partial_derivatives(),==,g);
 }
 
 void test_calculate_gradient(MachineLearning::uint num_data_points) {
