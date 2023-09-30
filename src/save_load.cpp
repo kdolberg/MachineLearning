@@ -81,3 +81,54 @@ bool load(MachineLearning::LayerParams& lp, std::ifstream& in_file) {
 		return false;
 	}
 }
+
+// NOTE: This function is not yet going to include the ability to save the ActivationFunction list
+bool save(const MachineLearning::Net& n, std::ofstream& out_file) {
+	if(out_file.is_open()) {
+		bool is_good = save_list((std::list<MachineLearning::LayerParams>)n,out_file);
+		// is_good = save_list(n.get_activation_function_list(),out_file) && is_good;
+		return is_good;
+	}
+	return false;
+}
+
+bool load(MachineLearning::Net& n, std::ifstream& in_file) {
+	bool is_good = in_file.is_open();
+	if(is_good) {
+		is_good = load_list(n,in_file) && is_good;
+		std::list<MachineLearning::ActivationFunction> af_list;
+		is_good = load_list(af_list,in_file) && is_good;
+	}
+	return is_good;
+}
+
+bool save(MachineLearning::uint num, std::ofstream& out_file) {
+	if(out_file.is_open()) {
+		out_file.write((char*)(&num),sizeof(MachineLearning::uint));
+		return out_file.good();
+	} else {
+		return false;
+	}
+}
+
+bool load(MachineLearning::uint& num, std::ifstream& in_file) {
+	if(in_file.is_open()) {
+		in_file.read((char*)(&num),sizeof(MachineLearning::uint));
+		return in_file.good();
+	} else {
+		return false;
+	}
+}
+
+/**
+ * @brief Temp function used to allow compilation
+ */
+bool save(const MachineLearning::ActivationFunction&, std::ofstream&){
+	return true;
+}
+/**
+ * @brief Temp function used to allow compilation
+ */
+bool load(MachineLearning::ActivationFunction&,std::ifstream&){
+	return true;
+}
