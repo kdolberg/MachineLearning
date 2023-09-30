@@ -86,7 +86,7 @@ bool load(MachineLearning::LayerParams& lp, std::ifstream& in_file) {
 bool save(const MachineLearning::Net& n, std::ofstream& out_file) {
 	if(out_file.is_open()) {
 		bool is_good = save_list((std::list<MachineLearning::LayerParams>)n,out_file);
-		// is_good = save_list(n.get_activation_function_list(),out_file) && is_good;
+		is_good = save_list(n.get_activation_function_list(),out_file) && is_good;
 		return is_good;
 	}
 	return false;
