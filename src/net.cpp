@@ -251,66 +251,6 @@ std::ostream& operator<<(std::ostream& os, const std::list<MachineLearning::Acti
 	return os;
 }
 
-bool MachineLearning::Net::save(const char * filename) {
-	std::ofstream file(filename, (std::ios::out | std::ios::binary));
-	if (file.is_open()) {
-		file << (*this);
-		return true;
-	} else {
-		return false;
-	}
-}
-MachineLearning::Net MachineLearning::Net::load(const char * filename){
-	MachineLearning::Net ret;
-	std::ifstream file(std::string(filename),std::ios::in | std::ios::binary);
-	file >> ret;
-	return ret;
-}
-
-// template <typename T>
-// std::ofstream& save_gradient(std::ofstream& f, const T& g) {
-// 	MachineLearning::uint num_layers = g.size();
-// 	f << num_layers;
-// 	// Send the number of inputs for each layer
-// 	for (auto i = g.cbegin(); i != g.cend(); ++i) {
-// 		f << i->get_num_inputs();
-// 	}
-// 	f << g.back().get_num_outputs();
-// 	return f;
-// }
-
-// std::ofstream& operator<<(std::ofstream& f, const MachineLearning::Gradient& g) {
-// 	return save_gradient<MachineLearning::Gradient>(f,g);
-// }
-
-// #define SIGMOID ((MachineLearning::uint)0)
-// #define RELU ((MachineLearning::uint)1)
-
-// std::ofstream& operator<<(std::ofstream& f, const MachineLearning::Net& n) {
-// 	save_gradient<MachineLearning::Net>(f,n);
-// 	f << DELINEATOR;
-
-// 	for (auto i = n.afs.cbegin(); i != n.afs.cend(); ++i) {
-// 		if (i->str() == std::string("sigmoid")) {
-// 			f << SIGMOID;
-// 		} else if (i->str() == std::string("leaky_ReLU")) {
-// 			f << RELU;
-// 		}
-// 	}
-// 	f << DELINEATOR;
-// }
-
-// std::ifstream& operator>>(std::ifstream& ifs, MachineLearning::NetDef& def) {
-// 	assert(def.empty());
-// 	MachineLearning::uint num_layers,curr;
-// 	ifs >> num_layers;
-// 	for (MachineLearning::uint i = 0; i < num_layers+1; ++i) {
-// 		ifs >> curr;
-// 		def.push_back(curr);
-// 	}
-// 	return ifs;
-// }
-
-std::ifstream& operator>>(std::ifstream& ifs, MachineLearning::Net& n) {
-	return ifs;
+const std::list<MachineLearning::ActivationFunction>& MachineLearning::Net::get_activation_function_list() const {
+	return this->afs;
 }

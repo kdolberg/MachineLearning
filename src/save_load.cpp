@@ -1,4 +1,27 @@
+#include <stdint.h>
 #include "save_load.h"
+
+static void matrix_copy(const LinearAlgebra::Matrix& m, MachineLearning::scalar * array) {
+	int j = 0;
+	for (MachineLearning::mindex i = {0,0}; i.row < m.get_num_rows(); ++i.row) {
+		for (i.col = 0; i.col < m.get_num_cols(); ++i.col) {
+			array[j] = m[i];
+			++j;
+		}
+	}
+}
+
+static void array_copy(const MachineLearning::scalar * array,LinearAlgebra::Matrix& m) {
+	assert(m.get_num_rows());
+	assert(m.get_num_cols());
+	int j = 0;
+	for (MachineLearning::mindex i = {0,0}; i.row < m.get_num_rows(); ++i.row) {
+		for (i.col = 0; i.col < m.get_num_cols(); ++i.col) {
+			m[i] = array[j];
+			++j;
+		}
+	}
+}
 
 bool save(const MachineLearning::mindex& m,std::ofstream& file) {
 	if(file.is_open()) {
@@ -15,28 +38,6 @@ bool load(MachineLearning::mindex& m, std::ifstream& file) {
 		return file.good();
 	} else {
 		return false;
-	}
-}
-
-void matrix_copy(const LinearAlgebra::Matrix& m, MachineLearning::scalar * array) {
-	int j = 0;
-	for (MachineLearning::mindex i = {0,0}; i.row < m.get_num_rows(); ++i.row) {
-		for (i.col = 0; i.col < m.get_num_cols(); ++i.col) {
-			array[j] = m[i];
-			++j;
-		}
-	}
-}
-
-void array_copy(const MachineLearning::scalar * array,LinearAlgebra::Matrix& m) {
-	assert(m.get_num_rows());
-	assert(m.get_num_cols());
-	int j = 0;
-	for (MachineLearning::mindex i = {0,0}; i.row < m.get_num_rows(); ++i.row) {
-		for (i.col = 0; i.col < m.get_num_cols(); ++i.col) {
-			m[i] = array[j];
-			++j;
-		}
 	}
 }
 
@@ -64,29 +65,19 @@ bool load(LinearAlgebra::Matrix& m, std::ifstream& in_file) {
 	return in_file.good();
 }
 
-template <typename T>
-bool save(const T& t, const char * filename) {
-	std::ofstream out_file;
-	out_file.open(filename,std::ios::out | std::ios::binary);
-	save(t,out_file);
-	out_file.close();
-	return out_file.good();
+bool save(const MachineLearning::LayerParams& lp, std::ofstream& out_file) {
+	if(out_file.is_open()) {
+		return save(lp.weights,out_file) && save(lp.biases,out_file);
+	} else {
+		return false;
+	}
 }
 
-template <typename T>
-bool load(T& t, const char * filename) {
-	std::ifstream in_file;
-	in_file.open(filename,std::ios::in | std::ios::binary);
-	load(t,in_file);
-	in_file.close();
-	return in_file.good();
-}
-
-void test() {
-	LinearAlgebra::Matrix m1(5,true),m2;
-	std::cout << m1 << std::endl;
-	std::cout << save(m1,"MyMatrix.mat") << std::endl;
-	std::cout << load(m2,"MyMatrix.mat") << std::endl;
-	std::cout << m2 << std::endl;
-	std::cout << (m1==m2) << std::endl;
+bool load(MachineLearning::LayerParams& lp, std::ifstream& in_file) {
+	if(in_file.is_open()) {
+		LinearAlgebra::Matrix weights, biases;
+		return (load(lp.weights,in_file) && load(lp.biases,in_file));
+	} else {
+		return false;
+	}
 }

@@ -85,13 +85,6 @@ void NetTest::PrivateAPI::calculate_gradient() {
 	test_calculate_gradient(7);
 }
 
-void NetTest::PublicAPI::verify_save() {
-	MachineLearning::NetDef def = {2,2,1};
-	MachineLearning::Net n(def);
-	MachineLearning::Net loaded;
-	TEST_VOID_FUNC(n.save("mynet.nn");loaded.load("mynet.nn");,n,==,loaded);
-}
-
 void NetTest::PublicAPI::load_training_data() {
 
 }
@@ -104,5 +97,4 @@ void NetTest::execute_all_tests() {
 	NetTest::PrivateAPI::calculate_gradient();
 	// NetTest::PublicAPI::learn();
 	NetTest::PublicAPI::load_training_data();
-	NetTest::PublicAPI::verify_save();
 }

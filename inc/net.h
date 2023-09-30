@@ -43,8 +43,8 @@ namespace MachineLearning {
 										const LinearAlgebra::Matrix& dataset_y_data		);
 
 	class Net : public std::list<LayerParams> {
-	public:
-		static MachineLearning::Net load(const char * filename);
+	// public:
+		// static MachineLearning::Net load(const char * filename);
 	private:
 		friend NetTest::PrivateAPI;
 	protected:
@@ -86,9 +86,6 @@ namespace MachineLearning {
 				i->biases.set_contents(s);
 			}
 		}
-		Net(const char * filename) {
-			this->load(filename);
-		}
 		std::string str() const;
 		void load_training_data(const MachineLearning::TrainingDataset& td);
 		const TrainingDataset& get_training_data() const;
@@ -103,7 +100,7 @@ namespace MachineLearning {
 		scalar learn();
 		MachineLearning::Net& operator+=(const MachineLearning::Gradient& g);
 		const MachineLearning::Gradient& get_partial_derivatives() const;
-		bool save(const char * filename);
+		const std::list<MachineLearning::ActivationFunction>& get_activation_function_list() const;
 	protected:
 		void forward_propagate();
 		void backward_propagate();
