@@ -8,7 +8,7 @@ FLAGS = -DNOFLAGS
 CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -Wall -g -O2 -MMD -MP
 
 # Directory of header files
-INCLUDES = -I. -I./../Utilities -I./../Utilities/src -I./../Utilities/include -I./inc -I./../UnitTest -I./../UnitTest/inc -I./../confirm
+INCLUDES = -I. -I./../LinearAlgebra -I./../LinearAlgebra/src -I./../LinearAlgebra/include -I./inc -I./../UnitTest -I./../UnitTest/inc -I./../confirm
 
 # Sources and objects
 LINALG_OBJ = obj/la_basic_types.la obj/la_matrix.la obj/la_matrix_like.la obj/la_vector.la obj/la_vector_overloads.la
@@ -26,7 +26,7 @@ $(TARGET): $(OBJECTS)
 obj/%.ml: src/%.cpp inc/%.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-obj/%.la: ../Utilities/src/%.cpp ../Utilities/src/%.h
+obj/%.la: ../LinearAlgebra/src/%.cpp ../LinearAlgebra/src/%.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 obj/%.ml_test: test/%.cpp test/%.h
