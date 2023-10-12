@@ -23,7 +23,7 @@ static void array_copy(const MachineLearning::scalar * array,LinearAlgebra::Matr
 	}
 }
 
-bool save(const MachineLearning::mindex& m,std::ofstream& file) {
+bool MachineLearning::save(const MachineLearning::mindex& m,std::ofstream& file) {
 	if(file.is_open()) {
 		file.write((char*)(&m),sizeof(MachineLearning::mindex));
 		return file.good();
@@ -32,7 +32,7 @@ bool save(const MachineLearning::mindex& m,std::ofstream& file) {
 	}
 }
 
-bool load(MachineLearning::mindex& m, std::ifstream& file) {
+bool MachineLearning::load(MachineLearning::mindex& m, std::ifstream& file) {
 	if(file.is_open()) {
 		file.read((char*)&m,sizeof(MachineLearning::mindex));
 		return file.good();
@@ -41,8 +41,8 @@ bool load(MachineLearning::mindex& m, std::ifstream& file) {
 	}
 }
 
-bool save(const LinearAlgebra::Matrix& m,std::ofstream& out_file) {
-	if(!(out_file.is_open() && save(m.size(),out_file))) {
+bool MachineLearning::save(const LinearAlgebra::Matrix& m,std::ofstream& out_file) {
+	if(!(out_file.is_open() && MachineLearning::save(m.size(),out_file))) {
 		return false;
 	}
 	MachineLearning::uint N = m.get_num_rows()*m.get_num_cols();
@@ -52,9 +52,9 @@ bool save(const LinearAlgebra::Matrix& m,std::ofstream& out_file) {
 	return out_file.good();
 }
 
-bool load(LinearAlgebra::Matrix& m, std::ifstream& in_file) {
+bool MachineLearning::load(LinearAlgebra::Matrix& m, std::ifstream& in_file) {
 	MachineLearning::mindex dims;
-	if(!(in_file.is_open() && load(dims,in_file))) {
+	if(!(in_file.is_open() && MachineLearning::load(dims,in_file))) {
 		return false;
 	}
 	m.resize(dims);
@@ -65,44 +65,44 @@ bool load(LinearAlgebra::Matrix& m, std::ifstream& in_file) {
 	return in_file.good();
 }
 
-bool save(const MachineLearning::LayerParams& lp, std::ofstream& out_file) {
+bool MachineLearning::save(const MachineLearning::LayerParams& lp, std::ofstream& out_file) {
 	if(out_file.is_open()) {
-		return save(lp.weights,out_file) && save(lp.biases,out_file);
+		return MachineLearning::save(lp.weights,out_file) && MachineLearning::save(lp.biases,out_file);
 	} else {
 		return false;
 	}
 }
 
-bool load(MachineLearning::LayerParams& lp, std::ifstream& in_file) {
+bool MachineLearning::load(MachineLearning::LayerParams& lp, std::ifstream& in_file) {
 	if(in_file.is_open()) {
 		LinearAlgebra::Matrix weights, biases;
-		return (load(lp.weights,in_file) && load(lp.biases,in_file));
+		return (MachineLearning::load(lp.weights,in_file) && MachineLearning::load(lp.biases,in_file));
 	} else {
 		return false;
 	}
 }
 
 // NOTE: This function is not yet going to include the ability to save the ActivationFunction list
-bool save(const MachineLearning::Net& n, std::ofstream& out_file) {
+bool MachineLearning::save(const MachineLearning::Net& n, std::ofstream& out_file) {
 	if(out_file.is_open()) {
-		bool is_good = save_list((std::list<MachineLearning::LayerParams>)n,out_file);
-		is_good = save_list(n.get_activation_function_list(),out_file) && is_good;
+		bool is_good = MachineLearning::save_list((std::list<MachineLearning::LayerParams>)n,out_file);
+		is_good = MachineLearning::save_list(n.get_activation_function_list(),out_file) && is_good;
 		return is_good;
 	}
 	return false;
 }
 
-bool load(MachineLearning::Net& n, std::ifstream& in_file) {
+bool MachineLearning::load(MachineLearning::Net& n, std::ifstream& in_file) {
 	bool is_good = in_file.is_open();
 	if(is_good) {
-		is_good = load_list(n,in_file) && is_good;
+		is_good = MachineLearning::load_list(n,in_file) && is_good;
 		std::list<MachineLearning::ActivationFunction> af_list;
-		is_good = load_list(af_list,in_file) && is_good;
+		is_good = MachineLearning::load_list(af_list,in_file) && is_good;
 	}
 	return is_good;
 }
 
-bool save(MachineLearning::uint num, std::ofstream& out_file) {
+bool MachineLearning::save(MachineLearning::uint num, std::ofstream& out_file) {
 	if(out_file.is_open()) {
 		out_file.write((char*)(&num),sizeof(MachineLearning::uint));
 		return out_file.good();
@@ -111,7 +111,7 @@ bool save(MachineLearning::uint num, std::ofstream& out_file) {
 	}
 }
 
-bool load(MachineLearning::uint& num, std::ifstream& in_file) {
+bool MachineLearning::load(MachineLearning::uint& num, std::ifstream& in_file) {
 	if(in_file.is_open()) {
 		in_file.read((char*)(&num),sizeof(MachineLearning::uint));
 		return in_file.good();
@@ -123,28 +123,28 @@ bool load(MachineLearning::uint& num, std::ifstream& in_file) {
 /**
  * @brief Temp function used to allow compilation
  */
-bool save(const MachineLearning::ActivationFunction&, std::ofstream&){
+bool MachineLearning::save(const MachineLearning::ActivationFunction&, std::ofstream&){
 	return true;
 }
 /**
  * @brief Temp function used to allow compilation
  */
-bool load(MachineLearning::ActivationFunction&,std::ifstream&){
+bool MachineLearning::load(MachineLearning::ActivationFunction&,std::ifstream&){
 	return true;
 }
 
-bool save(const MachineLearning::TrainingDataset& td, std::ofstream& out_file) {
+bool MachineLearning::save(const MachineLearning::TrainingDataset& td, std::ofstream& out_file) {
 	if (out_file.is_open()) {
-		return save(td.x,out_file) && save(td.y,out_file);
+		return MachineLearning::save(td.x,out_file) && MachineLearning::save(td.y,out_file);
 	} else {
 		return false;
 	}
 	
 }
 
-bool load(MachineLearning::TrainingDataset& td, std::ifstream& in_file) {
+bool MachineLearning::load(MachineLearning::TrainingDataset& td, std::ifstream& in_file) {
 	if (in_file.is_open()) {
-		return load(td.x,in_file) && load(td.y,in_file);
+		return MachineLearning::load(td.x,in_file) && MachineLearning::load(td.y,in_file);
 	} else {
 		return false;
 	}
