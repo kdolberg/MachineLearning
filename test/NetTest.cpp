@@ -45,7 +45,6 @@ void test_calculate_gradient_one_node_net_uniform_data(MachineLearning::uint num
 	MachineLearning::Net n(def,1.0f); // single-node net with all parameters equal to 1
 	n.learning_rate = 1;
 	n.afs = (std::list<MachineLearning::ActivationFunction>){MachineLearning::get_leaky_ReLU()};
-	std::cout << n.afs << std::endl;
 	LinearAlgebra::Matrix x(MINDEX(2,num_data_points)),y(MINDEX(1,num_data_points));
 	x.set_contents(1.0f);
 	y.set_contents(2.0f);

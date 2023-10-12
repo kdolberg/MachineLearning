@@ -7,12 +7,34 @@
 #include "net.h"
 #include "layer.h"
 
+/**
+ * @brief 
+ */
 bool save(const MachineLearning::mindex&,std::ofstream&);
-bool save(const LinearAlgebra::Matrix&,std::ofstream&);
-bool save(const MachineLearning::LayerParams&,std::ofstream&);
-bool save(const MachineLearning::Net&,std::ofstream&);
-bool save(const MachineLearning::ActivationFunction&, std::ofstream&);
+/**
+ * @brief 
+ */
+ bool save(const LinearAlgebra::Matrix&,std::ofstream&);
+/**
+ * @brief 
+ */
+ bool save(const MachineLearning::LayerParams&,std::ofstream&);
+/**
+ * @brief 
+ */
+ bool save(const MachineLearning::Net&,std::ofstream&);
+/**
+ * @brief 
+ */
+ bool save(const MachineLearning::ActivationFunction&, std::ofstream&);
+/**
+ * @brief 
+ */
 bool save(MachineLearning::uint, std::ofstream&);
+/**
+ * @brief 
+ */
+bool save(const MachineLearning::TrainingDataset&, std::ofstream&);
 
 bool load(MachineLearning::mindex&,std::ifstream&);
 bool load(LinearAlgebra::Matrix&,std::ifstream&);
@@ -20,6 +42,7 @@ bool load(MachineLearning::LayerParams&,std::ifstream&);
 bool load(MachineLearning::Net&,std::ifstream&);
 bool load(MachineLearning::ActivationFunction&,std::ifstream&);
 bool load(MachineLearning::uint&, std::ifstream&);
+bool load_thing(MachineLearning::TrainingDataset&, std::ifstream&);
 
 template <typename T>
 bool save(const T& t, const char * filename) {

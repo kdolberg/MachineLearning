@@ -18,10 +18,12 @@ void ActFuncTest::leaky_ReLU() {
 
 void ActFuncTest::sigmoid() {
 	MachineLearning::ActivationFunction sigm = MachineLearning::get_sigmoid();
-	TEST_RETURN_FUNC(sigm(0.5f),==,0.6224593312018958f);
-	TEST_RETURN_FUNC(sigm(-1.0f),==,0.26894142136992605f);
-	TEST_RETURN_FUNC(sigm.ddx(5.0f),==,0.006648056670778641f);
-	TEST_RETURN_FUNC(sigm.ddx(-7.0f),==,0.000910221180119593f);
+	MachineLearning::scalar ans;
+	ans = 0.0f;
+	TEST_VOID_FUNC(ans=sigm(0.5f),		LinearAlgebra::approx(ans,0.6224593312018958f),		==, true);
+	TEST_VOID_FUNC(ans=sigm(-1.0f),		LinearAlgebra::approx(ans,0.26894142136992605f),	==, true);
+	TEST_VOID_FUNC(ans=sigm.ddx(5.0f),	LinearAlgebra::approx(ans,0.006648056670778641f),	==, true);
+	TEST_VOID_FUNC(ans=sigm.ddx(-7.0f),	LinearAlgebra::approx(ans,0.000910221180119593f),	==, true);
 }
 
 void ActFuncTest::execute_all_tests() {

@@ -132,3 +132,20 @@ bool save(const MachineLearning::ActivationFunction&, std::ofstream&){
 bool load(MachineLearning::ActivationFunction&,std::ifstream&){
 	return true;
 }
+
+bool save(const MachineLearning::TrainingDataset& td, std::ofstream& out_file) {
+	if (out_file.is_open()) {
+		return save(td.x,out_file) && save(td.y,out_file);
+	} else {
+		return false;
+	}
+	
+}
+
+bool load(MachineLearning::TrainingDataset& td, std::ifstream& in_file) {
+	if (in_file.is_open()) {
+		return load(td.x,in_file) && load(td.y,in_file);
+	} else {
+		return false;
+	}
+}
