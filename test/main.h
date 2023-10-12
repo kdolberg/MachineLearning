@@ -6,6 +6,6 @@
 #include "NetTest.h"
 #include "NetPerformance.h"
 #include "ActFuncTest.h"
-#include "save_load.h"
+#include "SaveLoadTest.h"
 
 #endif //MAIN_H

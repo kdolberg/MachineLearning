@@ -7,3 +7,4 @@ obj
 bin
 *.nn
 sandbox
+test/saves

@@ -23,4 +23,6 @@ namespace MachineLearning {
 
 } //MachineLearning
 
+bool operator==(MachineLearning::TrainingDataset a, MachineLearning::TrainingDataset b);
+
 #endif //TYPES_H
