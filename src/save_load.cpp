@@ -94,6 +94,8 @@ bool MachineLearning::save(const MachineLearning::Net& n, std::ofstream& out_fil
 
 bool MachineLearning::load(MachineLearning::Net& n, std::ifstream& in_file) {
 	bool is_good = in_file.is_open();
+	MachineLearning::mindex dims;
+	MachineLearning::load(dims,in_file);
 	if(is_good) {
 		is_good = MachineLearning::load_list(n,in_file) && is_good;
 		std::list<MachineLearning::ActivationFunction> af_list;
