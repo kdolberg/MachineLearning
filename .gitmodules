@@ -1,0 +1,3 @@
+[submodule "LinearAlgebra.git"]
+	path = LinearAlgebra
+	url = https://github.com/kdolberg/LinearAlgebra.git
