@@ -245,7 +245,12 @@ MachineLearning::Net& MachineLearning::Net::operator+=(const MachineLearning::Gr
 
 std::ostream& operator<<(std::ostream& os, const std::list<MachineLearning::ActivationFunction>& afs) {
 	for (auto i = afs.cbegin(); i != afs.cend(); ++i) {
-		os << (*i) << " ";
+		auto i_next = i;
+		++i_next;
+		os << (*i);
+		if(i_next!=afs.cend()) {
+			os << " ";
+		}
 	}
 	return os;
 }
