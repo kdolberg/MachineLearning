@@ -1,6 +1,17 @@
 # Compiler
 CXX = g++
 
+LA_DIR = LinearAlgebra
+
+# Local directories
+SRC_DIR = src
+INC_DIR = inc
+OBJ_DIR = obj
+DOC_DIR = doc
+BIN_DIR = bin
+TEST_DIR = test
+MKDIRIFNEEDED = @mkdir -p $(@D)
+
 # Compiler flags
 SCALAR_TYPE=float
 DEFINE_SCALAR_TYPE_MACRO = -DSCALAR_TYPE=$(SCALAR_TYPE)
@@ -8,39 +19,40 @@ FLAGS = -DNOFLAGS
 CXXFLAGS = -std=c++23 $(DEFINE_SCALAR_TYPE_MACRO) $(FLAGS) -Wall -g -O2 -MMD -MP
 
 # Directory of header files
-INCLUDES = -I. -I./../LinearAlgebra -I./../LinearAlgebra/src -I./../LinearAlgebra/include -I./inc -I./../UnitTest -I./../UnitTest/inc -I./../confirm
+OTHER_DIR = -I./../../UnitTest -I./../../UnitTest/$(INC_DIR) -I./../../confirm
+INCLUDES = -I. -I./$(LA_DIR) -I./$(INC_DIR) $(OTHER_DIR)
 
 # Sources and objects
-LINALG_OBJ = obj/la_basic_types.la obj/la_matrix.la obj/la_matrix_like.la obj/la_vector.la obj/la_vector_overloads.la
-ML_OBJ = obj/activation_function.ml obj/layer.ml obj/net.ml obj/save_load.ml obj/types.ml
-ML_TEST_OBJ = obj/main.ml_test obj/NetTest.ml_test obj/NetPerformance.ml_test obj/ActFuncTest.ml_test obj/SaveLoadTest.ml_test
-UNIT_TEST_OBJ = obj/test.unit_test
+LINALG_OBJ = $(OBJ_DIR)/la_basic_types.la $(OBJ_DIR)/la_matrix.la $(OBJ_DIR)/la_matrix_like.la $(OBJ_DIR)/la_vector.la $(OBJ_DIR)/la_vector_overloads.la
+ML_OBJ = $(OBJ_DIR)/activation_function.ml $(OBJ_DIR)/layer.ml $(OBJ_DIR)/net.ml $(OBJ_DIR)/save_load.ml $(OBJ_DIR)/types.ml
+ML_TEST_OBJ = $(OBJ_DIR)/main.ml_test $(OBJ_DIR)/NetTest.ml_test $(OBJ_DIR)/NetPerformance.ml_test $(OBJ_DIR)/ActFuncTest.ml_test $(OBJ_DIR)/SaveLoadTest.ml_test
+UNIT_TEST_OBJ = $(OBJ_DIR)/test.unit_test
 OBJECTS = $(ML_OBJ) $(LINALG_OBJ) $(ML_TEST_OBJ) $(UNIT_TEST_OBJ)
 
 # Target executable
-TARGET = test
+TARGET = $(BIN_DIR)/test
 
-$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJECTS) clean_saves
+	$(MKDIRIFNEEDED)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OBJECTS) -o $(TARGET)
 
-obj/%.ml: src/%.cpp inc/%.h
+$(OBJ_DIR)/%.ml: $(SRC_DIR)/%.cpp $(INC_DIR)/%.h
+	$(MKDIRIFNEEDED)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-obj/%.la: ../LinearAlgebra/src/%.cpp ../LinearAlgebra/src/%.h
+$(OBJ_DIR)/%.la: $(LA_DIR)/$(SRC_DIR)/%.cpp $(LA_DIR)/$(SRC_DIR)/%.h
+	$(MKDIRIFNEEDED)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-obj/%.ml_test: test/%.cpp test/%.h
+$(OBJ_DIR)/%.ml_test: $(TEST_DIR)/%.cpp $(TEST_DIR)/%.h
+	$(MKDIRIFNEEDED)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-obj/%.unit_test: ../UnitTest/src/%.cpp ../UnitTest/inc/%.h
+$(OBJ_DIR)/%.unit_test: ../../UnitTest/$(SRC_DIR)/%.cpp ../../UnitTest/$(INC_DIR)/%.h
+	$(MKDIRIFNEEDED)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-# -include $(ML_OBJS:.ml=.d)
-# -include $(LINALG_OBJ:.la=.d)
-# -include $(ML_TEST_OBJ:.ml_test=.d)
-# -include $(UNIT_TEST_OBJ:.unit_test=.d)
-
-clean:
+clean: clean_saves
 	rm -f $(ML_OBJ) $(ML_TEST_OBJ) $(UNIT_TEST_OBJ) $(TARGET).exe
 
 clean_linalg:
@@ -52,8 +64,13 @@ clean_all: clean clean_linalg
 
 all: $(TARGET)
 
-run: $(TARGET)
-	rm -f test/saves/*
+run: $(TARGET) clean_saves
 	./$(TARGET).exe
 
-.PHONY: clean clean_linalg linalg clean_all run all
+folders:
+	mkdir --parents $(INC_DIR) $(OBJ_DIR) $(SRC_DIR) $(DOC_DIR) $(TEST_DIR) $(BIN_DIR)
+
+clean_saves:
+	rm -f test/saves/*
+
+.PHONY: clean clean_linalg linalg clean_all run all folders clean_saves
