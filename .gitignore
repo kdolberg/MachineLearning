@@ -8,3 +8,4 @@ bin
 *.nn
 sandbox
 test/saves
+doc
