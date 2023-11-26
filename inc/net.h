@@ -86,6 +86,16 @@ namespace MachineLearning {
 				i->biases.set_contents(s);
 			}
 		}
+		Net(const std::list<MachineLearning::LayerParams>& lpl, const std::list<MachineLearning::ActivationFunction>& afl) {
+			CONFIRM(lpl.size()==afl.size());
+			CONFIRM(lpl.size());
+			auto i = lpl.cbegin();
+			auto j = afl.cbegin();
+			for(; i!=lpl.cend() && j!=afl.cend(); ++i,++j) {
+				this->push_back(*i);
+				this->afs.push_back(*j);
+			}
+		}
 		std::string str() const;
 		void load_training_data(const MachineLearning::TrainingDataset& td);
 		const TrainingDataset& get_training_data() const;
