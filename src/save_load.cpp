@@ -123,14 +123,26 @@ bool MachineLearning::load(MachineLearning::uint& num, std::ifstream& in_file) {
 /**
  * @brief Temp function used to allow compilation
  */
-bool MachineLearning::save(const MachineLearning::ActivationFunction&, std::ofstream&){
-	return true;
+bool MachineLearning::save(const MachineLearning::ActivationFunction& af, std::ofstream& out_file){
+	if(out_file.is_open()) {
+		func_sym sym = af.get_sym();
+		out_file.write(&sym,sizeof(func_sym));
+		return out_file.good();
+	} else {
+		return false;
+	}
 }
+
 /**
  * @brief Temp function used to allow compilation
  */
-bool MachineLearning::load(MachineLearning::ActivationFunction&,std::ifstream&){
-	return true;
+bool MachineLearning::load(MachineLearning::ActivationFunction& af,std::ifstream& in_file){
+	if(in_file.is_open()) {
+		func_sym fs;
+		in_file.read(&fs,1);
+		af = MachineLearning::sym2ActFunc(fs);
+	}
+	return in_file.good();
 }
 
 bool MachineLearning::save(const MachineLearning::TrainingDataset& td, std::ofstream& out_file) {
