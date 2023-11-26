@@ -45,6 +45,7 @@ namespace MachineLearning {
 
 	template <typename T>
 	bool save_list(const std::list<T>& l, std::ofstream& out_file) {
+		assert(!(l.empty()));
 		bool is_good = out_file.is_open();
 		if(is_good) {
 			is_good = save(l.size(),out_file) && is_good;
