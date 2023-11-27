@@ -94,14 +94,11 @@ namespace MachineLearning {
 		}
 		std::string str() const;
 		func_sym get_sym() const;
+		bool operator==(const MachineLearning::ActivationFunction&) const;
 	}; // ActivationFunction
 } //MachineLearning
 
 std::ostream& operator<<(std::ostream& os, const MachineLearning::ActivationFunction& af);
-
-/**
- * @brief Compares two ActivationFunction objects and returns true if they are the same
- */
-bool operator==(const MachineLearning::ActivationFunction& a, const MachineLearning::ActivationFunction& b);
+bool operator==(const MachineLearning::ActivationFunction&,const MachineLearning::ActivationFunction&);
 
 #endif //ACTIVATION_FUNCTION_H

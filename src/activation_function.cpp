@@ -46,6 +46,10 @@ MachineLearning::func_sym MachineLearning::ActivationFunction::get_sym() const {
 	return (this->sym);
 }
 
+bool MachineLearning::ActivationFunction::operator==(const MachineLearning::ActivationFunction& af) const {
+	return this->get_sym()==af.get_sym();
+}
+
 /**
  * @brief Calculates the leaky ReLU function for the input value x
  */
@@ -100,6 +104,6 @@ std::ostream& operator<<(std::ostream& os, const MachineLearning::ActivationFunc
 	return os;
 }
 
-bool operator==(const MachineLearning::ActivationFunction& a, const MachineLearning::ActivationFunction& b) {
-	return a.get_sym() == b.get_sym();
+bool operator==(const MachineLearning::ActivationFunction& a,const MachineLearning::ActivationFunction& b) {
+	return a.operator==(b);
 }

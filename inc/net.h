@@ -111,6 +111,9 @@ namespace MachineLearning {
 		MachineLearning::Net& operator+=(const MachineLearning::Gradient& g);
 		const MachineLearning::Gradient& get_partial_derivatives() const;
 		const std::list<MachineLearning::ActivationFunction>& get_activation_function_list() const;
+		MachineLearning::Net& operator=(const MachineLearning::Net& n);
+		// bool operator==(const std::list<MachineLearning::LayerParams>&) const;
+		bool operator==(const MachineLearning::Net&) const;
 	protected:
 		void forward_propagate();
 		void backward_propagate();
@@ -136,5 +139,7 @@ MachineLearning::Gradient& operator*=(MachineLearning::Gradient& g,MachineLearni
 std::ostream& operator<<(std::ostream& os, const std::list<MachineLearning::ActivationFunction>& afs);
 
 std::ifstream& operator>>(std::ifstream& ifs, MachineLearning::Net& n);
+
+bool operator==(const MachineLearning::Net& a,const MachineLearning::Net& b);
 
 #endif //NET_H
