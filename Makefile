@@ -67,10 +67,13 @@ all: $(TARGET)
 run: $(TARGET) clean_saves
 	./$(TARGET).exe
 
+debug: $(TARGET) clean_saves
+	gdb $(TARGET).exe
+
 folders:
 	mkdir --parents $(INC_DIR) $(OBJ_DIR) $(SRC_DIR) $(DOC_DIR) $(TEST_DIR) $(BIN_DIR)
 
 clean_saves:
 	rm -f test/saves/*
 
-.PHONY: clean clean_linalg linalg clean_all run all folders clean_saves
+.PHONY: clean clean_linalg linalg clean_all run all folders clean_saves debug
