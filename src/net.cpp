@@ -280,7 +280,7 @@ static bool compare_nets_LayerParams_only(const MachineLearning::Net& a, const M
 	return true;
 }
 
-bool MachineLearning::Net::operator==(const MachineLearning::Net& n) const {
+bool MachineLearning::Net::compare(const MachineLearning::Net& n) const {
 	bool ret = compare_nets_LayerParams_only(*this,n);
 	std::list<MachineLearning::ActivationFunction> afl1, afl2;
 	afl1 = this->get_activation_function_list();
@@ -290,5 +290,5 @@ bool MachineLearning::Net::operator==(const MachineLearning::Net& n) const {
 }
 
 bool operator==(const MachineLearning::Net& a,const MachineLearning::Net& b) {
-	return a.operator==(b);
+	return a.compare(b);
 }

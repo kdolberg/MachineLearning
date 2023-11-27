@@ -41,6 +41,7 @@ void SaveLoadTest::Net() {
 	MachineLearning::Net n1(MachineLearning::NetDef({5,4,3,2,1})), n2;
 	TEST_RETURN_FUNC(MachineLearning::save(n1,"test/saves/testnet.nn"),==,true);
 	TEST_RETURN_FUNC(MachineLearning::load(n2,"test/saves/testnet.nn"),==,true);
+	TEST_RETURN_FUNC(n1.get_activation_function_list(),==,n2.get_activation_function_list());
 	TEST_RETURN_FUNC(n1,==,n2);
 }
 

@@ -6,7 +6,6 @@
 #include "linear_algebra.h"
 #include "net.h"
 #include "layer.h"
-#include "misc_overloads.h"
 
 namespace MachineLearning {
 	bool save(const MachineLearning::mindex&,std::ofstream&);

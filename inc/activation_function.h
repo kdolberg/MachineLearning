@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <string>
+#include <list>
 #include "types.h"
 
 namespace MachineLearning {typedef char func_sym;}
@@ -94,11 +95,16 @@ namespace MachineLearning {
 		}
 		std::string str() const;
 		func_sym get_sym() const;
-		bool operator==(const MachineLearning::ActivationFunction&) const;
 	}; // ActivationFunction
 } //MachineLearning
 
 std::ostream& operator<<(std::ostream& os, const MachineLearning::ActivationFunction& af);
-bool operator==(const MachineLearning::ActivationFunction&,const MachineLearning::ActivationFunction&);
+
+/**
+ * @brief Compares two ActivationFunction objects and returns true if they are the same
+ */
+bool operator==(const MachineLearning::ActivationFunction& a, const MachineLearning::ActivationFunction& b);
+
+bool operator==(const std::list<MachineLearning::ActivationFunction>& a, const std::list<MachineLearning::ActivationFunction>& b);
 
 #endif //ACTIVATION_FUNCTION_H

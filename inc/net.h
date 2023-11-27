@@ -113,7 +113,7 @@ namespace MachineLearning {
 		const std::list<MachineLearning::ActivationFunction>& get_activation_function_list() const;
 		MachineLearning::Net& operator=(const MachineLearning::Net& n);
 		// bool operator==(const std::list<MachineLearning::LayerParams>&) const;
-		bool operator==(const MachineLearning::Net&) const;
+		bool compare(const MachineLearning::Net&) const;
 	protected:
 		void forward_propagate();
 		void backward_propagate();
