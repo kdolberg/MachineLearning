@@ -98,6 +98,7 @@ bool MachineLearning::load(MachineLearning::Net& n, std::ifstream& in_file) {
 		is_good = MachineLearning::load_list(n,in_file) && is_good;
 		std::list<MachineLearning::ActivationFunction> af_list;
 		is_good = MachineLearning::load_list(af_list,in_file) && is_good;
+		n.afs = af_list;
 	}
 	return is_good;
 }

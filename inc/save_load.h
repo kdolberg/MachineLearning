@@ -57,6 +57,7 @@ namespace MachineLearning {
 
 	template <typename T>
 	bool load_list(std::list<T>& l, std::ifstream& in_file) {
+		l.clear();
 		assert(l.empty());
 		bool is_good = in_file.is_open();
 		if(is_good) {
@@ -78,6 +79,7 @@ namespace MachineLearning {
 
 	template <typename T>
 	bool load(std::list<T>& l, std::ifstream& in_file) {
+		l.clear();
 		assert(l.empty());
 		return load_list<T>(l,in_file);
 	}
