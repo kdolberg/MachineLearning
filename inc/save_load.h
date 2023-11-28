@@ -14,6 +14,7 @@ namespace MachineLearning {
 	bool save(const MachineLearning::Net&,std::ofstream&);
 	bool save(const MachineLearning::ActivationFunction&, std::ofstream&);
 	bool save(MachineLearning::uint, std::ofstream&);
+	bool save(MachineLearning::scalar, std::ofstream&);
 	bool save(const MachineLearning::TrainingDataset&, std::ofstream&);
 
 	bool load(MachineLearning::mindex&,std::ifstream&);
@@ -22,6 +23,7 @@ namespace MachineLearning {
 	bool load(MachineLearning::Net&,std::ifstream&);
 	bool load(MachineLearning::ActivationFunction&,std::ifstream&);
 	bool load(MachineLearning::uint&, std::ifstream&);
+	bool load(MachineLearning::scalar&, std::ifstream&);
 	bool load(MachineLearning::TrainingDataset&, std::ifstream&);
 
 	template <typename T>

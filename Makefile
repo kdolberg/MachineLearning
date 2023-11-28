@@ -36,11 +36,11 @@ $(TARGET): $(OBJECTS) clean_saves
 	$(MKDIRIFNEEDED)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(OBJECTS) -o $(TARGET)
 
-$(OBJ_DIR)/%.ml: $(SRC_DIR)/%.cpp $(INC_DIR)/%.h
+$(OBJ_DIR)/%.la: $(LA_DIR)/$(SRC_DIR)/%.cpp $(LA_DIR)/$(SRC_DIR)/%.h
 	$(MKDIRIFNEEDED)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-$(OBJ_DIR)/%.la: $(LA_DIR)/$(SRC_DIR)/%.cpp $(LA_DIR)/$(SRC_DIR)/%.h
+$(OBJ_DIR)/%.ml: $(SRC_DIR)/%.cpp $(INC_DIR)/%.h
 	$(MKDIRIFNEEDED)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
@@ -57,6 +57,9 @@ clean: clean_saves
 
 clean_linalg:
 	rm -f $(LINALG_OBJ)
+
+clean_ml_test: clean_saves
+	rm -f $(ML_TEST_OBJ)
 
 linalg: $(LINALG_OBJ)
 

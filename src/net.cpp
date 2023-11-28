@@ -1,4 +1,5 @@
 #include <iostream>
+#include "types.h"
 #include "net.h"
 
 #define DELINEATOR '\n'
@@ -184,6 +185,8 @@ std::string MachineLearning::Net::str() const {
 	return ss.str();
 }
 void MachineLearning::Net::load_training_data(const MachineLearning::TrainingDataset& td) {
+	// CONFIRM(td.x.get_array().size());
+	// CONFIRM(td.y.get_array().size());
 	this->clear_data_caches();
 	this->td = td;
 }
@@ -286,9 +289,18 @@ bool MachineLearning::Net::compare(const MachineLearning::Net& n) const {
 	afl1 = this->get_activation_function_list();
 	afl2 = n.get_activation_function_list();
 	ret = ret && (afl1 == afl2);
+	ret = ret && (this->get_training_data()==n.get_training_data());// add learning rate
 	return ret;
 }
 
 bool operator==(const MachineLearning::Net& a,const MachineLearning::Net& b) {
 	return a.compare(b);
 }
+
+// #include "save_load.h"
+// MachineLearning::Net::Net(const char * filename) {
+// 	bool is_good = MachineLearning::load(*this,filename);
+// 	if(!is_good) {
+// 		throw -1;
+// 	}
+// }

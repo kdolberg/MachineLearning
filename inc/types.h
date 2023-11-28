@@ -23,6 +23,6 @@ namespace MachineLearning {
 
 } //MachineLearning
 
-bool operator==(MachineLearning::TrainingDataset a, MachineLearning::TrainingDataset b);
+bool operator==(const MachineLearning::TrainingDataset& a, const MachineLearning::TrainingDataset& b);
 
 #endif //TYPES_H

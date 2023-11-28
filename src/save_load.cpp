@@ -12,13 +12,13 @@ static void matrix_copy(const LinearAlgebra::Matrix& m, MachineLearning::scalar 
 }
 
 static void array_copy(const MachineLearning::scalar * array,LinearAlgebra::Matrix& m) {
-	assert(m.get_num_rows());
-	assert(m.get_num_cols());
-	int j = 0;
-	for (MachineLearning::mindex i = {0,0}; i.row < m.get_num_rows(); ++i.row) {
-		for (i.col = 0; i.col < m.get_num_cols(); ++i.col) {
-			m[i] = array[j];
-			++j;
+	if(m.get_num_rows() && m.get_num_cols()) {
+		int j = 0;
+		for (MachineLearning::mindex i = {0,0}; i.row < m.get_num_rows(); ++i.row) {
+			for (i.col = 0; i.col < m.get_num_cols(); ++i.col) {
+				m[i] = array[j];
+				++j;
+			}
 		}
 	}
 }
@@ -85,8 +85,14 @@ bool MachineLearning::load(MachineLearning::LayerParams& lp, std::ifstream& in_f
 // NOTE: This function is not yet going to include the ability to save the ActivationFunction list
 bool MachineLearning::save(const MachineLearning::Net& n, std::ofstream& out_file) {
 	if(out_file.is_open()) {
+		// LayerParams
 		bool is_good = MachineLearning::save_list((std::list<MachineLearning::LayerParams>)n,out_file);
+		// ActivationFunctions
 		is_good = MachineLearning::save_list(n.get_activation_function_list(),out_file) && is_good;
+		// Learning rate
+		is_good = save(n.learning_rate,out_file) && is_good;
+		// Training data
+		is_good = save(n.get_training_data(),out_file) && is_good;
 		return is_good;
 	}
 	return false;
@@ -95,10 +101,19 @@ bool MachineLearning::save(const MachineLearning::Net& n, std::ofstream& out_fil
 bool MachineLearning::load(MachineLearning::Net& n, std::ifstream& in_file) {
 	bool is_good = in_file.is_open();
 	if(is_good) {
-		is_good = MachineLearning::load_list(n,in_file) && is_good;
-		std::list<MachineLearning::ActivationFunction> af_list;
-		is_good = MachineLearning::load_list(af_list,in_file) && is_good;
-		n.afs = af_list;
+		std::list<MachineLearning::LayerParams> lpl;
+		std::list<MachineLearning::ActivationFunction> afl;
+		// LayerParams
+		is_good = MachineLearning::load<MachineLearning::LayerParams>(lpl,in_file) && is_good;
+		// ActivationFunctions
+		is_good = MachineLearning::load_list<MachineLearning::ActivationFunction>(afl,in_file) && is_good;
+		n = MachineLearning::Net(lpl,afl);
+		// Learning rate
+		is_good = load(n.learning_rate,in_file) && is_good;
+		MachineLearning::TrainingDataset td;
+		// TrainingDatset
+		is_good = load(td,in_file) && is_good;
+		n.load_training_data(td);
 	}
 	return is_good;
 }
@@ -116,6 +131,24 @@ bool MachineLearning::load(MachineLearning::uint& num, std::ifstream& in_file) {
 	if(in_file.is_open()) {
 		in_file.read((char*)(&num),sizeof(MachineLearning::uint));
 		return in_file.good();
+	} else {
+		return false;
+	}
+}
+
+bool MachineLearning::load(MachineLearning::scalar& num, std::ifstream& in_file) {
+	if(in_file.is_open()) {
+		in_file.read((char*)(&num),sizeof(MachineLearning::scalar));
+		return in_file.good();
+	} else {
+		return false;
+	}
+}
+
+bool MachineLearning::save(MachineLearning::scalar num, std::ofstream& out_file) {
+	if(out_file.is_open()) {
+		out_file.write((char*)(&num),sizeof(MachineLearning::scalar));
+		return out_file.good();
 	} else {
 		return false;
 	}
