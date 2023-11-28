@@ -68,7 +68,7 @@ run: $(TARGET) clean_saves
 	./$(TARGET).exe
 
 debug: $(TARGET) clean_saves
-	gdb $(TARGET).exe
+	gdb $(TARGET).exe -x gdb_cmd
 
 folders:
 	mkdir --parents $(INC_DIR) $(OBJ_DIR) $(SRC_DIR) $(DOC_DIR) $(TEST_DIR) $(BIN_DIR)
