@@ -86,6 +86,16 @@ namespace MachineLearning {
 				i->biases.set_contents(s);
 			}
 		}
+		Net(const std::list<MachineLearning::LayerParams>& lpl, const std::list<MachineLearning::ActivationFunction>& afl) {
+			CONFIRM(lpl.size()==afl.size());
+			CONFIRM(lpl.size());
+			auto i = lpl.cbegin();
+			auto j = afl.cbegin();
+			for(; i!=lpl.cend() && j!=afl.cend(); ++i,++j) {
+				this->push_back(*i);
+				this->afs.push_back(*j);
+			}
+		}
 		std::string str() const;
 		void load_training_data(const MachineLearning::TrainingDataset& td);
 		const TrainingDataset& get_training_data() const;
@@ -101,6 +111,9 @@ namespace MachineLearning {
 		MachineLearning::Net& operator+=(const MachineLearning::Gradient& g);
 		const MachineLearning::Gradient& get_partial_derivatives() const;
 		const std::list<MachineLearning::ActivationFunction>& get_activation_function_list() const;
+		MachineLearning::Net& operator=(const MachineLearning::Net& n);
+		// bool operator==(const std::list<MachineLearning::LayerParams>&) const;
+		bool compare(const MachineLearning::Net&) const;
 	protected:
 		void forward_propagate();
 		void backward_propagate();
@@ -126,5 +139,7 @@ MachineLearning::Gradient& operator*=(MachineLearning::Gradient& g,MachineLearni
 std::ostream& operator<<(std::ostream& os, const std::list<MachineLearning::ActivationFunction>& afs);
 
 std::ifstream& operator>>(std::ifstream& ifs, MachineLearning::Net& n);
+
+bool operator==(const MachineLearning::Net& a,const MachineLearning::Net& b);
 
 #endif //NET_H

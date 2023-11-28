@@ -3,15 +3,32 @@
 
 #include <functional>
 #include <string>
+#include <list>
 #include "types.h"
 
+namespace MachineLearning {typedef char func_sym;}
+
+#define SIGMOID			((MachineLearning::func_sym)'S')
+#define LEAKY_RELU		((MachineLearning::func_sym)'L')
+#define UNDEFINED		((MachineLearning::func_sym)'\0')
+
+#define SIGMOID_NAME	("sigmoid")
+#define LEAKY_RELU_NAME	("leaky_ReLU")
+#define UNDEFINED_NAME 	("undefined")
+
 namespace MachineLearning {
+	std::string sym2name(func_sym sym);
 	class ActivationFunction;
 
 	typedef struct {
 		std::function<scalar(scalar)> function;
 		std::function<scalar(scalar)> derivative;
+		func_sym sym;
 	} ActivationFunctionStruct;
+
+	uint unit(MachineLearning::scalar x);
+
+	ActivationFunction sym2ActFunc(func_sym sym);
 
 	/**
 	 * @brief Returns the sigmoid ActivationFunction
@@ -30,14 +47,22 @@ namespace MachineLearning {
 	class ActivationFunction : ActivationFunctionStruct {
 		friend ActivationFunction get_leaky_ReLU();
 		friend ActivationFunction get_sigmoid();
-		std::string name;
+		friend ActivationFunction sym2ActFunc(func_sym sym);
 	public:
 		using ActivationFunctionStruct::ActivationFunctionStruct;
 
 		ActivationFunction(const ActivationFunctionStruct& afs) {
 			this->function = afs.function;
 			this->derivative = afs.derivative;
+			this->sym = afs.sym;
 		}
+		ActivationFunction(func_sym _sym) {
+			ActivationFunction tmp = sym2ActFunc(_sym);
+			this->function = tmp.function;
+			this->derivative = tmp.derivative;
+			this->sym = tmp.sym;
+		}
+		ActivationFunction(const func_sym * sym) : ActivationFunction(*sym) {}
 		scalar operator()(scalar in) const;
 
 		template <LinearAlgebra::MATRIXLIKE T>
@@ -68,10 +93,18 @@ namespace MachineLearning {
 			}
 			return ret;
 		}
-		const std::string& str() const;
+		std::string str() const;
+		func_sym get_sym() const;
 	}; // ActivationFunction
 } //MachineLearning
 
 std::ostream& operator<<(std::ostream& os, const MachineLearning::ActivationFunction& af);
+
+/**
+ * @brief Compares two ActivationFunction objects and returns true if they are the same
+ */
+bool operator==(const MachineLearning::ActivationFunction& a, const MachineLearning::ActivationFunction& b);
+
+bool operator==(const std::list<MachineLearning::ActivationFunction>& a, const std::list<MachineLearning::ActivationFunction>& b);
 
 #endif //ACTIVATION_FUNCTION_H

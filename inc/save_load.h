@@ -14,6 +14,7 @@ namespace MachineLearning {
 	bool save(const MachineLearning::Net&,std::ofstream&);
 	bool save(const MachineLearning::ActivationFunction&, std::ofstream&);
 	bool save(MachineLearning::uint, std::ofstream&);
+	bool save(MachineLearning::scalar, std::ofstream&);
 	bool save(const MachineLearning::TrainingDataset&, std::ofstream&);
 
 	bool load(MachineLearning::mindex&,std::ifstream&);
@@ -22,6 +23,7 @@ namespace MachineLearning {
 	bool load(MachineLearning::Net&,std::ifstream&);
 	bool load(MachineLearning::ActivationFunction&,std::ifstream&);
 	bool load(MachineLearning::uint&, std::ifstream&);
+	bool load(MachineLearning::scalar&, std::ifstream&);
 	bool load(MachineLearning::TrainingDataset&, std::ifstream&);
 
 	template <typename T>
@@ -44,6 +46,7 @@ namespace MachineLearning {
 
 	template <typename T>
 	bool save_list(const std::list<T>& l, std::ofstream& out_file) {
+		assert(!(l.empty()));
 		bool is_good = out_file.is_open();
 		if(is_good) {
 			is_good = save(l.size(),out_file) && is_good;
@@ -56,6 +59,7 @@ namespace MachineLearning {
 
 	template <typename T>
 	bool load_list(std::list<T>& l, std::ifstream& in_file) {
+		l.clear();
 		assert(l.empty());
 		bool is_good = in_file.is_open();
 		if(is_good) {
@@ -77,6 +81,7 @@ namespace MachineLearning {
 
 	template <typename T>
 	bool load(std::list<T>& l, std::ifstream& in_file) {
+		l.clear();
 		assert(l.empty());
 		return load_list<T>(l,in_file);
 	}

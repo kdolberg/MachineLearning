@@ -1,4 +1,5 @@
 #include <iostream>
+#include "types.h"
 #include "net.h"
 
 #define DELINEATOR '\n'
@@ -184,6 +185,8 @@ std::string MachineLearning::Net::str() const {
 	return ss.str();
 }
 void MachineLearning::Net::load_training_data(const MachineLearning::TrainingDataset& td) {
+	// CONFIRM(td.x.get_array().size());
+	// CONFIRM(td.y.get_array().size());
 	this->clear_data_caches();
 	this->td = td;
 }
@@ -245,7 +248,12 @@ MachineLearning::Net& MachineLearning::Net::operator+=(const MachineLearning::Gr
 
 std::ostream& operator<<(std::ostream& os, const std::list<MachineLearning::ActivationFunction>& afs) {
 	for (auto i = afs.cbegin(); i != afs.cend(); ++i) {
-		os << (*i) << " ";
+		auto i_next = i;
+		++i_next;
+		os << (*i);
+		if(i_next!=afs.cend()) {
+			os << " ";
+		}
 	}
 	return os;
 }
@@ -253,3 +261,46 @@ std::ostream& operator<<(std::ostream& os, const std::list<MachineLearning::Acti
 const std::list<MachineLearning::ActivationFunction>& MachineLearning::Net::get_activation_function_list() const {
 	return this->afs;
 }
+
+MachineLearning::Net& MachineLearning::Net::operator=(const MachineLearning::Net& n) {
+	this->std::list<MachineLearning::LayerParams>::operator=((std::list<MachineLearning::LayerParams>)n);
+	this->afs = n.get_activation_function_list();
+	return (*this);
+}
+
+static bool compare_nets_LayerParams_only(const MachineLearning::Net& a, const MachineLearning::Net& b) {
+	if(a.size()!=b.size()) {
+		return false;
+	}
+	if(a.size()==0 && b.size()==0) {
+		return true;
+	}
+	for(MachineLearning::Net::const_iterator i=a.cbegin(),j=b.cbegin(); i!=a.cend() && j!=b.cend(); ++i,++j) {
+		if(*i!=*j) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool MachineLearning::Net::compare(const MachineLearning::Net& n) const {
+	bool ret = compare_nets_LayerParams_only(*this,n);
+	std::list<MachineLearning::ActivationFunction> afl1, afl2;
+	afl1 = this->get_activation_function_list();
+	afl2 = n.get_activation_function_list();
+	ret = ret && (afl1 == afl2);
+	ret = ret && (this->get_training_data()==n.get_training_data());// add learning rate
+	return ret;
+}
+
+bool operator==(const MachineLearning::Net& a,const MachineLearning::Net& b) {
+	return a.compare(b);
+}
+
+// #include "save_load.h"
+// MachineLearning::Net::Net(const char * filename) {
+// 	bool is_good = MachineLearning::load(*this,filename);
+// 	if(!is_good) {
+// 		throw -1;
+// 	}
+// }

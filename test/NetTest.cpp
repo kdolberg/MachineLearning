@@ -25,9 +25,19 @@ bool verify_sizes() {
 	return ret;
 }
 
+bool verify_lpl_and_afl_constructor() {
+	MachineLearning::Net n1(MachineLearning::NetDef({5,4,3,2,1}),true);
+	auto iter = n1.afs.begin();
+	++iter;
+	(*iter) = MachineLearning::get_leaky_ReLU();
+	MachineLearning::Net n2((std::list<MachineLearning::LayerParams>)n1,n1.afs);
+	return n1==n2;
+}
+
 void NetTest::PublicAPI::Net_constructors() {
-	TEST_RETURN_FUNC(verify_act_funcs(),==,"leaky_ReLU leaky_ReLU sigmoid ");
+	TEST_RETURN_FUNC(verify_act_funcs(),==,"leaky_ReLU leaky_ReLU sigmoid");
 	TEST_RETURN_FUNC(verify_sizes(),==,true);
+	TEST_RETURN_FUNC(verify_lpl_and_afl_constructor(),==,true);
 }
 
 MachineLearning::Gradient make_gradient(const MachineLearning::Net& n) {

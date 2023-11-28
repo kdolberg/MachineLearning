@@ -6,6 +6,18 @@
 #define LEAKINESS 0.1
 #endif //LEAKINESS
 
+MachineLearning::uint MachineLearning::unit(MachineLearning::scalar x) {
+	return x;
+}
+
+MachineLearning::ActivationFunction MachineLearning::sym2ActFunc(func_sym sym) {
+	if(sym==SIGMOID)
+		return get_sigmoid();
+	if(sym==LEAKY_RELU)
+		return get_leaky_ReLU();
+	return ActivationFunction(((ActivationFunctionStruct){unit,unit,UNDEFINED}));
+}
+
 // ActivationFunction methods
 
 MachineLearning::scalar MachineLearning::ActivationFunction::operator()(scalar in) const {
@@ -16,8 +28,22 @@ MachineLearning::scalar MachineLearning::ActivationFunction::ddx(scalar in) cons
 	return this->derivative(in);
 }
 
-const std::string& MachineLearning::ActivationFunction::str() const {
-	return this->name;
+std::string MachineLearning::sym2name(func_sym sym) {
+	if(sym==SIGMOID) {
+		return SIGMOID_NAME;
+	}
+	if(sym==LEAKY_RELU) {
+		return LEAKY_RELU_NAME;
+	}
+	return UNDEFINED_NAME;
+}
+
+std::string MachineLearning::ActivationFunction::str() const {
+	return MachineLearning::sym2name(this->sym);
+}
+
+MachineLearning::func_sym MachineLearning::ActivationFunction::get_sym() const {
+	return (this->sym);
 }
 
 /**
@@ -60,18 +86,35 @@ MachineLearning::scalar sigmoid_ddx(MachineLearning::scalar x) {
  * @brief Builds and returns an ActivationFunction object that containing the leaky ReLU function
  */
 MachineLearning::ActivationFunction MachineLearning::get_leaky_ReLU() {
-	MachineLearning::ActivationFunction ret((ActivationFunctionStruct){leaky_ReLU,leaky_ReLU_ddx});
-	ret.name = "leaky_ReLU";
+	MachineLearning::ActivationFunction ret((ActivationFunctionStruct){leaky_ReLU,leaky_ReLU_ddx,LEAKY_RELU});
 	return ret;
 }
 
 MachineLearning::ActivationFunction MachineLearning::get_sigmoid() {
-	MachineLearning::ActivationFunction ret((ActivationFunctionStruct){sigmoid,sigmoid_ddx});
-	ret.name = "sigmoid";
+	MachineLearning::ActivationFunction ret((ActivationFunctionStruct){sigmoid,sigmoid_ddx,SIGMOID});
 	return ret;
 }
 
 std::ostream& operator<<(std::ostream& os, const MachineLearning::ActivationFunction& af) {
 	os << af.str();
 	return os;
+}
+
+bool operator==(const MachineLearning::ActivationFunction& a,const MachineLearning::ActivationFunction& b) {
+	return a.get_sym()==b.get_sym();
+}
+
+bool operator==(const std::list<MachineLearning::ActivationFunction>& a, const std::list<MachineLearning::ActivationFunction>& b) {
+	if(a.size()!=b.size()) {
+		return false;
+	}
+	if(a.size()==0 && b.size()==0) {
+		return true;
+	}
+	for(std::list<MachineLearning::ActivationFunction>::const_iterator i=a.cbegin(),j=b.cbegin(); i!=a.cend() && j!=b.cend(); ++i,++j) {
+		if(*i!=*j) {
+			return false;
+		}
+	}
+	return true;
 }
