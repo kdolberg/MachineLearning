@@ -60,7 +60,7 @@ MachineLearning::Gradient MachineLearning::Net::calculate_gradient() {
 LinearAlgebra::Matrix MachineLearning::Net::operator()(const LinearAlgebra::Matrix& x_in) const {
 	LinearAlgebra::Matrix ret = x_in;
 	auto af = this->afs.cbegin();
-	for (auto i = this->cbegin(); i != this->cend(); ++i) {
+	for (auto i = this->cbegin(); i != this->cend(); ++i,++af) {
 		ret = af->operator()(i->operator()(ret));
 	}
 	return ret;
