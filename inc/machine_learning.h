@@ -7,4 +7,6 @@
 #include "layer.h"
 #include "save_load.h"
 
+namespace ml=MachineLearning;
+
 #endif //MACHINE_LEARNING_H
