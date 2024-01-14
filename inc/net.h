@@ -114,8 +114,8 @@ namespace MachineLearning {
 		MachineLearning::Net& operator=(const MachineLearning::Net& n);
 		// bool operator==(const std::list<MachineLearning::LayerParams>&) const;
 		bool compare(const MachineLearning::Net&) const;
-	protected:
 		void forward_propagate();
+	protected:
 		void backward_propagate();
 		LinearAlgebra::Matrix get_last_output() const;
 		void clear_data_caches();
