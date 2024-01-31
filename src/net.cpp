@@ -49,9 +49,27 @@ void MachineLearning::Net::clear_data_caches() {
 MachineLearning::Gradient MachineLearning::Net::calculate_gradient() {
 	CONFIRM(!(this->td.x.empty()));
 	CONFIRM(!(this->td.y.empty()));
-	this->clear_data_caches();
-	this->forward_propagate();
-	this->backward_propagate();
+	try {
+		this->clear_data_caches();
+	} catch (std::exception& e) {
+		std::cerr << "An exception occurred while clearing the data caches" << std::endl;
+		std::cerr << e.what() << std::endl;
+		throw e;
+	}
+	try {
+		this->forward_propagate();
+	} catch (std::exception& e) {
+		std::cerr << "An exception occurred during forward propagation" << std::endl;
+		std::cerr << e.what() << std::endl;
+		throw e;
+	}
+	try {
+		this->backward_propagate();
+	} catch (std::exception& e) {
+		std::cerr << "An exception occurred durig backward propagation" << std::endl;
+		std::cerr << e.what() << std::endl;
+		throw e;
+	}
 	MachineLearning::Gradient ret = (this->partial_derivatives);
 	ret *= ((-1.0f)*(this->learning_rate));
 	return ret;
@@ -72,13 +90,31 @@ LinearAlgebra::Matrix MachineLearning::Net::operator()() const {
 void MachineLearning::Net::forward_propagate() {
 	//Empty all datacaches since we're starting from scratch
 	this->clear_data_caches();
+	
+	CONFIRM(this->td.x.get_num_rows());
+	CONFIRM(this->td.x.get_num_cols());
 
 	//Add the input to the post_act_func_output
 	this->post_act_func_output.push_back(this->td.x);
 	auto af = this->afs.cbegin();
+	int k = 0;
 	for (auto i = this->begin(); i != this->end(); ++i,++af) {
-		this->pre_act_func_output.push_back(i->operator()(this->post_act_func_output.back()));
-		this->post_act_func_output.push_back(af->operator()(this->pre_act_func_output.back()));
+		try {
+			this->pre_act_func_output.push_back(i->operator()(this->post_act_func_output.back()));
+		} catch (std::exception& e) {
+			std::cerr << k << ": An exception occurred while calculating and saving the pre-activation function output.\n";
+			std::cerr << e.what() << std::endl;
+			exit(-1);
+		}
+
+		try {
+			this->post_act_func_output.push_back(af->operator()(this->pre_act_func_output.back()));
+		} catch (std::exception& e) {
+			std::cerr << k << ": An exception occurred while calculating and saving the POST-activation function output.\n";
+			std::cerr << e.what() << std::endl;
+			exit(-1);
+		}
+		++k;
 	}
 }
 
